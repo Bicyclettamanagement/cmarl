@@ -28,9 +28,14 @@ from __future__ import annotations
 
 import json
 import os
+import platform
 import random
+import subprocess
+import sys
 import time
-from dataclasses import dataclass
+from collections import deque
+from dataclasses import dataclass, field
+from pathlib import Path
 
 import numpy as np
 import supersuit as ss
@@ -62,7 +67,17 @@ class Args:
     capture_video: bool = False
     """whether to capture videos of the agent performances (check out `videos` folder)"""
     save_model: bool = False
-    """whether to save model into the `runs/{run_name}` folder"""
+    """if toggled, also save a final model at the end of training (eval checkpoints are separate)"""
+    checkpoint_eval: bool = True
+    """save a checkpoint after every in-distribution evaluation (keeps only latest + best)"""
+    checkpoint_metric: str = "return_mean"
+    """eval metric used to decide the best checkpoint (higher is better)"""
+    performance_threshold: float | None = None
+    """if set, log the first global step whose rolling mean episodic return exceeds this value"""
+    rolling_return_window: int = 10
+    """window size for the rolling episodic-return mean used in threshold tracking"""
+    log_gradient_norms: bool = True
+    """log actor/critic gradient norms for optimization-stability analysis"""
 
     # Environment / context arguments. These physics parameters *are* the context in
     # contextual MARL; the baseline trains on the fixed values below and is evaluated
@@ -130,6 +145,174 @@ class Args:
 
 
 Context = dict
+
+
+def get_git_commit() -> str | None:
+    """Best-effort git commit hash for reproducibility manifests."""
+    try:
+        return (
+            subprocess.check_output(
+                ["git", "rev-parse", "HEAD"],
+                stderr=subprocess.DEVNULL,
+                text=True,
+            )
+            .strip()
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+
+
+def collect_environment_info() -> dict:
+    """Capture runtime and package versions for cluster reproducibility."""
+    versions: dict[str, str] = {}
+    for package in (
+        "torch",
+        "numpy",
+        "pettingzoo",
+        "supersuit",
+        "gymnasium",
+        "tyro",
+        "tensorboard",
+    ):
+        try:
+            import importlib.metadata as metadata
+
+            versions[package] = metadata.version(package)
+        except Exception:
+            versions[package] = "unknown"
+    return {
+        "python": sys.version,
+        "platform": platform.platform(),
+        "hostname": platform.node(),
+        "torch_cuda_available": torch.cuda.is_available(),
+        "torch_cuda_device": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
+        "packages": versions,
+        "git_commit": get_git_commit(),
+    }
+
+
+@dataclass
+class RunManifest:
+    """Persistent run metadata for cluster bookkeeping and post-hoc analysis."""
+
+    run_name: str
+    run_dir: Path
+    args: dict
+    started_at_unix: float = field(default_factory=time.time)
+    environment: dict = field(default_factory=dict)
+    global_step: int = 0
+    wallclock_seconds: float = 0.0
+    best_eval: dict | None = None
+    steps_to_threshold: int | None = None
+    finished: bool = False
+
+    def write(self) -> None:
+        self.run_dir.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "run_name": self.run_name,
+            "started_at_unix": self.started_at_unix,
+            "wallclock_seconds": self.wallclock_seconds,
+            "global_step": self.global_step,
+            "args": self.args,
+            "environment": self.environment,
+            "best_eval": self.best_eval,
+            "steps_to_threshold": self.steps_to_threshold,
+            "finished": self.finished,
+        }
+        with open(self.run_dir / "run_manifest.json", "w") as f:
+            json.dump(payload, f, indent=2)
+
+
+class CheckpointManager:
+    """Keep only the latest and best eval checkpoints on disk."""
+
+    def __init__(self, run_dir: Path, metric_key: str = "return_mean"):
+        self.checkpoint_dir = run_dir / "checkpoints"
+        self.checkpoint_dir.mkdir(parents=True, exist_ok=True)
+        self.metric_key = metric_key
+        self.best_value = float("-inf")
+        self.best_step = -1
+
+    def save(self, payload: dict, global_step: int, eval_stats: dict) -> dict[str, str | float]:
+        metric = float(eval_stats[self.metric_key])
+        latest_path = self.checkpoint_dir / "latest.pt"
+        torch.save(
+            {
+                **payload,
+                "global_step": global_step,
+                "eval_stats": eval_stats,
+                "checkpoint_metric": self.metric_key,
+                "checkpoint_metric_value": metric,
+            },
+            latest_path,
+        )
+        saved: dict[str, str | float] = {"latest": str(latest_path), "metric": metric}
+
+        if metric > self.best_value:
+            self.best_value = metric
+            self.best_step = global_step
+            best_path = self.checkpoint_dir / "best.pt"
+            torch.save(
+                {
+                    **payload,
+                    "global_step": global_step,
+                    "eval_stats": eval_stats,
+                    "checkpoint_metric": self.metric_key,
+                    "checkpoint_metric_value": metric,
+                },
+                best_path,
+            )
+            saved["best"] = str(best_path)
+            saved["best_step"] = global_step
+        return saved
+
+
+def build_checkpoint_payload(nets: dict, args: Args) -> dict:
+    return {
+        "actors": nets["actors"].state_dict(),
+        "target_actors": nets["target_actors"].state_dict(),
+        "qf1": nets["qf1"].state_dict(),
+        "qf2": nets["qf2"].state_dict(),
+        "qf1_target": nets["qf1_target"].state_dict(),
+        "qf2_target": nets["qf2_target"].state_dict(),
+        "q_optimizer": nets["q_optimizer"].state_dict(),
+        "actor_optimizer": nets["actor_optimizer"].state_dict(),
+        "args": vars(args),
+    }
+
+
+def append_eval_record(run_dir: Path, global_step: int, eval_stats: dict, wallclock_seconds: float) -> None:
+    record = {
+        "global_step": global_step,
+        "wallclock_seconds": wallclock_seconds,
+        **eval_stats,
+    }
+    with open(run_dir / "eval_history.jsonl", "a") as f:
+        f.write(json.dumps(record) + "\n")
+
+
+def log_timing_metrics(
+    writer: SummaryWriter,
+    global_step: int,
+    start_time: float,
+    total_timesteps: int,
+) -> None:
+    elapsed = time.time() - start_time
+    writer.add_scalar("time/wallclock_seconds", elapsed, global_step)
+    if global_step > 0:
+        sps = global_step / elapsed
+        writer.add_scalar("charts/SPS", int(sps), global_step)
+        remaining = max(total_timesteps - global_step, 0)
+        writer.add_scalar("time/eta_hours", (remaining / sps) / 3600.0, global_step)
+        writer.add_scalar("time/progress", global_step / total_timesteps, global_step)
+
+
+def gradient_norm(parameters) -> float:
+    total = 0.0
+    for p in parameters:
+        if p.grad is not None:
+            total += p.grad.data.norm(2).item() ** 2
+    return total**0.5
 
 
 def default_context(args: Args) -> Context:
@@ -358,13 +541,15 @@ def evaluate(
     deterministic (no exploration noise) so this measures the learned policy directly.
     """
     env = make_env(args, context, render_mode=render_mode)
-    returns, lengths, successes = [], [], []
+    returns, lengths, successes, action_stds = [], [], [], []
     for ep in range(n_episodes):
         obs_dict, _ = env.reset(seed=seed + ep)
         ep_return, ep_len, success = 0.0, 0, 0.0
+        ep_action_stds = []
         while env.agents:
             obs = torch.as_tensor(stack_obs(obs_dict, agents), device=device).float() / 255.0
             actions = joint_policy_actions(actors, obs.unsqueeze(0)).squeeze(0).cpu().numpy()
+            ep_action_stds.append(float(np.std(actions)))
             action_dict = {a: actions[i] for i, a in enumerate(agents)}
             obs_dict, rewards, terms, truncs, _ = env.step(action_dict)
             ep_return += float(np.mean(list(rewards.values())))
@@ -374,12 +559,14 @@ def evaluate(
         returns.append(ep_return)
         lengths.append(ep_len)
         successes.append(success)
+        action_stds.append(float(np.mean(ep_action_stds)) if ep_action_stds else 0.0)
     env.close()
     return {
         "return_mean": float(np.mean(returns)),
         "return_std": float(np.std(returns)),
         "length_mean": float(np.mean(lengths)),
         "success_rate": float(np.mean(successes)),
+        "action_std_mean": float(np.mean(action_stds)),
     }
 
 
@@ -441,6 +628,19 @@ def polyak_update(source: nn.Module, target: nn.Module, tau: float) -> None:
 
 def train(args: Args) -> str:
     run_name = f"pistonball__{args.exp_name}__{args.seed}__{int(time.time())}"
+    run_dir = Path("runs") / run_name
+    run_dir.mkdir(parents=True, exist_ok=True)
+    manifest = RunManifest(
+        run_name=run_name,
+        run_dir=run_dir,
+        args=vars(args),
+        environment=collect_environment_info(),
+    )
+    manifest.write()
+    checkpoint_manager = (
+        CheckpointManager(run_dir, metric_key=args.checkpoint_metric) if args.checkpoint_eval else None
+    )
+
     if args.track:
         import wandb
 
@@ -452,7 +652,7 @@ def train(args: Args) -> str:
             name=run_name,
             save_code=True,
         )
-    writer = SummaryWriter(f"runs/{run_name}")
+    writer = SummaryWriter(str(run_dir))
     writer.add_text(
         "hyperparameters",
         "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{k}|{v}|" for k, v in vars(args).items()])),
@@ -490,6 +690,9 @@ def train(args: Args) -> str:
     obs = stack_obs(obs_dict, agents)
     ep_return, ep_len = 0.0, 0
     start_time = time.time()
+    recent_returns: deque[float] = deque(maxlen=args.rolling_return_window)
+    steps_to_threshold: int | None = None
+    actor_loss = torch.tensor(0.0)
 
     for global_step in range(args.total_timesteps):
         # --- action selection ---------------------------------------------------
@@ -523,6 +726,18 @@ def train(args: Args) -> str:
             writer.add_scalar("charts/episodic_return", ep_return, global_step)
             writer.add_scalar("charts/episodic_length", ep_len, global_step)
             writer.add_scalar("charts/success", float(terminated), global_step)
+            recent_returns.append(ep_return)
+            if len(recent_returns) == recent_returns.maxlen:
+                rolling_mean = float(np.mean(recent_returns))
+                writer.add_scalar("charts/rolling_return_mean", rolling_mean, global_step)
+                if (
+                    args.performance_threshold is not None
+                    and steps_to_threshold is None
+                    and rolling_mean >= args.performance_threshold
+                ):
+                    steps_to_threshold = global_step
+                    writer.add_scalar("charts/steps_to_threshold", steps_to_threshold, global_step)
+                    manifest.steps_to_threshold = steps_to_threshold
             print(f"global_step={global_step}, episodic_return={ep_return:.2f}, length={ep_len}")
             obs_dict, _ = env.reset(seed=args.seed + global_step)
             obs = stack_obs(obs_dict, agents)
@@ -555,26 +770,33 @@ def train(args: Args) -> str:
 
             q_optimizer.zero_grad()
             qf_loss.backward()
+            q_grad_norm = gradient_norm(list(qf1.parameters()) + list(qf2.parameters()))
             q_optimizer.step()
 
             if global_step % args.policy_frequency == 0:
                 actor_loss = -qf1(b_obs, joint_policy_actions(actors, b_obs)).mean()
                 actor_optimizer.zero_grad()
                 actor_loss.backward()
+                actor_grad_norm = gradient_norm(actors.parameters())
                 actor_optimizer.step()
 
                 polyak_update(actors, target_actors, args.tau)
                 polyak_update(qf1, qf1_target, args.tau)
                 polyak_update(qf2, qf2_target, args.tau)
+            else:
+                actor_grad_norm = 0.0
 
             if global_step % 100 == 0:
-                sps = int(global_step / (time.time() - start_time))
+                log_timing_metrics(writer, global_step, start_time, args.total_timesteps)
                 writer.add_scalar("losses/qf1_values", qf1_a.mean().item(), global_step)
                 writer.add_scalar("losses/qf2_values", qf2_a.mean().item(), global_step)
                 writer.add_scalar("losses/qf_loss", qf_loss.item() / 2.0, global_step)
                 writer.add_scalar("losses/actor_loss", actor_loss.item(), global_step)
-                writer.add_scalar("charts/SPS", sps, global_step)
-                print(f"SPS: {sps}")
+                if args.log_gradient_norms:
+                    writer.add_scalar("stability/q_grad_norm", q_grad_norm, global_step)
+                    writer.add_scalar("stability/actor_grad_norm", actor_grad_norm, global_step)
+                elapsed = time.time() - start_time
+                print(f"SPS: {int(global_step / elapsed)} | wallclock: {elapsed / 3600:.2f} h")
 
         # --- periodic in-distribution evaluation --------------------------------
         if (
@@ -582,37 +804,66 @@ def train(args: Args) -> str:
             and global_step > args.learning_starts
             and global_step % args.eval_frequency == 0
         ):
+            eval_start = time.time()
             stats = evaluate(
                 actors, args, default_context(args), agents, device,
                 seed=args.seed + 10_000, n_episodes=args.eval_episodes,
             )
+            eval_wallclock = time.time() - eval_start
+            total_wallclock = time.time() - start_time
+            stats["eval_wallclock_seconds"] = eval_wallclock
+            stats["total_wallclock_seconds"] = total_wallclock
             for k, v in stats.items():
                 writer.add_scalar(f"eval/{k}", v, global_step)
-            print(f"[eval @ {global_step}] {stats}")
+            writer.add_scalar("time/eval_wallclock_seconds", eval_wallclock, global_step)
+            writer.add_scalar("time/total_wallclock_seconds", total_wallclock, global_step)
+            append_eval_record(run_dir, global_step, stats, total_wallclock)
+            manifest.global_step = global_step
+            manifest.wallclock_seconds = total_wallclock
+            manifest.best_eval = {
+                "step": checkpoint_manager.best_step if checkpoint_manager else global_step,
+                "metric": args.checkpoint_metric,
+                "value": checkpoint_manager.best_value if checkpoint_manager else stats[args.checkpoint_metric],
+                "stats": stats,
+            }
+            manifest.write()
+            print(
+                f"[eval @ {global_step}] return={stats['return_mean']:.2f} "
+                f"success={stats['success_rate']:.2f} "
+                f"eval_time={eval_wallclock:.1f}s total_time={total_wallclock / 3600:.2f}h"
+            )
+            if checkpoint_manager is not None:
+                saved = checkpoint_manager.save(
+                    build_checkpoint_payload(nets, args),
+                    global_step,
+                    stats,
+                )
+                print(f"[checkpoint] latest={saved['latest']}" + (f" best={saved['best']}" if "best" in saved else ""))
 
     env.close()
 
     # --- final transfer / generalization sweep ---------------------------------
     if args.transfer_eval:
+        transfer_start = time.time()
         results = transfer_sweep(actors, args, agents, device)
-        with open(f"runs/{run_name}/transfer_results.json", "w") as f:
+        results["transfer_wallclock_seconds"] = time.time() - transfer_start
+        results["total_wallclock_seconds"] = time.time() - start_time
+        with open(run_dir / "transfer_results.json", "w") as f:
             json.dump(results, f, indent=2)
         log_transfer_results(writer, results)
         print("transfer sweep:", json.dumps(results["contexts"], indent=2))
         print(f"generalization gap: {results['generalization_gap']:.3f}")
 
     if args.save_model:
-        model_path = f"runs/{run_name}/{args.exp_name}.pt"
-        torch.save(
-            {
-                "actors": actors.state_dict(),
-                "qf1": qf1.state_dict(),
-                "qf2": qf2.state_dict(),
-                "args": vars(args),
-            },
-            model_path,
-        )
+        model_path = run_dir / f"{args.exp_name}_final.pt"
+        torch.save(build_checkpoint_payload(nets, args), model_path)
         print(f"model saved to {model_path}")
+
+    manifest.global_step = args.total_timesteps
+    manifest.wallclock_seconds = time.time() - start_time
+    manifest.finished = True
+    manifest.write()
+    print(f"run finished in {manifest.wallclock_seconds / 3600:.2f} h -> {run_dir}")
 
     writer.close()
     return run_name
