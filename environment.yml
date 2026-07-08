@@ -1,0 +1,29 @@
+# Reproducible Linux (cluster) environment for contextual-MARL experiments.
+#
+# Create:
+#   conda env create -f environment.yml
+# Activate:
+#   conda activate cmarl
+# Verify:
+#   python -m pytest tests/test_matd3_pistonball.py -q
+#
+# PyTorch is installed from the pytorch + nvidia channels for CUDA on Linux.
+# Pip pins cover PettingZoo and the experiment utilities.
+name: cmarl
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.10.19
+  - pip=24.3.1
+  - pytorch=2.4.1
+  - pytorch-cuda=12.4
+  - numpy=2.2.6
+  - pip:
+      - pettingzoo[butterfly]==1.26.1
+      - supersuit==3.11.0
+      - tyro==1.0.15
+      - tensorboard==2.21.0
+      - pytest==8.3.5
+      - typing-extensions==4.15.0
