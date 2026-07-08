@@ -8,6 +8,8 @@ initialization, the physics-context plumbing, and that a full update step actual
 moves the parameters.
 """
 
+import json
+
 import numpy as np
 import pytest
 import torch
@@ -15,12 +17,17 @@ import torch
 from matd3_pistonball import (
     Args,
     CentralizedCritic,
+    CheckpointManager,
     MultiAgentReplayBuffer,
+    RunManifest,
+    append_eval_record,
     build_agents,
+    build_checkpoint_payload,
     build_transfer_contexts,
     default_context,
     estimate_buffer_gb,
     evaluate,
+    gradient_norm,
     joint_policy_actions,
     make_env,
     polyak_update,
@@ -190,7 +197,13 @@ def test_evaluate_returns_metrics(args, device):
         nets["actors"], args, default_context(args), nets["agents"], device,
         seed=0, n_episodes=2,
     )
-    assert set(stats) == {"return_mean", "return_std", "length_mean", "success_rate"}
+    assert set(stats) == {
+        "return_mean",
+        "return_std",
+        "length_mean",
+        "success_rate",
+        "action_std_mean",
+    }
     assert 0.0 <= stats["success_rate"] <= 1.0
     assert stats["length_mean"] > 0
 
@@ -252,3 +265,57 @@ def test_training_update_changes_parameters(args, device):
     assert any(not torch.allclose(b, p) for b, p in zip(q_params_before, qf1.parameters()))
     assert any(not torch.allclose(b, p) for b, p in zip(actor_params_before, actors.parameters()))
     assert torch.isfinite(qf_loss) and torch.isfinite(actor_loss)
+
+
+def test_checkpoint_manager_keeps_latest_and_best(tmp_path, args, device):
+    nets = build_agents(args, device)
+    manager = CheckpointManager(tmp_path, metric_key="return_mean")
+    payload = build_checkpoint_payload(nets, args)
+
+    manager.save(payload, global_step=10, eval_stats={"return_mean": 1.0})
+    assert (tmp_path / "checkpoints" / "latest.pt").exists()
+    assert (tmp_path / "checkpoints" / "best.pt").exists()
+
+    manager.save(payload, global_step=20, eval_stats={"return_mean": 0.5})
+    assert (tmp_path / "checkpoints" / "latest.pt").exists()
+    # best should still be step 10
+    best = torch.load(tmp_path / "checkpoints" / "best.pt", map_location="cpu")
+    assert best["global_step"] == 10
+    assert best["checkpoint_metric_value"] == 1.0
+    # only two checkpoint files should exist
+    assert sorted(p.name for p in (tmp_path / "checkpoints").iterdir()) == ["best.pt", "latest.pt"]
+
+
+def test_run_manifest_written(tmp_path, args):
+    manifest = RunManifest(
+        run_name="test_run",
+        run_dir=tmp_path,
+        args=vars(args),
+        environment={"python": "test"},
+    )
+    manifest.write()
+    data = json.loads((tmp_path / "run_manifest.json").read_text())
+    assert data["run_name"] == "test_run"
+    assert data["args"]["n_pistons"] == args.n_pistons
+    assert data["finished"] is False
+
+
+def test_append_eval_record(tmp_path):
+    append_eval_record(tmp_path, 100, {"return_mean": 12.3, "success_rate": 0.5}, 42.0)
+    lines = (tmp_path / "eval_history.jsonl").read_text().strip().splitlines()
+    assert len(lines) == 1
+    record = json.loads(lines[0])
+    assert record["global_step"] == 100
+    assert record["return_mean"] == 12.3
+    assert record["wallclock_seconds"] == 42.0
+
+
+def test_gradient_norm_reports_nonzero_after_backward(args, device):
+    nets = build_agents(args, device)
+    n, c, h, w = args.n_pistons, args.frame_stack, args.frame_size, args.frame_size
+    obs = torch.rand(2, n, c, h, w)
+    actions = torch.rand(2, n, nets["act_dim"])
+    loss = nets["qf1"](obs, actions).mean()
+    loss.backward()
+    norm = gradient_norm(nets["qf1"].parameters())
+    assert norm > 0.0
