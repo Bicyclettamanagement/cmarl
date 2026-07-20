@@ -18,7 +18,7 @@ dependencies:
   - python=3.10.19
   - pip=24.3.1
   - pytorch=2.4.1
-  - pytorch-cuda=12.4
+  - pytorch-cuda=12.1
   - numpy=2.2.6
   - pip:
       - pettingzoo[butterfly]==1.26.1
