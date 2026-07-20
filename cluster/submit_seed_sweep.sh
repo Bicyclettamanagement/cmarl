@@ -12,3 +12,5 @@ for seed in "${SEEDS[@]}"; do
 done
 
 echo "Submitted ${#SEEDS[@]} jobs."
+echo "After completion, aggregate with:"
+echo "  python scripts/rliable_aggregate.py --exp-name matd3_pistonball --seeds ${SEEDS[*]}"

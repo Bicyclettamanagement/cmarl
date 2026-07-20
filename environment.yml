@@ -27,3 +27,6 @@ dependencies:
       - tensorboard==2.21.0
       - pytest==8.3.5
       - typing-extensions==4.15.0
+      - rliable==1.2.0
+      - jupyterlab==4.4.1
+      - pandas==2.3.3

@@ -47,6 +47,8 @@ import tyro
 from pettingzoo.butterfly import pistonball_v6
 from torch.utils.tensorboard import SummaryWriter
 
+from evaluation.rliable_utils import save_rliable_scores, summarize_episode_scores
+
 
 @dataclass
 class Args:
@@ -78,6 +80,10 @@ class Args:
     """window size for the rolling episodic-return mean used in threshold tracking"""
     log_gradient_norms: bool = True
     """log actor/critic gradient norms for optimization-stability analysis"""
+    method_tag: str = "hidden_context"
+    """label for rliable aggregation (e.g. hidden_context vs context_concat)"""
+    reference_return: float = 100.0
+    """reference return for optimality gap (Pistonball success-scale heuristic)"""
 
     # Environment / context arguments. These physics parameters *are* the context in
     # contextual MARL; the baseline trains on the fixed values below and is evaluated
@@ -173,6 +179,7 @@ def collect_environment_info() -> dict:
         "gymnasium",
         "tyro",
         "tensorboard",
+        "rliable",
     ):
         try:
             import importlib.metadata as metadata
@@ -279,6 +286,44 @@ def build_checkpoint_payload(nets: dict, args: Args) -> dict:
         "actor_optimizer": nets["actor_optimizer"].state_dict(),
         "args": vars(args),
     }
+
+
+def append_training_episode_record(
+    run_dir: Path,
+    global_step: int,
+    ep_return: float,
+    ep_len: int,
+    success: bool,
+    per_agent_return_variance: float,
+) -> None:
+    """Append team-level training episodes for learning-curve / seed aggregation."""
+    record = {
+        "global_step": global_step,
+        "team_episodic_return": ep_return,
+        "episodic_length": ep_len,
+        "success": success,
+        "per_agent_return_variance": per_agent_return_variance,
+    }
+    with open(run_dir / "training_episodes.jsonl", "a") as f:
+        f.write(json.dumps(record) + "\n")
+
+
+def log_eval_metrics(writer: SummaryWriter, prefix: str, stats: dict, global_step: int) -> None:
+    """Log metrics using abstract §Evaluation taxonomy (performance / coordination / …)."""
+    mapping = {
+        "return_mean": f"{prefix}/performance/team_return_mean",
+        "return_std": f"{prefix}/performance/team_return_std",
+        "return_median": f"{prefix}/performance/team_return_median",
+        "return_iqm": f"{prefix}/performance/team_return_iqm",
+        "optimality_gap": f"{prefix}/performance/optimality_gap",
+        "length_mean": f"{prefix}/performance/episode_length_mean",
+        "success_rate": f"{prefix}/performance/success_rate",
+        "per_agent_return_variance_mean": f"{prefix}/coordination/per_agent_return_variance",
+        "action_std_mean": f"{prefix}/coordination/action_std_across_agents",
+    }
+    for key, tag in mapping.items():
+        if key in stats:
+            writer.add_scalar(tag, stats[key], global_step)
 
 
 def append_eval_record(run_dir: Path, global_step: int, eval_stats: dict, wallclock_seconds: float) -> None:
@@ -541,32 +586,46 @@ def evaluate(
     deterministic (no exploration noise) so this measures the learned policy directly.
     """
     env = make_env(args, context, render_mode=render_mode)
-    returns, lengths, successes, action_stds = [], [], [], []
+    episode_returns: list[float] = []
+    episode_lengths: list[int] = []
+    episode_successes: list[float] = []
+    episode_action_stds: list[float] = []
+    episode_per_agent_var: list[float] = []
+
     for ep in range(n_episodes):
         obs_dict, _ = env.reset(seed=seed + ep)
         ep_return, ep_len, success = 0.0, 0, 0.0
-        ep_action_stds = []
+        ep_action_stds: list[float] = []
+        ep_per_agent_vars: list[float] = []
         while env.agents:
             obs = torch.as_tensor(stack_obs(obs_dict, agents), device=device).float() / 255.0
             actions = joint_policy_actions(actors, obs.unsqueeze(0)).squeeze(0).cpu().numpy()
             ep_action_stds.append(float(np.std(actions)))
             action_dict = {a: actions[i] for i, a in enumerate(agents)}
             obs_dict, rewards, terms, truncs, _ = env.step(action_dict)
-            ep_return += float(np.mean(list(rewards.values())))
+            rew_vals = list(rewards.values())
+            ep_return += float(np.mean(rew_vals))
+            ep_per_agent_vars.append(float(np.var(rew_vals)))
             ep_len += 1
             if any(terms.values()):
                 success = 1.0
-        returns.append(ep_return)
-        lengths.append(ep_len)
-        successes.append(success)
-        action_stds.append(float(np.mean(ep_action_stds)) if ep_action_stds else 0.0)
+        episode_returns.append(ep_return)
+        episode_lengths.append(ep_len)
+        episode_successes.append(success)
+        episode_action_stds.append(float(np.mean(ep_action_stds)) if ep_action_stds else 0.0)
+        episode_per_agent_var.append(float(np.mean(ep_per_agent_vars)) if ep_per_agent_vars else 0.0)
     env.close()
+
+    summary = summarize_episode_scores(episode_returns, reference_return=args.reference_return)
     return {
-        "return_mean": float(np.mean(returns)),
-        "return_std": float(np.std(returns)),
-        "length_mean": float(np.mean(lengths)),
-        "success_rate": float(np.mean(successes)),
-        "action_std_mean": float(np.mean(action_stds)),
+        **summary,
+        "length_mean": float(np.mean(episode_lengths)),
+        "success_rate": float(np.mean(episode_successes)),
+        "action_std_mean": float(np.mean(episode_action_stds)),
+        "per_agent_return_variance_mean": float(np.mean(episode_per_agent_var)),
+        "episode_returns": episode_returns,
+        "episode_lengths": episode_lengths,
+        "episode_successes": episode_successes,
     }
 
 
@@ -689,6 +748,7 @@ def train(args: Args) -> str:
     obs_dict, _ = env.reset(seed=args.seed)
     obs = stack_obs(obs_dict, agents)
     ep_return, ep_len = 0.0, 0
+    ep_per_agent_var_sum, ep_var_steps = 0.0, 0
     start_time = time.time()
     recent_returns: deque[float] = deque(maxlen=args.rolling_return_window)
     steps_to_threshold: int | None = None
@@ -711,6 +771,9 @@ def train(args: Args) -> str:
         action_dict = {a: actions[i] for i, a in enumerate(agents)}
         next_obs_dict, rewards, terms, truncs, infos = env.step(action_dict)
         reward = float(np.mean(list(rewards.values())))
+        rew_vals = list(rewards.values())
+        ep_per_agent_var_sum += float(np.var(rew_vals))
+        ep_var_steps += 1
         terminated = any(terms.values())
         truncated = any(truncs.values())
         next_obs = stack_obs(next_obs_dict, agents)
@@ -723,25 +786,33 @@ def train(args: Args) -> str:
         obs = next_obs
 
         if terminated or truncated:
-            writer.add_scalar("charts/episodic_return", ep_return, global_step)
-            writer.add_scalar("charts/episodic_length", ep_len, global_step)
-            writer.add_scalar("charts/success", float(terminated), global_step)
+            ep_var_mean = ep_per_agent_var_sum / max(ep_var_steps, 1)
+            writer.add_scalar("performance/team_episodic_return", ep_return, global_step)
+            writer.add_scalar("performance/episodic_length", ep_len, global_step)
+            writer.add_scalar("performance/success", float(terminated), global_step)
+            writer.add_scalar("coordination/per_agent_return_variance", ep_var_mean, global_step)
+            append_training_episode_record(
+                run_dir, global_step, ep_return, ep_len, bool(terminated), ep_var_mean
+            )
             recent_returns.append(ep_return)
             if len(recent_returns) == recent_returns.maxlen:
                 rolling_mean = float(np.mean(recent_returns))
-                writer.add_scalar("charts/rolling_return_mean", rolling_mean, global_step)
+                writer.add_scalar("sample_efficiency/rolling_return_mean", rolling_mean, global_step)
                 if (
                     args.performance_threshold is not None
                     and steps_to_threshold is None
                     and rolling_mean >= args.performance_threshold
                 ):
                     steps_to_threshold = global_step
-                    writer.add_scalar("charts/steps_to_threshold", steps_to_threshold, global_step)
+                    writer.add_scalar(
+                        "sample_efficiency/steps_to_threshold", steps_to_threshold, global_step
+                    )
                     manifest.steps_to_threshold = steps_to_threshold
             print(f"global_step={global_step}, episodic_return={ep_return:.2f}, length={ep_len}")
             obs_dict, _ = env.reset(seed=args.seed + global_step)
             obs = stack_obs(obs_dict, agents)
             ep_return, ep_len = 0.0, 0
+            ep_per_agent_var_sum, ep_var_steps = 0.0, 0
 
         # --- learning -----------------------------------------------------------
         if global_step > args.learning_starts:
@@ -813,11 +884,22 @@ def train(args: Args) -> str:
             total_wallclock = time.time() - start_time
             stats["eval_wallclock_seconds"] = eval_wallclock
             stats["total_wallclock_seconds"] = total_wallclock
-            for k, v in stats.items():
-                writer.add_scalar(f"eval/{k}", v, global_step)
+            log_eval_metrics(writer, "eval_id", stats, global_step)
             writer.add_scalar("time/eval_wallclock_seconds", eval_wallclock, global_step)
             writer.add_scalar("time/total_wallclock_seconds", total_wallclock, global_step)
             append_eval_record(run_dir, global_step, stats, total_wallclock)
+            save_rliable_scores(
+                run_dir,
+                algorithm=args.exp_name,
+                method_tag=args.method_tag,
+                seed=args.seed,
+                global_step=global_step,
+                context_order=["train"],
+                scores_by_context={"train": stats["episode_returns"]},
+                eval_split="in_distribution_eval",
+                reference_return=args.reference_return,
+                extra={"checkpoint_metric": args.checkpoint_metric},
+            )
             manifest.global_step = global_step
             manifest.wallclock_seconds = total_wallclock
             manifest.best_eval = {
@@ -845,12 +927,12 @@ def train(args: Args) -> str:
     # --- final transfer / generalization sweep ---------------------------------
     if args.transfer_eval:
         transfer_start = time.time()
-        results = transfer_sweep(actors, args, agents, device)
+        results = transfer_sweep(actors, args, agents, device, run_dir=run_dir)
         results["transfer_wallclock_seconds"] = time.time() - transfer_start
         results["total_wallclock_seconds"] = time.time() - start_time
         with open(run_dir / "transfer_results.json", "w") as f:
             json.dump(results, f, indent=2)
-        log_transfer_results(writer, results)
+        log_transfer_results(writer, results, args.total_timesteps)
         print("transfer sweep:", json.dumps(results["contexts"], indent=2))
         print(f"generalization gap: {results['generalization_gap']:.3f}")
 
@@ -869,16 +951,22 @@ def train(args: Args) -> str:
     return run_name
 
 
-def transfer_sweep(actors: nn.ModuleList, args: Args, agents: list[str], device: torch.device):
+def transfer_sweep(
+    actors: nn.ModuleList,
+    args: Args,
+    agents: list[str],
+    device: torch.device,
+    run_dir: Path | None = None,
+):
     """Evaluate the frozen policy across the transfer contexts and summarize.
 
-    The *generalization gap* is the drop in mean return between the training context
-    and the average out-of-distribution context. Together with the per-context returns
-    this is the headline metric for comparing this context-free baseline against
-    context-aware algorithms.
+    Reports generalization gap (ID vs OOD) using team return means and IQMs, and
+    writes ``rliable_scores.json`` for multi-seed robust aggregation.
     """
     contexts = build_transfer_contexts(args)
+    context_order = list(contexts.keys())
     per_context: dict[str, dict] = {}
+    scores_by_context: dict[str, list[float]] = {}
     for name, ctx in contexts.items():
         stats = evaluate(
             actors, args, ctx, agents, device,
@@ -886,25 +974,55 @@ def transfer_sweep(actors: nn.ModuleList, args: Args, agents: list[str], device:
         )
         stats["context"] = ctx
         per_context[name] = stats
+        scores_by_context[name] = stats["episode_returns"]
 
-    train_return = per_context["train"]["return_mean"]
-    ood_returns = [v["return_mean"] for k, v in per_context.items() if k != "train"]
-    ood_mean = float(np.mean(ood_returns)) if ood_returns else train_return
-    return {
+    train_stats = per_context["train"]
+    ood_names = [k for k in per_context if k != "train"]
+    ood_means = [per_context[k]["return_mean"] for k in ood_names]
+    ood_iqms = [per_context[k]["return_iqm"] for k in ood_names]
+
+    results = {
         "contexts": per_context,
-        "train_return": train_return,
-        "ood_return_mean": ood_mean,
-        "generalization_gap": train_return - ood_mean,
+        "train_return_mean": train_stats["return_mean"],
+        "train_return_iqm": train_stats["return_iqm"],
+        "ood_return_mean": float(np.mean(ood_means)) if ood_means else train_stats["return_mean"],
+        "ood_return_iqm": float(np.mean(ood_iqms)) if ood_iqms else train_stats["return_iqm"],
+        "generalization_gap_mean": train_stats["return_mean"] - (float(np.mean(ood_means)) if ood_means else train_stats["return_mean"]),
+        "generalization_gap_iqm": train_stats["return_iqm"] - (float(np.mean(ood_iqms)) if ood_iqms else train_stats["return_iqm"]),
+        # Backwards-compatible aliases
+        "train_return": train_stats["return_mean"],
+        "ood_return_mean_legacy": float(np.mean(ood_means)) if ood_means else train_stats["return_mean"],
+        "generalization_gap": train_stats["return_mean"] - (float(np.mean(ood_means)) if ood_means else train_stats["return_mean"]),
     }
 
+    if run_dir is not None:
+        save_rliable_scores(
+            run_dir,
+            algorithm=args.exp_name,
+            method_tag=args.method_tag,
+            seed=args.seed,
+            global_step=args.total_timesteps,
+            context_order=context_order,
+            scores_by_context=scores_by_context,
+            eval_split="zero_shot_transfer",
+            reference_return=args.reference_return,
+            extra={
+                "generalization_gap_mean": results["generalization_gap_mean"],
+                "generalization_gap_iqm": results["generalization_gap_iqm"],
+            },
+        )
+    return results
 
-def log_transfer_results(writer: SummaryWriter, results: dict) -> None:
+
+def log_transfer_results(writer: SummaryWriter, results: dict, global_step: int) -> None:
     for name, stats in results["contexts"].items():
-        writer.add_scalar(f"transfer/return_mean/{name}", stats["return_mean"], 0)
-        writer.add_scalar(f"transfer/success_rate/{name}", stats["success_rate"], 0)
-    writer.add_scalar("transfer/train_return", results["train_return"], 0)
-    writer.add_scalar("transfer/ood_return_mean", results["ood_return_mean"], 0)
-    writer.add_scalar("transfer/generalization_gap", results["generalization_gap"], 0)
+        log_eval_metrics(writer, f"transfer/{name}", stats, global_step)
+    writer.add_scalar("generalization/id_return_mean", results["train_return_mean"], global_step)
+    writer.add_scalar("generalization/ood_return_mean", results["ood_return_mean"], global_step)
+    writer.add_scalar("generalization/gap_mean", results["generalization_gap_mean"], global_step)
+    writer.add_scalar("generalization/id_return_iqm", results["train_return_iqm"], global_step)
+    writer.add_scalar("generalization/ood_return_iqm", results["ood_return_iqm"], global_step)
+    writer.add_scalar("generalization/gap_iqm", results["generalization_gap_iqm"], global_step)
 
 
 if __name__ == "__main__":

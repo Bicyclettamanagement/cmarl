@@ -200,9 +200,17 @@ def test_evaluate_returns_metrics(args, device):
     assert set(stats) == {
         "return_mean",
         "return_std",
+        "return_median",
+        "return_iqm",
+        "optimality_gap",
         "length_mean",
         "success_rate",
         "action_std_mean",
+        "per_agent_return_variance_mean",
+        "episode_returns",
+        "episode_lengths",
+        "episode_successes",
+        "n_episodes",
     }
     assert 0.0 <= stats["success_rate"] <= 1.0
     assert stats["length_mean"] > 0
@@ -213,7 +221,8 @@ def test_transfer_sweep_reports_gap(args, device):
     results = transfer_sweep(nets["actors"], args, nets["agents"], device)
     assert "train" in results["contexts"]
     assert "generalization_gap" in results
-    expected = results["train_return"] - results["ood_return_mean"]
+    assert "generalization_gap_iqm" in results
+    expected = results["train_return"] - results["ood_return_mean_legacy"]
     assert results["generalization_gap"] == pytest.approx(expected)
 
 

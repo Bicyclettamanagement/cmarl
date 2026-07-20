@@ -1,2 +1,5 @@
 runs/*
+reports/*
 **/__pycache__/*
+Dockerfile
+extended_abstract*
