@@ -21,9 +21,11 @@ from matd3_pistonball import (
     MultiAgentReplayBuffer,
     RunManifest,
     append_eval_record,
+    bootstrap_done,
     build_agents,
     build_checkpoint_payload,
     build_transfer_contexts,
+    clip_gradients,
     default_context,
     estimate_buffer_gb,
     evaluate,
@@ -328,3 +330,35 @@ def test_gradient_norm_reports_nonzero_after_backward(args, device):
     loss.backward()
     norm = gradient_norm(nets["qf1"].parameters())
     assert norm > 0.0
+
+
+def test_bootstrap_done_stops_on_timeout_and_success():
+    """Pistonball max_cycles truncations must stop TD bootstrapping."""
+    assert bootstrap_done(terminated=False, truncated=False) == 0.0
+    assert bootstrap_done(terminated=True, truncated=False) == 1.0
+    assert bootstrap_done(terminated=False, truncated=True) == 1.0
+    assert bootstrap_done(terminated=True, truncated=True) == 1.0
+
+
+def test_clip_gradients_reduces_norm(args, device):
+    nets = build_agents(args, device)
+    n, c, h, w = args.n_pistons, args.frame_stack, args.frame_size, args.frame_size
+    obs = torch.rand(2, n, c, h, w)
+    actions = torch.rand(2, n, nets["act_dim"])
+    loss = nets["qf1"](obs, actions).mean() * 1000.0
+    loss.backward()
+    before = gradient_norm(nets["qf1"].parameters())
+    clip_gradients(nets["qf1"].parameters(), max_grad_norm=1e-3)
+    after = gradient_norm(nets["qf1"].parameters())
+    assert before > after
+    assert after <= 1e-3 + 1e-6
+
+
+def test_checkpoint_manager_tracks_best_stats(tmp_path, args, device):
+    nets = build_agents(args, device)
+    manager = CheckpointManager(tmp_path, metric_key="return_mean")
+    payload = build_checkpoint_payload(nets, args)
+    manager.save(payload, global_step=10, eval_stats={"return_mean": 1.0, "success_rate": 0.2})
+    manager.save(payload, global_step=20, eval_stats={"return_mean": 0.5, "success_rate": 0.0})
+    assert manager.best_step == 10
+    assert manager.best_stats["success_rate"] == 0.2

@@ -23,7 +23,12 @@ else
   conda env create -f environment.yml
 fi
 
+# Some conda activation scripts (e.g. MKL/BLAS) reference optional vars like
+# `MKL_INTERFACE_LAYER` while `nounset` (`set -u`) is enabled. Temporarily
+# relax nounset during activation to avoid hard failures.
+set +u
 conda activate "$ENV_NAME"
+set -u
 
 echo "=== Environment snapshot ==="
 python --version

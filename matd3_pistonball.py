@@ -116,8 +116,8 @@ class Args:
     """total environment steps of the experiment"""
     learning_rate: float = 3e-4
     """the learning rate of the optimizers"""
-    buffer_size: int = 4_000
-    """replay buffer capacity in transitions (uint8 image obs are memory-heavy; ~0.85 MB/step with 20 agents @ 84px)"""
+    buffer_size: int = 50_000
+    """replay buffer capacity in transitions (~0.85 MB/step with 20 agents @ 84px => ~42 GB at 50k; use fewer pistons or lower capacity on small-RAM nodes)"""
     gamma: float = 0.99
     """the discount factor gamma"""
     tau: float = 0.005
@@ -128,12 +128,14 @@ class Args:
     """the scale of target policy smoothing noise"""
     exploration_noise: float = 0.1
     """the scale of exploration noise added to actions during rollouts"""
-    learning_starts: int = 5_000
-    """timestep to start learning"""
+    learning_starts: int = 10_000
+    """timestep to start learning (must be < buffer_size so random warmup is retained)"""
     policy_frequency: int = 2
     """the frequency of delayed policy (actor + target) updates"""
     noise_clip: float = 0.5
     """clip range of the target policy smoothing noise"""
+    max_grad_norm: float = 10.0
+    """clip actor/critic grad norms to this value (0 disables clipping)"""
     feature_dim: int = 128
     """dimensionality of the per-agent CNN feature vector"""
     hidden_dim: int = 256
@@ -194,7 +196,7 @@ def collect_environment_info() -> dict:
         "torch_cuda_available": torch.cuda.is_available(),
         "torch_cuda_device": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
         "packages": versions,
-        "git_commit": get_git_commit(),
+        # "git_commit": get_git_commit(),
     }
 
 
@@ -239,6 +241,7 @@ class CheckpointManager:
         self.metric_key = metric_key
         self.best_value = float("-inf")
         self.best_step = -1
+        self.best_stats: dict | None = None
 
     def save(self, payload: dict, global_step: int, eval_stats: dict) -> dict[str, str | float]:
         metric = float(eval_stats[self.metric_key])
@@ -258,6 +261,7 @@ class CheckpointManager:
         if metric > self.best_value:
             self.best_value = metric
             self.best_step = global_step
+            self.best_stats = dict(eval_stats)
             best_path = self.checkpoint_dir / "best.pt"
             torch.save(
                 {
@@ -358,6 +362,23 @@ def gradient_norm(parameters) -> float:
         if p.grad is not None:
             total += p.grad.data.norm(2).item() ** 2
     return total**0.5
+
+
+def clip_gradients(parameters, max_grad_norm: float) -> None:
+    """Clip gradients in-place when ``max_grad_norm > 0``; no-op otherwise."""
+    if max_grad_norm > 0:
+        nn.utils.clip_grad_norm_(parameters, max_grad_norm)
+
+
+def bootstrap_done(terminated: bool, truncated: bool) -> float:
+    """Mark episode end for the TD target.
+
+    Pistonball's ``max_cycles`` is a true episodic horizon (not an artificial
+    TimeLimit around a continuing MDP), so both success termination and timeout
+    truncation must stop bootstrapping. Otherwise every timeout incorrectly
+    continues with ``gamma * Q(s')``.
+    """
+    return float(terminated or truncated)
 
 
 def default_context(args: Args) -> Context:
@@ -738,10 +759,16 @@ def train(args: Args) -> str:
     )
     buf_gb = rb.memory_gb()
     print(f"replay buffer allocation: {buf_gb:.2f} GB ({args.buffer_size} transitions)")
-    if buf_gb > 12.0:
+    if args.learning_starts >= args.buffer_size:
         raise ValueError(
-            f"Replay buffer would use {buf_gb:.1f} GB. Reduce --buffer_size, --n_pistons, "
-            f"--frame_size, or --frame_stack. At defaults (20 agents, 84px, 4k steps) expect ~3.4 GB."
+            f"learning_starts ({args.learning_starts}) must be < buffer_size ({args.buffer_size}) "
+            "so the random-exploration warmup is not overwritten before learning begins."
+        )
+    # Host-RAM guard: uint8 obs live on CPU. ~42 GB at defaults (20 agents, 84px, 50k).
+    if buf_gb > 48.0:
+        raise ValueError(
+            f"Replay buffer would use {buf_gb:.1f} GB. Reduce --buffer-size, --n-pistons, "
+            f"--frame-size, or --frame-stack. At defaults (20 agents, 84px, 50k steps) expect ~42 GB."
         )
 
     env = make_env(args, default_context(args))
@@ -781,8 +808,8 @@ def train(args: Args) -> str:
         ep_return += reward
         ep_len += 1
 
-        # Bootstrap on truncation (timeout) but not on genuine termination.
-        rb.add(obs, next_obs, actions, reward, float(terminated))
+        # Stop bootstrapping on both success and max_cycles timeout (true episode end).
+        rb.add(obs, next_obs, actions, reward, bootstrap_done(terminated, truncated))
         obs = next_obs
 
         if terminated or truncated:
@@ -839,9 +866,11 @@ def train(args: Args) -> str:
             qf2_loss = F.mse_loss(qf2_a, next_q_value)
             qf_loss = qf1_loss + qf2_loss
 
+            q_params = list(qf1.parameters()) + list(qf2.parameters())
             q_optimizer.zero_grad()
             qf_loss.backward()
-            q_grad_norm = gradient_norm(list(qf1.parameters()) + list(qf2.parameters()))
+            q_grad_norm = gradient_norm(q_params)
+            clip_gradients(q_params, args.max_grad_norm)
             q_optimizer.step()
 
             if global_step % args.policy_frequency == 0:
@@ -849,6 +878,7 @@ def train(args: Args) -> str:
                 actor_optimizer.zero_grad()
                 actor_loss.backward()
                 actor_grad_norm = gradient_norm(actors.parameters())
+                clip_gradients(actors.parameters(), args.max_grad_norm)
                 actor_optimizer.step()
 
                 polyak_update(actors, target_actors, args.tau)
@@ -900,15 +930,6 @@ def train(args: Args) -> str:
                 reference_return=args.reference_return,
                 extra={"checkpoint_metric": args.checkpoint_metric},
             )
-            manifest.global_step = global_step
-            manifest.wallclock_seconds = total_wallclock
-            manifest.best_eval = {
-                "step": checkpoint_manager.best_step if checkpoint_manager else global_step,
-                "metric": args.checkpoint_metric,
-                "value": checkpoint_manager.best_value if checkpoint_manager else stats[args.checkpoint_metric],
-                "stats": stats,
-            }
-            manifest.write()
             print(
                 f"[eval @ {global_step}] return={stats['return_mean']:.2f} "
                 f"success={stats['success_rate']:.2f} "
@@ -921,7 +942,22 @@ def train(args: Args) -> str:
                     stats,
                 )
                 print(f"[checkpoint] latest={saved['latest']}" + (f" best={saved['best']}" if "best" in saved else ""))
-
+                manifest.best_eval = {
+                    "step": checkpoint_manager.best_step,
+                    "metric": args.checkpoint_metric,
+                    "value": checkpoint_manager.best_value,
+                    "stats": checkpoint_manager.best_stats,
+                }
+            else:
+                manifest.best_eval = {
+                    "step": global_step,
+                    "metric": args.checkpoint_metric,
+                    "value": stats[args.checkpoint_metric],
+                    "stats": stats,
+                }
+            manifest.global_step = global_step
+            manifest.wallclock_seconds = total_wallclock
+            manifest.write()
     env.close()
 
     # --- final transfer / generalization sweep ---------------------------------
