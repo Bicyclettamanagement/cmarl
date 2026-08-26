@@ -3,15 +3,12 @@
 This is a *context-free* baseline for contextual-MARL research. It adapts CleanRL's
 single-file ``td3_continuous_action.py`` to the multi-agent setting:
 
-* **Multiple actors, one centralized critic (CTDE).** Every piston is controlled by
-  its own decentralized actor ``pi_i(o_i)`` (no parameter sharing -> the pure,
-  fully-independent baseline). A single *centralized* critic conditions on the joint
-  observation and joint action ``Q(o_1..o_N, a_1..a_N)``. Following TD3, the
-  centralized critic keeps the twin-Q / target-policy-smoothing / delayed-update
-  tricks; "one critic" here means one *centralized* critic (as opposed to one critic
-  per agent), which is the standard MATD3 / MADDPG(+TD3) construction. Dropping the
-  twin-Q would silently reintroduce the value-overestimation bias TD3 exists to fix,
-  so it is retained.
+* **CTDE with a centralized twin critic.** Actors are decentralized
+  ``pi(o_i, agent_id)`` (parameter sharing + one-hot ID by default; disable with
+  ``--no-share-actors`` for the fully-independent ablation). A single *centralized*
+  critic conditions on the joint observation and joint action
+  ``Q(o_1..o_N, a_1..a_N)``. Following TD3, the critic keeps twin-Q / target-policy
+  smoothing / delayed updates.
 * **No context input.** Actors and the critic never observe the environment context
   (ball physics). This is deliberate: it is the reference point against which
   context-aware algorithms are compared. The context is still *logged and swept* at
@@ -53,7 +50,9 @@ from evaluation.rliable_utils import save_rliable_scores, summarize_episode_scor
 @dataclass
 class Args:
     exp_name: str = os.path.basename(__file__)[: -len(".py")]
-    """the name of this experiment"""
+    """algorithm / script name (kept for manifests and rliable aggregation)"""
+    experiment: str = "default"
+    """human-readable experiment tag used in run folder names (TensorBoard grouping)"""
     seed: int = 1
     """seed of the experiment"""
     torch_deterministic: bool = True
@@ -115,7 +114,9 @@ class Args:
     total_timesteps: int = 1_000_000
     """total environment steps of the experiment"""
     learning_rate: float = 3e-4
-    """the learning rate of the optimizers"""
+    """critic (Q-network) learning rate"""
+    actor_lr: float = 1e-4
+    """actor learning rate (kept lower than the critic to reduce policy churn)"""
     buffer_size: int = 50_000
     """replay buffer capacity in transitions (~0.85 MB/step with 20 agents @ 84px => ~42 GB at 50k; use fewer pistons or lower capacity on small-RAM nodes)"""
     gamma: float = 0.99
@@ -126,16 +127,26 @@ class Args:
     """the batch size sampled from the replay memory"""
     policy_noise: float = 0.2
     """the scale of target policy smoothing noise"""
-    exploration_noise: float = 0.1
-    """the scale of exploration noise added to actions during rollouts"""
+    exploration_noise: float = 0.2
+    """initial scale of exploration noise added to actions during rollouts"""
+    exploration_noise_end: float = 0.05
+    """final exploration noise after linear decay"""
+    exploration_noise_decay_steps: int = 100_000
+    """env steps over which exploration noise decays from start to end (after learning_starts)"""
     learning_starts: int = 10_000
     """timestep to start learning (must be < buffer_size so random warmup is retained)"""
-    policy_frequency: int = 2
+    policy_frequency: int = 4
     """the frequency of delayed policy (actor + target) updates"""
     noise_clip: float = 0.5
     """clip range of the target policy smoothing noise"""
     max_grad_norm: float = 10.0
     """clip actor/critic grad norms to this value (0 disables clipping)"""
+    share_actors: bool = True
+    """if toggled, use one shared actor with a one-hot agent ID (recommended); else independent actors"""
+    critic_shared_obs: bool = True
+    """if toggled, encode agent-0's image once in the critic (valid when all agents share the global frame)"""
+    action_saturation_threshold: float = 0.95
+    """|a| at or above this fraction of the action bound counts as saturated"""
     feature_dim: int = 128
     """dimensionality of the per-agent CNN feature vector"""
     hidden_dim: int = 256
@@ -150,7 +161,6 @@ class Args:
     """if toggled, run a zero-shot transfer sweep over perturbed contexts at the end"""
     transfer_factors: tuple[float, ...] = (0.5, 2.0)
     """multiplicative perturbations applied to each physics parameter for transfer eval"""
-
 
 Context = dict
 
@@ -292,6 +302,42 @@ def build_checkpoint_payload(nets: dict, args: Args) -> dict:
     }
 
 
+def load_checkpoint_into_nets(path: Path, nets: dict, device: torch.device) -> dict:
+    """Restore networks from a checkpoint file; returns the loaded payload metadata."""
+    ckpt = torch.load(path, map_location=device, weights_only=False)
+    nets["actors"].load_state_dict(ckpt["actors"])
+    nets["target_actors"].load_state_dict(ckpt["target_actors"])
+    nets["qf1"].load_state_dict(ckpt["qf1"])
+    nets["qf2"].load_state_dict(ckpt["qf2"])
+    nets["qf1_target"].load_state_dict(ckpt["qf1_target"])
+    nets["qf2_target"].load_state_dict(ckpt["qf2_target"])
+    if "q_optimizer" in ckpt:
+        nets["q_optimizer"].load_state_dict(ckpt["q_optimizer"])
+    if "actor_optimizer" in ckpt:
+        nets["actor_optimizer"].load_state_dict(ckpt["actor_optimizer"])
+    return ckpt
+
+
+def maybe_restore_best_checkpoint(
+    checkpoint_manager: CheckpointManager | None,
+    nets: dict,
+    device: torch.device,
+) -> int | None:
+    """Load ``best.pt`` if available (guards transfer eval against late policy collapse)."""
+    if checkpoint_manager is None or checkpoint_manager.best_step < 0:
+        return None
+    best_path = checkpoint_manager.checkpoint_dir / "best.pt"
+    if not best_path.exists():
+        return None
+    ckpt = load_checkpoint_into_nets(best_path, nets, device)
+    step = int(ckpt.get("global_step", checkpoint_manager.best_step))
+    print(
+        f"[checkpoint] restored best for final eval/transfer "
+        f"(step={step}, {checkpoint_manager.metric_key}={checkpoint_manager.best_value:.3f})"
+    )
+    return step
+
+
 def append_training_episode_record(
     run_dir: Path,
     global_step: int,
@@ -324,6 +370,7 @@ def log_eval_metrics(writer: SummaryWriter, prefix: str, stats: dict, global_ste
         "success_rate": f"{prefix}/performance/success_rate",
         "per_agent_return_variance_mean": f"{prefix}/coordination/per_agent_return_variance",
         "action_std_mean": f"{prefix}/coordination/action_std_across_agents",
+        "action_saturation_mean": f"{prefix}/stability/action_saturation",
     }
     for key, tag in mapping.items():
         if key in stats:
@@ -379,6 +426,46 @@ def bootstrap_done(terminated: bool, truncated: bool) -> float:
     continues with ``gamma * Q(s')``.
     """
     return float(terminated or truncated)
+
+
+def sanitize_experiment_tag(tag: str) -> str:
+    """Make an experiment tag safe for filesystem / TensorBoard run directories."""
+    cleaned = "".join(ch if (ch.isalnum() or ch in "-_") else "_" for ch in tag.strip())
+    while "__" in cleaned:
+        cleaned = cleaned.replace("__", "_")
+    return cleaned.strip("_") or "default"
+
+
+def build_run_name(args: Args) -> str:
+    """Readable run id for TensorBoard grouping and cluster bookkeeping."""
+    tag = sanitize_experiment_tag(args.experiment)
+    share = "shared" if args.share_actors else "indep"
+    drop = "randdrop" if args.random_drop else "nodrop"
+    return f"{tag}__{share}__{drop}__n{args.n_pistons}__seed{args.seed}__{int(time.time())}"
+
+
+def action_saturation_fraction(
+    actions: np.ndarray | torch.Tensor,
+    threshold: float = 0.95,
+    action_bound: float = 1.0,
+) -> float:
+    """Fraction of action components with ``|a| >= threshold * action_bound``."""
+    if isinstance(actions, torch.Tensor):
+        abs_a = actions.detach().abs()
+        return float((abs_a >= threshold * action_bound).float().mean().item())
+    abs_a = np.abs(np.asarray(actions))
+    return float(np.mean(abs_a >= threshold * action_bound))
+
+
+def current_exploration_noise(args: Args, global_step: int) -> float:
+    """Linearly decay exploration noise after ``learning_starts``."""
+    if global_step < args.learning_starts:
+        return args.exploration_noise
+    if args.exploration_noise_decay_steps <= 0:
+        return args.exploration_noise_end
+    t = global_step - args.learning_starts
+    frac = min(1.0, t / args.exploration_noise_decay_steps)
+    return args.exploration_noise + frac * (args.exploration_noise_end - args.exploration_noise)
 
 
 def default_context(args: Args) -> Context:
@@ -541,33 +628,55 @@ class CNNEncoder(nn.Module):
 
 
 class Actor(nn.Module):
-    """Decentralized actor: maps a single agent's observation to its action."""
+    """Decentralized actor: maps one agent's observation (+ optional ID) to an action."""
 
-    def __init__(self, args: Args, act_dim: int, action_low: float, action_high: float):
+    def __init__(
+        self,
+        args: Args,
+        act_dim: int,
+        action_low: float,
+        action_high: float,
+        n_agents: int,
+        use_agent_id: bool,
+    ):
         super().__init__()
+        self.use_agent_id = use_agent_id
+        self.n_agents = n_agents
         self.encoder = CNNEncoder(args.frame_stack, args.frame_size, args.feature_dim)
-        self.fc1 = nn.Linear(args.feature_dim, args.hidden_dim)
+        in_dim = args.feature_dim + (n_agents if use_agent_id else 0)
+        self.fc1 = nn.Linear(in_dim, args.hidden_dim)
         self.fc_mu = nn.Linear(args.hidden_dim, act_dim)
         self.register_buffer("action_scale", torch.tensor((action_high - action_low) / 2.0))
         self.register_buffer("action_bias", torch.tensor((action_high + action_low) / 2.0))
 
-    def forward(self, obs: torch.Tensor) -> torch.Tensor:
-        x = F.relu(self.fc1(self.encoder(obs)))
+    def forward(self, obs: torch.Tensor, agent_index: int | torch.Tensor | None = None) -> torch.Tensor:
+        # obs: (B, C, H, W); agent_index: int or LongTensor (B,)
+        x = self.encoder(obs)
+        if self.use_agent_id:
+            if agent_index is None:
+                raise ValueError("shared actor requires agent_index")
+            if isinstance(agent_index, int):
+                idx = torch.full((obs.shape[0],), agent_index, device=obs.device, dtype=torch.long)
+            else:
+                idx = agent_index
+            x = torch.cat([x, F.one_hot(idx, self.n_agents).float()], dim=-1)
+        x = F.relu(self.fc1(x))
         return torch.tanh(self.fc_mu(x)) * self.action_scale + self.action_bias
 
 
 class CentralizedCritic(nn.Module):
     """Centralized Q-network over the joint observation and joint action.
 
-    Each agent's image is encoded by a shared CNN (the agents are homogeneous, so
-    weight sharing in the *critic's* encoder is both correct and efficient), the
-    resulting features are concatenated with all agents' actions, and an MLP maps the
-    joint representation to a single scalar team value.
+    Each agent's image is encoded by a shared CNN. When ``shared_obs=True`` (default
+    for Pistonball's global frame), agent-0's image is encoded once and tiled, which
+    avoids redundant CNN work. Features are concatenated with all agents' actions and
+    an MLP maps the joint representation to a single scalar team value.
     """
 
     def __init__(self, args: Args, n_agents: int, act_dim: int):
         super().__init__()
         self.n_agents = n_agents
+        self.shared_obs = args.critic_shared_obs
         self.encoder = CNNEncoder(args.frame_stack, args.frame_size, args.feature_dim)
         joint_dim = n_agents * (args.feature_dim + act_dim)
         self.fc1 = nn.Linear(joint_dim, args.hidden_dim)
@@ -577,7 +686,10 @@ class CentralizedCritic(nn.Module):
     def forward(self, obs: torch.Tensor, actions: torch.Tensor) -> torch.Tensor:
         # obs: (B, N, C, H, W), actions: (B, N, act_dim)
         b, n = obs.shape[:2]
-        feats = self.encoder(obs.reshape(b * n, *obs.shape[2:])).reshape(b, -1)
+        if self.shared_obs:
+            feats = self.encoder(obs[:, 0]).unsqueeze(1).expand(-1, n, -1).reshape(b, -1)
+        else:
+            feats = self.encoder(obs.reshape(b * n, *obs.shape[2:])).reshape(b, -1)
         x = torch.cat([feats, actions.reshape(b, -1)], dim=1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
@@ -585,7 +697,21 @@ class CentralizedCritic(nn.Module):
 
 
 def joint_policy_actions(actors: nn.ModuleList, obs: torch.Tensor) -> torch.Tensor:
-    """Stack per-agent actor outputs into a joint action ``(B, N, act_dim)``."""
+    """Stack per-agent actor outputs into a joint action ``(B, N, act_dim)``.
+
+    Supports both independent actors (``len(actors) == N``) and a single shared actor
+    conditioned on a one-hot agent ID (``len(actors) == 1`` and ``use_agent_id``).
+    """
+    b, n = obs.shape[:2]
+    actor0 = actors[0]
+    if actor0.use_agent_id:
+        if len(actors) != 1:
+            raise ValueError("shared actor mode expects a ModuleList of length 1")
+        flat_obs = obs.reshape(b * n, *obs.shape[2:])
+        agent_index = torch.arange(n, device=obs.device).view(1, n).expand(b, n).reshape(b * n)
+        return actor0(flat_obs, agent_index=agent_index).reshape(b, n, -1)
+    if len(actors) != n:
+        raise ValueError(f"independent actors expect {n} modules, got {len(actors)}")
     return torch.stack([actor(obs[:, i]) for i, actor in enumerate(actors)], dim=1)
 
 
@@ -612,16 +738,25 @@ def evaluate(
     episode_successes: list[float] = []
     episode_action_stds: list[float] = []
     episode_per_agent_var: list[float] = []
+    episode_saturations: list[float] = []
 
     for ep in range(n_episodes):
         obs_dict, _ = env.reset(seed=seed + ep)
         ep_return, ep_len, success = 0.0, 0, 0.0
         ep_action_stds: list[float] = []
         ep_per_agent_vars: list[float] = []
+        ep_saturations: list[float] = []
         while env.agents:
             obs = torch.as_tensor(stack_obs(obs_dict, agents), device=device).float() / 255.0
             actions = joint_policy_actions(actors, obs.unsqueeze(0)).squeeze(0).cpu().numpy()
             ep_action_stds.append(float(np.std(actions)))
+            ep_saturations.append(
+                action_saturation_fraction(
+                    actions,
+                    threshold=args.action_saturation_threshold,
+                    action_bound=float(actors[0].action_scale.item() + abs(actors[0].action_bias.item())),
+                )
+            )
             action_dict = {a: actions[i] for i, a in enumerate(agents)}
             obs_dict, rewards, terms, truncs, _ = env.step(action_dict)
             rew_vals = list(rewards.values())
@@ -635,6 +770,7 @@ def evaluate(
         episode_successes.append(success)
         episode_action_stds.append(float(np.mean(ep_action_stds)) if ep_action_stds else 0.0)
         episode_per_agent_var.append(float(np.mean(ep_per_agent_vars)) if ep_per_agent_vars else 0.0)
+        episode_saturations.append(float(np.mean(ep_saturations)) if ep_saturations else 0.0)
     env.close()
 
     summary = summarize_episode_scores(episode_returns, reference_return=args.reference_return)
@@ -643,6 +779,7 @@ def evaluate(
         "length_mean": float(np.mean(episode_lengths)),
         "success_rate": float(np.mean(episode_successes)),
         "action_std_mean": float(np.mean(episode_action_stds)),
+        "action_saturation_mean": float(np.mean(episode_saturations)),
         "per_agent_return_variance_mean": float(np.mean(episode_per_agent_var)),
         "episode_returns": episode_returns,
         "episode_lengths": episode_lengths,
@@ -668,10 +805,21 @@ def build_agents(args: Args, device: torch.device):
     probe_env.close()
 
     def make_actor():
-        return Actor(args, act_dim, action_low, action_high).to(device)
+        return Actor(
+            args,
+            act_dim,
+            action_low,
+            action_high,
+            n_agents=n_agents,
+            use_agent_id=args.share_actors,
+        ).to(device)
 
-    actors = nn.ModuleList([make_actor() for _ in range(n_agents)])
-    target_actors = nn.ModuleList([make_actor() for _ in range(n_agents)])
+    if args.share_actors:
+        actors = nn.ModuleList([make_actor()])
+        target_actors = nn.ModuleList([make_actor()])
+    else:
+        actors = nn.ModuleList([make_actor() for _ in range(n_agents)])
+        target_actors = nn.ModuleList([make_actor() for _ in range(n_agents)])
     qf1 = CentralizedCritic(args, n_agents, act_dim).to(device)
     qf2 = CentralizedCritic(args, n_agents, act_dim).to(device)
     qf1_target = CentralizedCritic(args, n_agents, act_dim).to(device)
@@ -681,7 +829,7 @@ def build_agents(args: Args, device: torch.device):
     qf2_target.load_state_dict(qf2.state_dict())
 
     q_optimizer = optim.Adam(list(qf1.parameters()) + list(qf2.parameters()), lr=args.learning_rate)
-    actor_optimizer = optim.Adam(actors.parameters(), lr=args.learning_rate)
+    actor_optimizer = optim.Adam(actors.parameters(), lr=args.actor_lr)
 
     return {
         "agents": agents,
@@ -707,7 +855,7 @@ def polyak_update(source: nn.Module, target: nn.Module, tau: float) -> None:
 
 
 def train(args: Args) -> str:
-    run_name = f"pistonball__{args.exp_name}__{args.seed}__{int(time.time())}"
+    run_name = build_run_name(args)
     run_dir = Path("runs") / run_name
     run_dir.mkdir(parents=True, exist_ok=True)
     manifest = RunManifest(
@@ -753,12 +901,18 @@ def train(args: Args) -> str:
     q_optimizer, actor_optimizer = nets["q_optimizer"], nets["actor_optimizer"]
     action_low, action_high = nets["action_low"], nets["action_high"]
     action_scale = actors[0].action_scale
+    action_bound = max(abs(action_low), abs(action_high))
 
     rb = MultiAgentReplayBuffer(
         args.buffer_size, nets["n_agents"], nets["obs_shape"], nets["act_dim"], device
     )
     buf_gb = rb.memory_gb()
     print(f"replay buffer allocation: {buf_gb:.2f} GB ({args.buffer_size} transitions)")
+    actor_mode = "shared+id" if args.share_actors else f"independent x{nets['n_agents']}"
+    print(
+        f"actors: {actor_mode} | "
+        f"actor_lr={args.actor_lr} critic_lr={args.learning_rate} policy_freq={args.policy_frequency}"
+    )
     if args.learning_starts >= args.buffer_size:
         raise ValueError(
             f"learning_starts ({args.learning_starts}) must be < buffer_size ({args.buffer_size}) "
@@ -780,6 +934,7 @@ def train(args: Args) -> str:
     recent_returns: deque[float] = deque(maxlen=args.rolling_return_window)
     steps_to_threshold: int | None = None
     actor_loss = torch.tensor(0.0)
+    prev_eval_returns: list[float] | None = None
 
     for global_step in range(args.total_timesteps):
         # --- action selection ---------------------------------------------------
@@ -787,11 +942,13 @@ def train(args: Args) -> str:
             actions = np.random.uniform(
                 action_low, action_high, size=(nets["n_agents"], nets["act_dim"])
             ).astype(np.float32)
+            explore_std = args.exploration_noise
         else:
+            explore_std = current_exploration_noise(args, global_step)
             with torch.no_grad():
                 obs_t = torch.as_tensor(obs, device=device).float().unsqueeze(0) / 255.0
                 actions = joint_policy_actions(actors, obs_t).squeeze(0)
-                actions += torch.normal(0, action_scale * args.exploration_noise, size=actions.shape, device=device)
+                actions += torch.normal(0, action_scale * explore_std, size=actions.shape, device=device)
                 actions = actions.cpu().numpy().clip(action_low, action_high).astype(np.float32)
 
         # --- environment step ---------------------------------------------------
@@ -846,14 +1003,13 @@ def train(args: Args) -> str:
             b_obs, b_next_obs, b_actions, b_rewards, b_dones = rb.sample(args.batch_size)
 
             with torch.no_grad():
-                next_actions = []
-                for i, target_actor in enumerate(target_actors):
-                    noise = (torch.randn_like(b_actions[:, i]) * args.policy_noise).clamp(
-                        -args.noise_clip, args.noise_clip
-                    ) * action_scale
-                    a = (target_actor(b_next_obs[:, i]) + noise).clamp(action_low, action_high)
-                    next_actions.append(a)
-                next_actions = torch.stack(next_actions, dim=1)
+                next_actions = joint_policy_actions(target_actors, b_next_obs)
+                noise = (
+                    (torch.randn_like(next_actions) * args.policy_noise)
+                    .clamp(-args.noise_clip, args.noise_clip)
+                    * action_scale
+                )
+                next_actions = (next_actions + noise).clamp(action_low, action_high)
 
                 qf1_next = qf1_target(b_next_obs, next_actions)
                 qf2_next = qf2_target(b_next_obs, next_actions)
@@ -874,7 +1030,8 @@ def train(args: Args) -> str:
             q_optimizer.step()
 
             if global_step % args.policy_frequency == 0:
-                actor_loss = -qf1(b_obs, joint_policy_actions(actors, b_obs)).mean()
+                actor_actions = joint_policy_actions(actors, b_obs)
+                actor_loss = -qf1(b_obs, actor_actions).mean()
                 actor_optimizer.zero_grad()
                 actor_loss.backward()
                 actor_grad_norm = gradient_norm(actors.parameters())
@@ -886,6 +1043,7 @@ def train(args: Args) -> str:
                 polyak_update(qf2, qf2_target, args.tau)
             else:
                 actor_grad_norm = 0.0
+                actor_actions = None
 
             if global_step % 100 == 0:
                 log_timing_metrics(writer, global_step, start_time, args.total_timesteps)
@@ -893,6 +1051,17 @@ def train(args: Args) -> str:
                 writer.add_scalar("losses/qf2_values", qf2_a.mean().item(), global_step)
                 writer.add_scalar("losses/qf_loss", qf_loss.item() / 2.0, global_step)
                 writer.add_scalar("losses/actor_loss", actor_loss.item(), global_step)
+                writer.add_scalar("exploration/noise_std", explore_std, global_step)
+                sat_actions = actor_actions if actor_actions is not None else joint_policy_actions(actors, b_obs)
+                writer.add_scalar(
+                    "stability/action_saturation",
+                    action_saturation_fraction(
+                        sat_actions,
+                        threshold=args.action_saturation_threshold,
+                        action_bound=action_bound,
+                    ),
+                    global_step,
+                )
                 if args.log_gradient_norms:
                     writer.add_scalar("stability/q_grad_norm", q_grad_norm, global_step)
                     writer.add_scalar("stability/actor_grad_norm", actor_grad_norm, global_step)
@@ -917,6 +1086,15 @@ def train(args: Args) -> str:
             log_eval_metrics(writer, "eval_id", stats, global_step)
             writer.add_scalar("time/eval_wallclock_seconds", eval_wallclock, global_step)
             writer.add_scalar("time/total_wallclock_seconds", total_wallclock, global_step)
+            if prev_eval_returns is not None and stats["episode_returns"] == prev_eval_returns:
+                writer.add_scalar("stability/eval_returns_unchanged", 1.0, global_step)
+                print(
+                    f"[warn @ {global_step}] eval episode returns identical to previous eval "
+                    "(deterministic policy likely frozen / saturated)"
+                )
+            else:
+                writer.add_scalar("stability/eval_returns_unchanged", 0.0, global_step)
+            prev_eval_returns = list(stats["episode_returns"])
             append_eval_record(run_dir, global_step, stats, total_wallclock)
             save_rliable_scores(
                 run_dir,
@@ -928,11 +1106,15 @@ def train(args: Args) -> str:
                 scores_by_context={"train": stats["episode_returns"]},
                 eval_split="in_distribution_eval",
                 reference_return=args.reference_return,
-                extra={"checkpoint_metric": args.checkpoint_metric},
+                extra={
+                    "checkpoint_metric": args.checkpoint_metric,
+                    "experiment": args.experiment,
+                },
             )
             print(
                 f"[eval @ {global_step}] return={stats['return_mean']:.2f} "
                 f"success={stats['success_rate']:.2f} "
+                f"sat={stats['action_saturation_mean']:.2f} "
                 f"eval_time={eval_wallclock:.1f}s total_time={total_wallclock / 3600:.2f}h"
             )
             if checkpoint_manager is not None:
@@ -960,12 +1142,19 @@ def train(args: Args) -> str:
             manifest.write()
     env.close()
 
+    # Prefer the best in-distribution checkpoint for transfer / final export so late
+    # TD3 collapse (common under random_drop) does not poison generalization numbers.
+    restored_best_step = maybe_restore_best_checkpoint(checkpoint_manager, nets, device)
+    actors = nets["actors"]
+
     # --- final transfer / generalization sweep ---------------------------------
     if args.transfer_eval:
         transfer_start = time.time()
         results = transfer_sweep(actors, args, agents, device, run_dir=run_dir)
         results["transfer_wallclock_seconds"] = time.time() - transfer_start
         results["total_wallclock_seconds"] = time.time() - start_time
+        if restored_best_step is not None:
+            results["checkpoint_step"] = restored_best_step
         with open(run_dir / "transfer_results.json", "w") as f:
             json.dump(results, f, indent=2)
         log_transfer_results(writer, results, args.total_timesteps)
