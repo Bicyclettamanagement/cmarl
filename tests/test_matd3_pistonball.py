@@ -20,12 +20,15 @@ from matd3_pistonball import (
     CheckpointManager,
     MultiAgentReplayBuffer,
     RunManifest,
+    action_saturation_fraction,
     append_eval_record,
     bootstrap_done,
     build_agents,
     build_checkpoint_payload,
+    build_run_name,
     build_transfer_contexts,
     clip_gradients,
+    current_exploration_noise,
     default_context,
     estimate_buffer_gb,
     evaluate,
@@ -33,6 +36,7 @@ from matd3_pistonball import (
     joint_policy_actions,
     make_env,
     polyak_update,
+    sanitize_experiment_tag,
     stack_obs,
     transfer_sweep,
 )
@@ -40,7 +44,7 @@ from matd3_pistonball import (
 
 @pytest.fixture
 def args() -> Args:
-    """Tiny, fast configuration used across the tests."""
+    """Tiny, fast configuration used across the tests (shared actors by default)."""
     return Args(
         n_pistons=3,
         max_cycles=8,
@@ -52,9 +56,16 @@ def args() -> Args:
         buffer_size=64,
         learning_starts=0,
         eval_episodes=2,
+        share_actors=True,
+        critic_shared_obs=True,
         cuda=False,
         seed=0,
     )
+
+
+@pytest.fixture
+def indep_args(args) -> Args:
+    return Args(**{**vars(args), "share_actors": False, "critic_shared_obs": False})
 
 
 @pytest.fixture
@@ -144,16 +155,29 @@ def test_actor_output_shape_and_bounds(args, device):
     assert float(actions.max()) <= nets["action_high"] + 1e-5
 
 
-def test_actors_are_independent(args, device):
-    """Multiple actors must have *independent* parameters (no sharing)."""
-    nets = build_agents(args, device)
+def test_actors_are_independent(indep_args, device):
+    """Independent mode: multiple actors must have distinct parameters."""
+    nets = build_agents(indep_args, device)
     actors = nets["actors"]
-    assert len(actors) == args.n_pistons
+    assert len(actors) == indep_args.n_pistons
+    assert not actors[0].use_agent_id
     p0 = dict(actors[0].named_parameters())
     p1 = dict(actors[1].named_parameters())
     assert p0["fc_mu.weight"].data_ptr() != p1["fc_mu.weight"].data_ptr()
-    # Given random init they should also differ in value.
     assert not torch.allclose(p0["fc_mu.weight"], p1["fc_mu.weight"])
+
+
+def test_shared_actor_uses_agent_id(args, device):
+    nets = build_agents(args, device)
+    actors = nets["actors"]
+    assert len(actors) == 1
+    assert actors[0].use_agent_id
+    n, c, h, w = args.n_pistons, args.frame_stack, args.frame_size, args.frame_size
+    obs = torch.rand(4, n, c, h, w)
+    actions = joint_policy_actions(actors, obs)
+    assert actions.shape == (4, n, nets["act_dim"])
+    # Same image, different agent IDs -> generally different actions after random init.
+    assert not torch.allclose(actions[:, 0], actions[:, 1])
 
 
 def test_centralized_critic_shape(args, device):
@@ -163,6 +187,7 @@ def test_centralized_critic_shape(args, device):
     actions = torch.rand(5, n, nets["act_dim"]) * 2 - 1
     q = nets["qf1"](obs, actions)
     assert q.shape == (5, 1)
+    assert nets["qf1"].shared_obs is True
 
 
 def test_single_centralized_critic_instances(args, device):
@@ -208,6 +233,7 @@ def test_evaluate_returns_metrics(args, device):
         "length_mean",
         "success_rate",
         "action_std_mean",
+        "action_saturation_mean",
         "per_agent_return_variance_mean",
         "episode_returns",
         "episode_lengths",
@@ -215,6 +241,7 @@ def test_evaluate_returns_metrics(args, device):
         "n_episodes",
     }
     assert 0.0 <= stats["success_rate"] <= 1.0
+    assert 0.0 <= stats["action_saturation_mean"] <= 1.0
     assert stats["length_mean"] > 0
 
 
@@ -248,14 +275,13 @@ def test_training_update_changes_parameters(args, device):
 
     b_obs, b_next_obs, b_actions, b_rewards, b_dones = rb.sample(args.batch_size)
     with torch.no_grad():
-        next_actions = []
-        for i, target_actor in enumerate(nets["target_actors"]):
-            noise = (torch.randn_like(b_actions[:, i]) * args.policy_noise).clamp(
-                -args.noise_clip, args.noise_clip
-            ) * action_scale
-            a = (target_actor(b_next_obs[:, i]) + noise).clamp(nets["action_low"], nets["action_high"])
-            next_actions.append(a)
-        next_actions = torch.stack(next_actions, dim=1)
+        next_actions = joint_policy_actions(nets["target_actors"], b_next_obs)
+        noise = (
+            (torch.randn_like(next_actions) * args.policy_noise)
+            .clamp(-args.noise_clip, args.noise_clip)
+            * action_scale
+        )
+        next_actions = (next_actions + noise).clamp(nets["action_low"], nets["action_high"])
         min_q_next = torch.min(
             nets["qf1_target"](b_next_obs, next_actions),
             nets["qf2_target"](b_next_obs, next_actions),
@@ -290,7 +316,7 @@ def test_checkpoint_manager_keeps_latest_and_best(tmp_path, args, device):
     manager.save(payload, global_step=20, eval_stats={"return_mean": 0.5})
     assert (tmp_path / "checkpoints" / "latest.pt").exists()
     # best should still be step 10
-    best = torch.load(tmp_path / "checkpoints" / "best.pt", map_location="cpu")
+    best = torch.load(tmp_path / "checkpoints" / "best.pt", map_location="cpu", weights_only=False)
     assert best["global_step"] == 10
     assert best["checkpoint_metric_value"] == 1.0
     # only two checkpoint files should exist
@@ -362,3 +388,41 @@ def test_checkpoint_manager_tracks_best_stats(tmp_path, args, device):
     manager.save(payload, global_step=20, eval_stats={"return_mean": 0.5, "success_rate": 0.0})
     assert manager.best_step == 10
     assert manager.best_stats["success_rate"] == 0.2
+
+
+def test_maybe_restore_best_checkpoint(tmp_path, args, device):
+    from matd3_pistonball import maybe_restore_best_checkpoint
+
+    nets = build_agents(args, device)
+    manager = CheckpointManager(tmp_path, metric_key="return_mean")
+    # Mutate actors, save as "best", mutate again, then restore.
+    with torch.no_grad():
+        for p in nets["actors"].parameters():
+            p.fill_(0.0)
+    manager.save(build_checkpoint_payload(nets, args), global_step=5, eval_stats={"return_mean": 2.0})
+    with torch.no_grad():
+        for p in nets["actors"].parameters():
+            p.fill_(1.0)
+    step = maybe_restore_best_checkpoint(manager, nets, device)
+    assert step == 5
+    assert all(torch.allclose(p, torch.zeros_like(p)) for p in nets["actors"].parameters())
+
+
+def test_action_saturation_fraction():
+    actions = np.array([[1.0], [-0.99], [0.0], [0.5]], dtype=np.float32)
+    assert action_saturation_fraction(actions, threshold=0.95, action_bound=1.0) == pytest.approx(0.5)
+
+
+def test_exploration_noise_decays():
+    args = Args(learning_starts=10, exploration_noise=0.2, exploration_noise_end=0.05, exploration_noise_decay_steps=100)
+    assert current_exploration_noise(args, 0) == pytest.approx(0.2)
+    assert current_exploration_noise(args, 10) == pytest.approx(0.2)
+    assert current_exploration_noise(args, 60) == pytest.approx(0.125)
+    assert current_exploration_noise(args, 110) == pytest.approx(0.05)
+
+
+def test_build_run_name_includes_experiment_tag():
+    args = Args(experiment="sanity5 shared!", share_actors=True, random_drop=False, n_pistons=5, seed=2)
+    name = build_run_name(args)
+    assert name.startswith("sanity5_shared__static__shared__nodrop__n5__seed2__")
+    assert sanitize_experiment_tag("a/b c") == "a_b_c"

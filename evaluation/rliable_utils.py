@@ -30,6 +30,47 @@ else:
 RLIABLE_SCORES_FILENAME = "rliable_scores.json"
 RUN_MANIFEST_FILENAME = "run_manifest.json"
 
+# Common N=5 experiment presets (2×2: static/varying × hidden/explicit context).
+EXPERIMENT_PRESETS: dict[str, dict[str, str]] = {
+    "baseline5_static": {
+        "exp_name": "baseline5_static_randdrop",
+        "method_tag": "hidden_context_static",
+        "label": "Hidden context (static)",
+        "algorithm": "matd3_pistonball",
+    },
+    "baseline5_varying": {
+        "exp_name": "baseline5_varying_randdrop",
+        "method_tag": "hidden_context_varying",
+        "label": "Hidden context (varying)",
+        "algorithm": "matd3_pistonball",
+    },
+    "context5_static": {
+        "exp_name": "context5_concat_static_randdrop",
+        "method_tag": "context_concat_static",
+        "label": "Context concat (static)",
+        "algorithm": "matd3_pistonball_context",
+    },
+    "context5_varying": {
+        "exp_name": "context5_concat_varying_randdrop",
+        "method_tag": "context_concat_varying",
+        "label": "Context concat (varying)",
+        "algorithm": "matd3_pistonball_context",
+    },
+    # Legacy aliases (constant-context training runs)
+    "baseline5": {
+        "exp_name": "baseline5_shared_randdrop",
+        "method_tag": "hidden_context",
+        "label": "Hidden context",
+        "algorithm": "matd3_pistonball",
+    },
+    "context5": {
+        "exp_name": "context5_concat_randdrop",
+        "method_tag": "context_concat",
+        "label": "Context concat",
+        "algorithm": "matd3_pistonball_context",
+    },
+}
+
 
 def require_rliable() -> None:
     if rly is None or rly_metrics is None:
@@ -123,22 +164,62 @@ def load_rliable_scores(run_dir: Path) -> dict | None:
         return json.load(f)
 
 
-def discover_run_dirs(runs_root: Path, exp_name: str, seeds: list[int] | None = None) -> list[Path]:
-    """Find run directories for an experiment name (newest per seed if duplicates)."""
-    pattern = f"pistonball__{exp_name}__"
+def parse_seed_from_run_name(run_name: str) -> int | None:
+    """Extract training seed from a run folder name."""
+    for part in run_name.split("__"):
+        if part.startswith("seed") and part[4:].isdigit():
+            return int(part[4:])
+    # Legacy layout: pistonball__<exp>__<seed>__<timestamp>
+    parts = run_name.split("__")
+    if len(parts) >= 4 and parts[0] == "pistonball":
+        try:
+            return int(parts[2])
+        except ValueError:
+            return None
+    return None
+
+
+def _run_matches_experiment(run_name: str, exp_name: str) -> bool:
+    """Match current and legacy run directory naming schemes."""
+    return run_name.startswith(f"{exp_name}__") or run_name.startswith(f"pistonball__{exp_name}__")
+
+
+def discover_run_dirs(
+    runs_root: Path,
+    exp_name: str,
+    seeds: list[int] | None = None,
+    *,
+    method_tag: str | None = None,
+    require_finished: bool = False,
+) -> list[Path]:
+    """Find run directories for an experiment (newest per seed if duplicates).
+
+    Supports folder names like ``baseline5_shared_randdrop__shared__...__seed3__<ts>``
+    and legacy ``pistonball__matd3_pistonball__3__<ts>``.
+    """
+    if not runs_root.is_dir():
+        return []
     candidates: dict[int, Path] = {}
     for child in runs_root.iterdir():
-        if not child.is_dir() or not child.name.startswith(pattern):
+        if not child.is_dir() or not _run_matches_experiment(child.name, exp_name):
             continue
-        parts = child.name.split("__")
-        if len(parts) < 4:
-            continue
-        try:
-            seed = int(parts[2])
-        except ValueError:
+        seed = parse_seed_from_run_name(child.name)
+        if seed is None:
             continue
         if seeds is not None and seed not in seeds:
             continue
+        if method_tag is not None:
+            data = load_rliable_scores(child)
+            if data is None or data.get("method_tag") != method_tag:
+                continue
+        if require_finished:
+            manifest_path = child / RUN_MANIFEST_FILENAME
+            if not manifest_path.exists():
+                continue
+            with open(manifest_path) as f:
+                manifest = json.load(f)
+            if not manifest.get("finished", False):
+                continue
         prev = candidates.get(seed)
         if prev is None or child.name > prev.name:
             candidates[seed] = child
@@ -185,14 +266,95 @@ def compute_generalization_gap(matrix: np.ndarray, context_order: list[str]) -> 
     """In-distribution vs OOD gap (mean over runs), per abstract §Evaluation."""
     id_idx, ood_idx = split_id_ood(context_order)
     if not id_idx or not ood_idx:
-        return {"id_return_mean": float("nan"), "ood_return_mean": float("nan"), "generalization_gap": float("nan")}
-    id_mean = float(np.mean(matrix[:, id_idx]))
-    ood_mean = float(np.mean(matrix[:, ood_idx]))
-    return {
+        return {
+            "id_return_mean": float("nan"),
+            "ood_return_mean": float("nan"),
+            "generalization_gap": float("nan"),
+            "id_return_iqm": float("nan"),
+            "ood_return_iqm": float("nan"),
+            "generalization_gap_iqm": float("nan"),
+        }
+    id_col = matrix[:, id_idx]
+    ood_cols = matrix[:, ood_idx]
+    id_mean = float(np.mean(id_col))
+    ood_mean = float(np.mean(ood_cols))
+    out = {
         "id_return_mean": id_mean,
         "ood_return_mean": ood_mean,
         "generalization_gap": id_mean - ood_mean,
     }
+    if rly_metrics is not None:
+        id_iqm = float(rly_metrics.aggregate_iqm(id_col.reshape(-1)))
+        ood_iqm = float(rly_metrics.aggregate_iqm(ood_cols.reshape(-1)))
+        out["id_return_iqm"] = id_iqm
+        out["ood_return_iqm"] = ood_iqm
+        out["generalization_gap_iqm"] = id_iqm - ood_iqm
+    return out
+
+
+def compute_per_context_stats(
+    matrix: np.ndarray,
+    context_order: list[str],
+) -> dict[str, dict[str, float]]:
+    """Per-context summary across seeds (mean return + IQM over seeds)."""
+    stats: dict[str, dict[str, float]] = {}
+    for idx, ctx in enumerate(context_order):
+        col = matrix[:, idx]
+        entry = {
+            "return_mean": float(np.mean(col)),
+            "return_std": float(np.std(col)),
+            "return_median": float(np.median(col)),
+            "n_seeds": float(col.size),
+        }
+        if rly_metrics is not None:
+            entry["return_iqm"] = float(rly_metrics.aggregate_iqm(col))
+        stats[ctx] = entry
+    return stats
+
+
+def subset_score_matrix(
+    matrix: np.ndarray,
+    context_order: list[str],
+    context_names: list[str],
+) -> tuple[np.ndarray, list[str]]:
+    """Select columns by context name."""
+    indices = [context_order.index(name) for name in context_names]
+    return matrix[:, indices], context_names
+
+
+def resolve_experiment_config(
+    *,
+    preset: str | None,
+    exp_name: str | None,
+    method_tag: str | None,
+    label: str | None,
+) -> dict[str, str]:
+    """Merge CLI preset overrides with explicit flags."""
+    if preset is not None:
+        if preset not in EXPERIMENT_PRESETS:
+            known = ", ".join(sorted(EXPERIMENT_PRESETS))
+            raise ValueError(f"Unknown preset {preset!r}; choose from: {known}")
+        base = dict(EXPERIMENT_PRESETS[preset])
+    else:
+        if not exp_name:
+            raise ValueError("Provide --exp-name or --preset.")
+        base = {
+            "exp_name": exp_name,
+            "method_tag": method_tag or "",
+            "label": label or exp_name,
+            "algorithm": exp_name,
+        }
+    if exp_name:
+        base["exp_name"] = exp_name
+    if method_tag:
+        base["method_tag"] = method_tag
+    if label:
+        base["label"] = label
+    if not base.get("method_tag"):
+        base["method_tag"] = ""
+    if not base.get("label"):
+        base["label"] = base["exp_name"]
+    return base
 
 
 def aggregate_with_rliable(

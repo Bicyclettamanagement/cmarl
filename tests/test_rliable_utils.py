@@ -1,6 +1,5 @@
 """Tests for rliable evaluation utilities."""
 
-import json
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +9,8 @@ from evaluation.rliable_utils import (
     aggregate_with_rliable,
     build_score_matrix,
     compute_generalization_gap,
+    compute_per_context_stats,
+    discover_run_dirs,
     save_rliable_scores,
     summarize_episode_scores,
 )
@@ -41,6 +42,30 @@ def test_save_and_build_score_matrix(tmp_path):
     assert seeds == [1, 2]
     assert matrix.shape == (2, 2)
     assert matrix[0, 0] == pytest.approx(11.0)
+
+
+def test_discover_run_dirs_legacy_and_seed_parsing(tmp_path):
+    run_dir = tmp_path / "pistonball__matd3_pistonball__7__2000"
+    run_dir.mkdir()
+    save_rliable_scores(
+        run_dir,
+        algorithm="matd3_pistonball",
+        method_tag="hidden_context",
+        seed=7,
+        global_step=1,
+        context_order=["train"],
+        scores_by_context={"train": [1.0]},
+        eval_split="zero_shot_transfer",
+    )
+    found = discover_run_dirs(tmp_path, "matd3_pistonball")
+    assert found == [run_dir]
+
+
+def test_compute_per_context_stats():
+    matrix = np.array([[80.0, 40.0], [90.0, 30.0]])
+    stats = compute_per_context_stats(matrix, ["train", "ood"])
+    assert stats["train"]["return_mean"] == pytest.approx(85.0)
+    assert stats["ood"]["return_mean"] == pytest.approx(35.0)
 
 
 def test_aggregate_with_rliable_bootstrap(tmp_path):

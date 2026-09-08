@@ -10,6 +10,7 @@ from matd3_pistonball import Args, train
 @pytest.fixture
 def tiny_train_args() -> Args:
     return Args(
+        experiment="unit_tiny",
         n_pistons=3,
         max_cycles=8,
         frame_size=32,
@@ -25,6 +26,7 @@ def tiny_train_args() -> Args:
         checkpoint_eval=True,
         transfer_eval=True,
         performance_threshold=-500.0,
+        share_actors=True,
         cuda=False,
         seed=42,
     )
@@ -35,6 +37,7 @@ def test_train_emits_cluster_artifacts(tmp_path, tiny_train_args, monkeypatch):
     run_name = train(tiny_train_args)
     run_dir = tmp_path / "runs" / run_name
 
+    assert run_name.startswith("unit_tiny__static__shared__randdrop__n3__seed42__")
     assert (run_dir / "run_manifest.json").exists()
     assert (run_dir / "training_episodes.jsonl").exists()
     assert (run_dir / "eval_history.jsonl").exists()
@@ -44,10 +47,13 @@ def test_train_emits_cluster_artifacts(tmp_path, tiny_train_args, monkeypatch):
 
     manifest = json.loads((run_dir / "run_manifest.json").read_text())
     assert manifest["finished"] is True
+    assert manifest["run_name"] == run_name
+    assert manifest["args"]["experiment"] == "unit_tiny"
     assert manifest["environment"]["packages"]["pettingzoo"] != "unknown"
     assert manifest["steps_to_threshold"] is not None
     assert manifest["best_eval"] is not None
     assert manifest["best_eval"]["stats"] is not None
+    assert "action_saturation_mean" in manifest["best_eval"]["stats"]
 
     rliable = json.loads((run_dir / "rliable_scores.json").read_text())
     assert rliable["method_tag"] == "hidden_context"

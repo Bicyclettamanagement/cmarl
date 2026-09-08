@@ -24,3 +24,10 @@ done
 echo
 echo "Monitor:  squeue -u \$USER"
 echo "Runs:     ls -d runs/${EXPERIMENT}__*"
+echo "Aggregate when done:"
+echo "  python scripts/rliable_aggregate.py --preset context5 --seeds ${SEEDS[*]}"
+echo "Compare vs baseline:"
+echo "  python scripts/rliable_aggregate.py --preset context5 --compare-preset baseline5 --seeds ${SEEDS[*]}"
+echo "Export figures (no Jupyter):"
+echo "  python scripts/export_eval_figures.py --report-path reports/rliable_compare_context5_concat_randdrop_vs_baseline5_shared_randdrop.json"
+echo "Notebook: notebooks/evaluate_rliable.ipynb (MODE=compare)"

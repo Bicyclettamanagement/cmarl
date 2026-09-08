@@ -21,6 +21,11 @@ to interpretable magnitudes (e.g. ``ball_mass_x2`` -> ~2).
 At transfer evaluation the *true* context of each evaluation environment is
 provided to the networks (oracle / privileged context), which is the standard
 contextual-RL comparison against a hidden-context policy.
+
+Training uses ``--training-regime static`` (fixed nominal physics) or
+``--training-regime varying`` (resample physics each episode via
+``--train-context-sampling random|grid``). Context vectors are normalized by
+the nominal training context so transfer factors map to interpretable scales.
 """
 
 from __future__ import annotations
@@ -44,6 +49,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 import matd3_pistonball as base
 from evaluation.rliable_utils import save_rliable_scores, summarize_episode_scores
+from evaluation.context_sampling import TrainingEnvironment
 
 Context = base.Context
 ContextMode = Literal["concat", "none"]
@@ -97,8 +103,9 @@ def build_run_name(args: Args) -> str:
     share = "shared" if args.share_actors else "indep"
     drop = "randdrop" if args.random_drop else "nodrop"
     mode = args.context_mode
+    regime = getattr(args, "training_regime", "static")
     return (
-        f"{tag}__{mode}__{share}__{drop}__n{args.n_pistons}"
+        f"{tag}__{mode}__{regime}__{share}__{drop}__n{args.n_pistons}"
         f"__seed{args.seed}__{int(time.time())}"
     )
 
@@ -424,6 +431,7 @@ def transfer_sweep(
     device: torch.device,
     reference_context: Context,
     run_dir: Path | None = None,
+    method_tag: str | None = None,
 ):
     """Evaluate the frozen contextual policy across transfer contexts."""
     contexts = base.build_transfer_contexts(args)
@@ -468,10 +476,11 @@ def transfer_sweep(
     }
 
     if run_dir is not None:
+        tag = method_tag or args.method_tag or f"context_{args.context_mode}_{args.training_regime}"
         save_rliable_scores(
             run_dir,
             algorithm=args.exp_name,
-            method_tag=args.method_tag,
+            method_tag=tag,
             seed=args.seed,
             global_step=args.total_timesteps,
             context_order=context_order,
@@ -530,8 +539,8 @@ def train(args: Args) -> str:
     torch.backends.cudnn.deterministic = args.torch_deterministic
 
     device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
-    train_context = base.default_context(args)
-    train_ctx_vec = context_to_vector(train_context, train_context)
+    reference_context = base.default_context(args)
+    method_tag = args.method_tag or f"context_{args.context_mode}_{args.training_regime}"
 
     nets = build_agents(args, device)
     agents = nets["agents"]
@@ -556,8 +565,13 @@ def train(args: Args) -> str:
     print(f"replay buffer allocation: {buf_gb:.2f} GB ({args.buffer_size} transitions)")
     print(
         f"context_mode={args.context_mode} dim={ctx_dim} "
-        f"to_actor={args.context_to_actor} to_critic={args.context_to_critic}"
+        f"to_actor={args.context_to_actor} to_critic={args.context_to_critic} "
+        f"training_regime={args.training_regime} "
+        f"sampling={args.train_context_sampling if args.training_regime == 'varying' else 'n/a'} "
+        f"method_tag={method_tag}"
     )
+    if args.training_regime == "varying":
+        print("varying physics: in-place mutation on a single env (no per-episode recreate)")
     actor_mode = "shared+id" if args.share_actors else f"independent x{nets['n_agents']}"
     print(
         f"actors: {actor_mode} | "
@@ -574,8 +588,11 @@ def train(args: Args) -> str:
             f"--frame-size, or --frame-stack."
         )
 
-    env = base.make_env(args, train_context)
-    obs_dict, _ = env.reset(seed=args.seed)
+    training_env = TrainingEnvironment(args, rng=random.Random(args.seed))
+    obs_dict, episode_context = training_env.reset(seed=args.seed)
+    episode_ctx_vec = (
+        context_to_vector(episode_context, reference_context) if ctx_dim > 0 else None
+    )
     obs = base.stack_obs(obs_dict, agents)
     ep_return, ep_len = 0.0, 0
     ep_per_agent_var_sum, ep_var_steps = 0.0, 0
@@ -596,7 +613,7 @@ def train(args: Args) -> str:
             with torch.no_grad():
                 obs_t = torch.as_tensor(obs, device=device).float().unsqueeze(0) / 255.0
                 ctx_t = (
-                    torch.as_tensor(train_ctx_vec, device=device).float().unsqueeze(0)
+                    torch.as_tensor(episode_ctx_vec, device=device).float().unsqueeze(0)
                     if ctx_dim > 0
                     else None
                 )
@@ -607,7 +624,7 @@ def train(args: Args) -> str:
                 actions = actions.cpu().numpy().clip(action_low, action_high).astype(np.float32)
 
         action_dict = {a: actions[i] for i, a in enumerate(agents)}
-        next_obs_dict, rewards, terms, truncs, infos = env.step(action_dict)
+        next_obs_dict, rewards, terms, truncs, infos = training_env.step(action_dict)
         reward = float(np.mean(list(rewards.values())))
         rew_vals = list(rewards.values())
         ep_per_agent_var_sum += float(np.var(rew_vals))
@@ -625,7 +642,7 @@ def train(args: Args) -> str:
             actions,
             reward,
             base.bootstrap_done(terminated, truncated),
-            context=train_ctx_vec if ctx_dim > 0 else None,
+            context=episode_ctx_vec if ctx_dim > 0 else None,
         )
         obs = next_obs
 
@@ -635,6 +652,17 @@ def train(args: Args) -> str:
             writer.add_scalar("performance/episodic_length", ep_len, global_step)
             writer.add_scalar("performance/success", float(terminated), global_step)
             writer.add_scalar("coordination/per_agent_return_variance", ep_var_mean, global_step)
+            if args.training_regime == "varying":
+                writer.add_scalar("context/ball_mass", float(episode_context["ball_mass"]), global_step)
+                writer.add_scalar(
+                    "context/ball_friction", float(episode_context["ball_friction"]), global_step
+                )
+                writer.add_scalar(
+                    "context/ball_elasticity", float(episode_context["ball_elasticity"]), global_step
+                )
+                if ctx_dim > 0 and episode_ctx_vec is not None:
+                    for i, key in enumerate(CONTEXT_KEYS):
+                        writer.add_scalar(f"context/feature/{key}", float(episode_ctx_vec[i]), global_step)
             base.append_training_episode_record(
                 run_dir, global_step, ep_return, ep_len, bool(terminated), ep_var_mean
             )
@@ -653,7 +681,10 @@ def train(args: Args) -> str:
                     )
                     manifest.steps_to_threshold = steps_to_threshold
             print(f"global_step={global_step}, episodic_return={ep_return:.2f}, length={ep_len}")
-            obs_dict, _ = env.reset(seed=args.seed + global_step)
+            obs_dict, episode_context = training_env.start_episode(seed=args.seed + global_step)
+            episode_ctx_vec = (
+                context_to_vector(episode_context, reference_context) if ctx_dim > 0 else None
+            )
             obs = base.stack_obs(obs_dict, agents)
             ep_return, ep_len = 0.0, 0
             ep_per_agent_var_sum, ep_var_steps = 0.0, 0
@@ -737,8 +768,8 @@ def train(args: Args) -> str:
             stats = evaluate(
                 actors,
                 args,
-                train_context,
-                train_context,
+                reference_context,
+                reference_context,
                 agents,
                 device,
                 seed=args.seed + 10_000,
@@ -764,7 +795,7 @@ def train(args: Args) -> str:
             save_rliable_scores(
                 run_dir,
                 algorithm=args.exp_name,
-                method_tag=args.method_tag,
+                method_tag=method_tag,
                 seed=args.seed,
                 global_step=global_step,
                 context_order=["train"],
@@ -810,7 +841,7 @@ def train(args: Args) -> str:
             manifest.wallclock_seconds = total_wallclock
             manifest.write()
 
-    env.close()
+    training_env.close()
 
     restored_best_step = base.maybe_restore_best_checkpoint(checkpoint_manager, nets, device)
     actors = nets["actors"]
@@ -818,7 +849,7 @@ def train(args: Args) -> str:
     if args.transfer_eval:
         transfer_start = time.time()
         results = transfer_sweep(
-            actors, args, agents, device, train_context, run_dir=run_dir
+            actors, args, agents, device, reference_context, run_dir=run_dir, method_tag=method_tag
         )
         results["transfer_wallclock_seconds"] = time.time() - transfer_start
         results["total_wallclock_seconds"] = time.time() - start_time

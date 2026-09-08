@@ -14,6 +14,10 @@ single-file ``td3_continuous_action.py`` to the multi-agent setting:
   context-aware algorithms are compared. The context is still *logged and swept* at
   evaluation time to measure zero-shot transfer / generalization.
 
+Use ``--training-regime static`` for fixed nominal physics (classic baseline) or
+``--training-regime varying`` to randomize physics each episode while keeping
+context hidden from the policy (implicit / visual adaptation).
+
 The environment is ``pistonball_v6`` (fully cooperative, shared reward). Observations
 are RGB frames that we grayscale + resize + frame-stack via SuperSuit; each agent
 therefore sees a small image and emits a scalar force in ``[-1, 1]``.
@@ -45,6 +49,7 @@ from pettingzoo.butterfly import pistonball_v6
 from torch.utils.tensorboard import SummaryWriter
 
 from evaluation.rliable_utils import save_rliable_scores, summarize_episode_scores
+from evaluation.context_sampling import TrainingEnvironment
 
 
 @dataclass
@@ -162,7 +167,18 @@ class Args:
     transfer_factors: tuple[float, ...] = (0.5, 2.0)
     """multiplicative perturbations applied to each physics parameter for transfer eval"""
 
+    training_regime: TrainingRegime = "static"
+    """``static``: fixed nominal physics; ``varying``: resample physics each episode"""
+    train_context_sampling: TrainContextSampling = "random"
+    """how to sample physics when ``training_regime=varying`` (``random`` uniform in factor range, ``grid`` uniform over transfer grid)"""
+    train_context_factors: tuple[float, ...] = ()
+    """factor endpoints for random training sampling; default = ``transfer_factors``"""
+
+from typing import Literal
+
 Context = dict
+TrainingRegime = Literal["static", "varying"]
+TrainContextSampling = Literal["random", "grid"]
 
 
 def get_git_commit() -> str | None:
@@ -441,7 +457,8 @@ def build_run_name(args: Args) -> str:
     tag = sanitize_experiment_tag(args.experiment)
     share = "shared" if args.share_actors else "indep"
     drop = "randdrop" if args.random_drop else "nodrop"
-    return f"{tag}__{share}__{drop}__n{args.n_pistons}__seed{args.seed}__{int(time.time())}"
+    regime = getattr(args, "training_regime", "static")
+    return f"{tag}__{regime}__{share}__{drop}__n{args.n_pistons}__seed{args.seed}__{int(time.time())}"
 
 
 def action_saturation_fraction(
@@ -892,6 +909,8 @@ def train(args: Args) -> str:
     torch.backends.cudnn.deterministic = args.torch_deterministic
 
     device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
+    method_tag = args.method_tag or f"hidden_context_{args.training_regime}"
+    reference_context = default_context(args)
 
     nets = build_agents(args, device)
     agents = nets["agents"]
@@ -925,8 +944,15 @@ def train(args: Args) -> str:
             f"--frame-size, or --frame-stack. At defaults (20 agents, 84px, 50k steps) expect ~42 GB."
         )
 
-    env = make_env(args, default_context(args))
-    obs_dict, _ = env.reset(seed=args.seed)
+    print(
+        f"training_regime={args.training_regime} "
+        f"sampling={args.train_context_sampling if args.training_regime == 'varying' else 'n/a'} "
+        f"method_tag={method_tag}"
+    )
+    if args.training_regime == "varying":
+        print("varying physics: in-place mutation on a single env (no per-episode recreate)")
+    training_env = TrainingEnvironment(args, rng=random.Random(args.seed))
+    obs_dict, episode_context = training_env.reset(seed=args.seed)
     obs = stack_obs(obs_dict, agents)
     ep_return, ep_len = 0.0, 0
     ep_per_agent_var_sum, ep_var_steps = 0.0, 0
@@ -953,7 +979,7 @@ def train(args: Args) -> str:
 
         # --- environment step ---------------------------------------------------
         action_dict = {a: actions[i] for i, a in enumerate(agents)}
-        next_obs_dict, rewards, terms, truncs, infos = env.step(action_dict)
+        next_obs_dict, rewards, terms, truncs, infos = training_env.step(action_dict)
         reward = float(np.mean(list(rewards.values())))
         rew_vals = list(rewards.values())
         ep_per_agent_var_sum += float(np.var(rew_vals))
@@ -975,6 +1001,14 @@ def train(args: Args) -> str:
             writer.add_scalar("performance/episodic_length", ep_len, global_step)
             writer.add_scalar("performance/success", float(terminated), global_step)
             writer.add_scalar("coordination/per_agent_return_variance", ep_var_mean, global_step)
+            if args.training_regime == "varying":
+                writer.add_scalar("context/ball_mass", float(episode_context["ball_mass"]), global_step)
+                writer.add_scalar(
+                    "context/ball_friction", float(episode_context["ball_friction"]), global_step
+                )
+                writer.add_scalar(
+                    "context/ball_elasticity", float(episode_context["ball_elasticity"]), global_step
+                )
             append_training_episode_record(
                 run_dir, global_step, ep_return, ep_len, bool(terminated), ep_var_mean
             )
@@ -993,7 +1027,7 @@ def train(args: Args) -> str:
                     )
                     manifest.steps_to_threshold = steps_to_threshold
             print(f"global_step={global_step}, episodic_return={ep_return:.2f}, length={ep_len}")
-            obs_dict, _ = env.reset(seed=args.seed + global_step)
+            obs_dict, episode_context = training_env.start_episode(seed=args.seed + global_step)
             obs = stack_obs(obs_dict, agents)
             ep_return, ep_len = 0.0, 0
             ep_per_agent_var_sum, ep_var_steps = 0.0, 0
@@ -1076,7 +1110,7 @@ def train(args: Args) -> str:
         ):
             eval_start = time.time()
             stats = evaluate(
-                actors, args, default_context(args), agents, device,
+                actors, args, reference_context, agents, device,
                 seed=args.seed + 10_000, n_episodes=args.eval_episodes,
             )
             eval_wallclock = time.time() - eval_start
@@ -1099,7 +1133,7 @@ def train(args: Args) -> str:
             save_rliable_scores(
                 run_dir,
                 algorithm=args.exp_name,
-                method_tag=args.method_tag,
+                method_tag=method_tag,
                 seed=args.seed,
                 global_step=global_step,
                 context_order=["train"],
@@ -1140,7 +1174,7 @@ def train(args: Args) -> str:
             manifest.global_step = global_step
             manifest.wallclock_seconds = total_wallclock
             manifest.write()
-    env.close()
+    training_env.close()
 
     # Prefer the best in-distribution checkpoint for transfer / final export so late
     # TD3 collapse (common under random_drop) does not poison generalization numbers.
@@ -1150,7 +1184,7 @@ def train(args: Args) -> str:
     # --- final transfer / generalization sweep ---------------------------------
     if args.transfer_eval:
         transfer_start = time.time()
-        results = transfer_sweep(actors, args, agents, device, run_dir=run_dir)
+        results = transfer_sweep(actors, args, agents, device, run_dir=run_dir, method_tag=method_tag)
         results["transfer_wallclock_seconds"] = time.time() - transfer_start
         results["total_wallclock_seconds"] = time.time() - start_time
         if restored_best_step is not None:
@@ -1182,6 +1216,7 @@ def transfer_sweep(
     agents: list[str],
     device: torch.device,
     run_dir: Path | None = None,
+    method_tag: str | None = None,
 ):
     """Evaluate the frozen policy across the transfer contexts and summarize.
 
@@ -1221,10 +1256,11 @@ def transfer_sweep(
     }
 
     if run_dir is not None:
+        tag = method_tag or args.method_tag or f"hidden_context_{args.training_regime}"
         save_rliable_scores(
             run_dir,
             algorithm=args.exp_name,
-            method_tag=args.method_tag,
+            method_tag=tag,
             seed=args.seed,
             global_step=args.total_timesteps,
             context_order=context_order,
