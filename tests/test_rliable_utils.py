@@ -61,6 +61,22 @@ def test_discover_run_dirs_legacy_and_seed_parsing(tmp_path):
     assert found == [run_dir]
 
 
+def test_compute_generalization_gap_uses_context_meta():
+    from evaluation.rliable_utils import compute_generalization_gap
+
+    matrix = np.array([[80.0, 70.0, 20.0], [90.0, 75.0, 10.0]])
+    order = ["default", "ball_mass_x1", "ball_mass_x2"]
+    meta = {
+        "default": {"split": "id"},
+        "ball_mass_x1": {"split": "id"},
+        "ball_mass_x2": {"split": "ood"},
+    }
+    gap = compute_generalization_gap(matrix, order, meta)
+    # ID = mean of first two columns, OOD = last column
+    assert gap["id_return_mean"] == pytest.approx(78.75)
+    assert gap["ood_return_mean"] == pytest.approx(15.0)
+
+
 def test_compute_per_context_stats():
     matrix = np.array([[80.0, 40.0], [90.0, 30.0]])
     stats = compute_per_context_stats(matrix, ["train", "ood"])

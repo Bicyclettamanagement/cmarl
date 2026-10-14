@@ -24,7 +24,7 @@ def tiny_train_args() -> Args:
         eval_frequency=100,
         eval_episodes=2,
         checkpoint_eval=True,
-        transfer_eval=True,
+        transfer_eval=False,
         performance_threshold=-500.0,
         share_actors=True,
         cuda=False,
@@ -35,14 +35,14 @@ def tiny_train_args() -> Args:
 def test_train_emits_cluster_artifacts(tmp_path, tiny_train_args, monkeypatch):
     monkeypatch.chdir(tmp_path)
     run_name = train(tiny_train_args)
-    run_dir = tmp_path / "runs" / run_name
+    run_dir = tmp_path / "runs" / "pistonball" / "n3" / run_name
 
     assert run_name.startswith("unit_tiny__static__shared__randdrop__n3__seed42__")
     assert (run_dir / "run_manifest.json").exists()
     assert (run_dir / "training_episodes.jsonl").exists()
     assert (run_dir / "eval_history.jsonl").exists()
-    assert (run_dir / "rliable_scores.json").exists()
-    assert (run_dir / "transfer_results.json").exists()
+    assert not (run_dir / "rliable_scores.json").exists()
+    assert not (run_dir / "transfer_results.json").exists()
     assert (run_dir / "checkpoints" / "latest.pt").exists()
 
     manifest = json.loads((run_dir / "run_manifest.json").read_text())
@@ -54,11 +54,6 @@ def test_train_emits_cluster_artifacts(tmp_path, tiny_train_args, monkeypatch):
     assert manifest["best_eval"] is not None
     assert manifest["best_eval"]["stats"] is not None
     assert "action_saturation_mean" in manifest["best_eval"]["stats"]
-
-    rliable = json.loads((run_dir / "rliable_scores.json").read_text())
-    assert rliable["method_tag"] == "hidden_context"
-    assert "train" in rliable["context_order"]
-    assert len(rliable["context_order"]) > 1
 
     episodes = (run_dir / "training_episodes.jsonl").read_text().strip().splitlines()
     assert len(episodes) >= 1

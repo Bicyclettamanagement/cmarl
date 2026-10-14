@@ -60,6 +60,9 @@ def args() -> Args:
         critic_shared_obs=True,
         cuda=False,
         seed=0,
+        eval_factor_grid=(0.5, 1.0, 2.0),
+        id_factor_low=0.75,
+        id_factor_high=1.5,
     )
 
 
@@ -108,14 +111,14 @@ def test_context_changes_environment(args):
 
 def test_transfer_contexts_structure(args):
     contexts = build_transfer_contexts(args)
-    assert "train" in contexts
-    # One perturbed context per (physics param, factor) pair.
-    n_expected = 1 + 3 * len(args.transfer_factors)
+    assert "default" in contexts
+    # default + one point per (param, non-1.0 factor)
+    n_expected = 1 + 3 * (len(args.eval_factor_grid) - 1)
     assert len(contexts) == n_expected
     assert contexts["ball_mass_x2"]["ball_mass"] == pytest.approx(args.ball_mass * 2.0)
-    # Only the swept parameter changes relative to the training context.
-    base = contexts["train"]
+    base = contexts["default"]
     assert contexts["ball_mass_x2"]["ball_friction"] == base["ball_friction"]
+    assert contexts["ball_mass_x0.5"]["ball_mass"] == pytest.approx(args.ball_mass * 0.5)
 
 
 def test_replay_buffer_roundtrip(args, device):
@@ -235,6 +238,7 @@ def test_evaluate_returns_metrics(args, device):
         "action_std_mean",
         "action_saturation_mean",
         "per_agent_return_variance_mean",
+        "physics_probe",
         "episode_returns",
         "episode_lengths",
         "episode_successes",
@@ -248,10 +252,12 @@ def test_evaluate_returns_metrics(args, device):
 def test_transfer_sweep_reports_gap(args, device):
     nets = build_agents(args, device)
     results = transfer_sweep(nets["actors"], args, nets["agents"], device)
-    assert "train" in results["contexts"]
+    assert "default" in results["contexts"]
     assert "generalization_gap" in results
     assert "generalization_gap_iqm" in results
-    expected = results["train_return"] - results["ood_return_mean_legacy"]
+    assert results["context_meta"]["ball_mass_x2"]["split"] == "ood"
+    assert results["context_meta"]["default"]["split"] == "id"
+    expected = results["id_return_mean"] - results["ood_return_mean"]
     assert results["generalization_gap"] == pytest.approx(expected)
 
 

@@ -42,6 +42,19 @@ def test_discover_run_dirs_new_naming(tmp_path):
     assert found == [run_dir]
 
 
+def test_discover_run_dirs_relaxed_ignores_stale_method_tag(tmp_path):
+    from evaluation.rliable_utils import discover_run_dirs_relaxed
+
+    run_dir = tmp_path / "baseline5_varying_randdrop__n5__seed1__1"
+    run_dir.mkdir(parents=True)
+    _write_fake_run(run_dir, 1, exp_tag="baseline5_varying_randdrop", method_tag="hidden_context")
+    assert discover_run_dirs(tmp_path, "baseline5_varying_randdrop", method_tag="hidden_context_varying") == []
+    found = discover_run_dirs_relaxed(
+        tmp_path, "baseline5_varying_randdrop", method_tag="hidden_context_varying"
+    )
+    assert found == [run_dir]
+
+
 def test_rliable_aggregate_script_entrypoint(tmp_path, monkeypatch):
     """Ensure CLI works when invoked as a script (cluster usage)."""
     import os
@@ -100,6 +113,56 @@ def test_rliable_aggregate_main(tmp_path, monkeypatch):
     assert "per_context" in report
     iqm = report["rliable"]["algorithms"]["Hidden context"]["metrics"]["iqm"]
     assert iqm["ci_low"] <= iqm["point"] <= iqm["ci_high"]
+    assert "diagnostics" in report
+    assert "seed_health" in report["diagnostics"]
+    assert "env_switch" in report["diagnostics"]
+
+
+def test_rliable_aggregate_compare_all(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    runs = tmp_path / "runs"
+    cells = [
+        ("baseline5_static_randdrop", "hidden_context", [40.0, 50.0], [20.0, 25.0]),
+        ("baseline5_varying_randdrop", "hidden_context", [55.0, 60.0], [35.0, 40.0]),
+        ("context5_concat_static_randdrop", "context_concat", [45.0, 55.0], [25.0, 30.0]),
+        ("context5_concat_varying_randdrop", "context_concat", [70.0, 80.0], [55.0, 65.0]),
+    ]
+    for seed in (1, 2):
+        for exp_name, method_tag, id_scores, ood_scores in cells:
+            run_dir = runs / f"{exp_name}__n5__seed{seed}__1000"
+            run_dir.mkdir(parents=True)
+            _write_fake_run(run_dir, seed, exp_tag=exp_name, method_tag=method_tag)
+            save_rliable_scores(
+                run_dir,
+                algorithm="matd3_pistonball",
+                method_tag=method_tag,
+                seed=seed,
+                global_step=1000,
+                context_order=["train", "ball_mass_x2"],
+                scores_by_context={"train": id_scores, "ball_mass_x2": ood_scores},
+                eval_split="zero_shot_transfer",
+                reference_return=100.0,
+            )
+
+    out = main(
+        Args(
+            compare_all=True,
+            runs_root="runs",
+            bootstrap_reps=50,
+            profile_steps=11,
+        )
+    )
+    payload = json.loads(out.read_text())
+    assert out.name == "rliable_matrix.json"
+    assert len(payload["experiments"]) == 4
+    assert "rliable_combined" in payload
+    assert "rliable_combined_by_split" in payload
+    assert len(payload["pairwise_poi"]) == 6
+    labels = [exp["label"] for exp in payload["experiments"]]
+    assert "Hidden context (static)" in labels
+    assert "Context concat (varying)" in labels
+    algos = payload["rliable_combined"]["algorithms"]
+    assert len(algos) == 4
 
 
 def test_rliable_aggregate_compare_presets(tmp_path, monkeypatch):
@@ -143,3 +206,17 @@ def test_rliable_aggregate_compare_presets(tmp_path, monkeypatch):
     assert "rliable_combined" in payload
     assert payload["primary"]["label"] == "Context concat"
     assert payload["challenger"]["label"] == "Hidden context"
+    assert len(payload["experiments"]) == 2
+
+
+def test_compare_flags_select_preset_groups():
+    from evaluation.rliable_utils import KIND_PRESETS, MULTIWALKER_PRESETS
+    from scripts.rliable_aggregate import Args as AggArgs
+
+    flags = AggArgs(compare_multiwalker=True)
+    assert flags.compare_multiwalker is True
+    flags_k = AggArgs(compare_kinds=True)
+    assert flags_k.compare_kinds is True
+    assert "mw3_hidden_varying_fwd5" in MULTIWALKER_PRESETS
+    assert "mw3_concat_varying_fwd5" in MULTIWALKER_PRESETS
+    assert "context5_agent_varying" in KIND_PRESETS

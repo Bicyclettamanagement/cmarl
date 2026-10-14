@@ -49,6 +49,6 @@ def test_replay_buffer_stores_distinct_context_vectors(args):
         obs = np.ones((n, c, h, w), dtype=np.uint8)
         rb.add(obs, obs, np.zeros((n, 1), np.float32), 1.0, 0.0, context=ctx_b)
 
-    _, _, _, _, _, contexts = rb.sample(args.batch_size)
+    _, _, _, _, _, contexts, _agent = rb.sample(args.batch_size)
     unique_rows = {tuple(row.tolist()) for row in contexts.cpu().numpy()}
     assert len(unique_rows) >= 2
