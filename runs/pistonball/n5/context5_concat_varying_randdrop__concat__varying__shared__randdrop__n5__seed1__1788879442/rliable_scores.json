@@ -1,0 +1,877 @@
+{
+  "algorithm": "matd3_pistonball_context",
+  "method_tag": "context_concat",
+  "seed": 1,
+  "global_step": 175000,
+  "eval_split": "id_ood_1d_slice",
+  "context_order": [
+    "default",
+    "ball_mass_x0.25",
+    "ball_mass_x0.5",
+    "ball_mass_x0.75",
+    "ball_mass_x1.5",
+    "ball_mass_x2",
+    "ball_mass_x3",
+    "ball_mass_x4",
+    "ball_friction_x0.25",
+    "ball_friction_x0.5",
+    "ball_friction_x0.75",
+    "ball_friction_x1.5",
+    "ball_friction_x2",
+    "ball_friction_x3",
+    "ball_friction_x4",
+    "ball_elasticity_x0.25",
+    "ball_elasticity_x0.5",
+    "ball_elasticity_x0.75",
+    "ball_elasticity_x1.5",
+    "ball_elasticity_x2",
+    "ball_elasticity_x3",
+    "ball_elasticity_x4",
+    "gravity_x0.25",
+    "gravity_x0.5",
+    "gravity_x0.75",
+    "gravity_x1.5",
+    "gravity_x2",
+    "gravity_x3",
+    "gravity_x4"
+  ],
+  "reference_return": 100.0,
+  "scores_by_context": {
+    "default": {
+      "episode_returns": [
+        99.50000000000001,
+        97.89999999999999,
+        99.5,
+        98.49999999999999,
+        99.1,
+        99.4,
+        98.99999999999999,
+        33.445945945945766,
+        99.49999999999999,
+        97.08421052631581
+      ],
+      "return_mean": 92.29301564722616,
+      "return_std": 19.630455575828623,
+      "return_median": 99.04999999999998,
+      "n_episodes": 10.0,
+      "return_iqm": 98.89999999999999,
+      "optimality_gap": 7.706984352773844
+    },
+    "ball_mass_x0.25": {
+      "episode_returns": [
+        99.50000000000001,
+        95.80714285714285,
+        99.49999999999999,
+        98.49999999999997,
+        99.1,
+        99.39999999999999,
+        98.89999999999998,
+        33.44594594594577,
+        99.49999999999999,
+        98.80000000000001
+      ],
+      "return_mean": 92.24530888030885,
+      "return_std": 19.627760489755865,
+      "return_median": 98.99999999999999,
+      "n_episodes": 10.0,
+      "return_iqm": 99.03333333333332,
+      "optimality_gap": 7.754691119691145
+    },
+    "ball_mass_x0.5": {
+      "episode_returns": [
+        99.50000000000001,
+        95.20714285714288,
+        99.49999999999999,
+        98.39999999999998,
+        97.92352941176469,
+        99.39999999999999,
+        98.89999999999999,
+        34.79729729729713,
+        99.49999999999999,
+        96.5842105263158
+      ],
+      "return_mean": 91.97121800925206,
+      "return_std": 19.106569196513654,
+      "return_median": 98.64999999999998,
+      "n_episodes": 10.0,
+      "return_iqm": 98.45128998968006,
+      "optimality_gap": 8.028781990747945
+    },
+    "ball_mass_x0.75": {
+      "episode_returns": [
+        99.50000000000001,
+        94.60000000000011,
+        99.49999999999999,
+        98.39999999999998,
+        97.92352941176469,
+        99.39999999999999,
+        97.29059829059828,
+        34.79729729729713,
+        99.49999999999999,
+        98.70000000000002
+      ],
+      "return_mean": 91.96114249996603,
+      "return_std": 19.10846076586297,
+      "return_median": 98.55,
+      "n_episodes": 10.0,
+      "return_iqm": 98.53568795039382,
+      "optimality_gap": 8.03885750003397
+    },
+    "ball_mass_x1.5": {
+      "episode_returns": [
+        99.50000000000001,
+        98.5,
+        99.6,
+        98.79999999999998,
+        96.74705882352941,
+        99.39999999999999,
+        98.99999999999999,
+        34.797297297297135,
+        99.49999999999999,
+        98.19999999999999
+      ],
+      "return_mean": 92.40443561208265,
+      "return_std": 19.219776487578233,
+      "return_median": 98.89999999999998,
+      "n_episodes": 10.0,
+      "return_iqm": 98.89999999999999,
+      "optimality_gap": 7.595564387917349
+    },
+    "ball_mass_x2": {
+      "episode_returns": [
+        99.50000000000001,
+        99.0,
+        97.27441860465115,
+        93.15287356321838,
+        99.1,
+        99.29999999999998,
+        97.49059829059829,
+        34.79729729729715,
+        99.49999999999999,
+        97.30000000000001
+      ],
+      "return_mean": 91.64151877557649,
+      "return_std": 19.03536022057304,
+      "return_median": 98.24529914529914,
+      "n_episodes": 10.0,
+      "return_iqm": 98.24416948254157,
+      "optimality_gap": 8.358481224423514
+    },
+    "ball_mass_x3": {
+      "episode_returns": [
+        24.999999999999936,
+        96.6142857142857,
+        98.80000000000001,
+        95.45172413793101,
+        99.1,
+        99.29999999999998,
+        99.1,
+        97.69999999999999,
+        99.49999999999999,
+        34.86842105263146
+      ],
+      "return_mean": 84.54344309048481,
+      "return_std": 27.421361993432164,
+      "return_median": 98.25,
+      "n_episodes": 10.0,
+      "return_iqm": 97.79433497536945,
+      "optimality_gap": 15.456556909515186
+    },
+    "ball_mass_x4": {
+      "episode_returns": [
+        -35.93750000000006,
+        96.6142857142857,
+        99.50000000000001,
+        96.60114942528735,
+        99.0,
+        99.29999999999998,
+        98.59999999999998,
+        -20.608108108108198,
+        99.49999999999999,
+        34.86842105263146
+      ],
+      "return_mean": 66.74382480840961,
+      "return_std": 51.21979655031893,
+      "return_median": 97.60714285714283,
+      "n_episodes": 10.0,
+      "return_iqm": 87.49730936536741,
+      "optimality_gap": 33.25617519159039
+    },
+    "ball_friction_x0.25": {
+      "episode_returns": [
+        97.8375,
+        95.20714285714278,
+        93.68604651162792,
+        -4.454022988505763,
+        -6.617647058823526,
+        99.39999999999999,
+        19.123931623931515,
+        22.635135135134973,
+        99.1,
+        99.0
+      ],
+      "return_mean": 61.49180860805079,
+      "return_std": 44.77175693009795,
+      "return_median": 94.44659468438536,
+      "n_episodes": 10.0,
+      "return_iqm": 71.24829268797286,
+      "optimality_gap": 38.50819139194921
+    },
+    "ball_friction_x0.5": {
+      "episode_returns": [
+        95.1125,
+        97.21428571428572,
+        99.5,
+        98.39999999999998,
+        96.84705882352941,
+        99.39999999999999,
+        98.79999999999998,
+        34.79729729729716,
+        99.3,
+        98.2
+      ],
+      "return_mean": 91.75711418351122,
+      "return_std": 19.031210345887754,
+      "return_median": 98.29999999999998,
+      "n_episodes": 10.0,
+      "return_iqm": 98.1268907563025,
+      "optimality_gap": 8.24288581648878
+    },
+    "ball_friction_x0.75": {
+      "episode_returns": [
+        24.999999999999908,
+        97.89999999999998,
+        99.5,
+        98.59999999999998,
+        98.99999999999999,
+        99.4,
+        97.19059829059829,
+        33.44594594594579,
+        90.75802469135802,
+        97.08421052631581
+      ],
+      "return_mean": 83.78787794542178,
+      "return_std": 27.45159698401853,
+      "return_median": 97.54529914529914,
+      "n_episodes": 10.0,
+      "return_iqm": 96.75547225137866,
+      "optimality_gap": 16.212122054578217
+    },
+    "ball_friction_x1.5": {
+      "episode_returns": [
+        24.999999999999922,
+        97.70714285714286,
+        99.5,
+        98.79999999999998,
+        99.10000000000001,
+        99.39999999999999,
+        99.1,
+        96.39729729729729,
+        99.6,
+        98.0
+      ],
+      "return_mean": 91.26044401544401,
+      "return_std": 22.107166875404314,
+      "return_median": 98.94999999999999,
+      "n_episodes": 10.0,
+      "return_iqm": 98.68452380952381,
+      "optimality_gap": 8.739555984555992
+    },
+    "ball_friction_x2": {
+      "episode_returns": [
+        24.999999999999837,
+        99.1,
+        99.5,
+        98.79999999999998,
+        99.1,
+        99.3,
+        99.2,
+        98.50000000000001,
+        99.69999999999999,
+        36.184210526315645
+      ],
+      "return_mean": 85.43842105263154,
+      "return_std": 27.53877116311689,
+      "return_median": 99.1,
+      "n_episodes": 10.0,
+      "return_iqm": 99.0,
+      "optimality_gap": 14.56157894736846
+    },
+    "ball_friction_x3": {
+      "episode_returns": [
+        73.43750000000009,
+        98.60000000000001,
+        99.6,
+        98.99999999999999,
+        99.19999999999999,
+        99.29999999999998,
+        99.19999999999999,
+        94.39999999999993,
+        99.69999999999997,
+        36.18421052631565
+      ],
+      "return_mean": 89.86217105263155,
+      "return_std": 19.459202539514777,
+      "return_median": 99.1,
+      "n_episodes": 10.0,
+      "return_iqm": 98.28333333333332,
+      "optimality_gap": 10.137828947368448
+    },
+    "ball_friction_x4": {
+      "episode_returns": [
+        88.33750000000002,
+        98.60000000000001,
+        99.5,
+        99.09999999999998,
+        99.1,
+        99.29999999999998,
+        97.39059829059829,
+        9.121621621621532,
+        97.33086419753087,
+        36.18421052631565
+      ],
+      "return_mean": 82.39647946360664,
+      "return_std": 30.637823779674935,
+      "return_median": 97.99529914529916,
+      "n_episodes": 10.0,
+      "return_iqm": 96.64316041468818,
+      "optimality_gap": 17.60352053639336
+    },
+    "ball_elasticity_x0.25": {
+      "episode_returns": [
+        99.50000000000001,
+        99.10000000000001,
+        97.27441860465115,
+        95.45172413793102,
+        99.0,
+        99.29999999999998,
+        99.09999999999998,
+        34.79729729729718,
+        99.49999999999999,
+        34.86842105263146
+      ],
+      "return_mean": 85.78918610925108,
+      "return_std": 25.506407643569638,
+      "return_median": 99.04999999999998,
+      "n_episodes": 10.0,
+      "return_iqm": 98.2043571237637,
+      "optimality_gap": 14.210813890748923
+    },
+    "ball_elasticity_x0.5": {
+      "episode_returns": [
+        99.50000000000001,
+        98.20714285714286,
+        97.27441860465115,
+        96.60114942528735,
+        99.1,
+        99.3,
+        99.09999999999998,
+        34.79729729729715,
+        99.49999999999999,
+        98.30000000000001
+      ],
+      "return_mean": 92.16800081843785,
+      "return_std": 19.14598037146111,
+      "return_median": 98.69999999999999,
+      "n_episodes": 10.0,
+      "return_iqm": 98.546926910299,
+      "optimality_gap": 7.8319991815621535
+    },
+    "ball_elasticity_x0.75": {
+      "episode_returns": [
+        99.50000000000001,
+        98.39999999999999,
+        99.6,
+        95.35172413793103,
+        96.74705882352941,
+        99.39999999999999,
+        99.0,
+        34.797297297297135,
+        99.49999999999999,
+        98.29999999999998
+      ],
+      "return_mean": 92.05960802587575,
+      "return_std": 19.132569841757167,
+      "return_median": 98.69999999999999,
+      "n_episodes": 10.0,
+      "return_iqm": 98.55784313725489,
+      "optimality_gap": 7.940391974124253
+    },
+    "ball_elasticity_x1.5": {
+      "episode_returns": [
+        99.50000000000001,
+        97.89999999999995,
+        97.27441860465115,
+        98.89999999999998,
+        99.0,
+        99.3,
+        97.49059829059829,
+        98.20000000000003,
+        99.49999999999999,
+        97.2
+      ],
+      "return_mean": 98.42650168952494,
+      "return_std": 0.8750383735094979,
+      "return_median": 98.55000000000001,
+      "n_episodes": 10.0,
+      "return_iqm": 98.4650997150997,
+      "optimality_gap": 1.5734983104750597
+    },
+    "ball_elasticity_x2": {
+      "episode_returns": [
+        24.99999999999985,
+        96.6142857142857,
+        97.27441860465117,
+        96.50114942528735,
+        99.0,
+        99.29999999999998,
+        97.29059829059828,
+        34.79729729729718,
+        99.49999999999999,
+        34.86842105263146
+      ],
+      "return_mean": 78.0146170384751,
+      "return_std": 30.537123381876548,
+      "return_median": 96.94435215946844,
+      "n_episodes": 10.0,
+      "return_iqm": 86.92481218124232,
+      "optimality_gap": 21.985382961524905
+    },
+    "ball_elasticity_x3": {
+      "episode_returns": [
+        98.0375,
+        96.6142857142857,
+        99.5,
+        98.79999999999997,
+        99.0,
+        99.29999999999998,
+        97.29059829059828,
+        95.34864864864862,
+        99.49999999999999,
+        34.86842105263146
+      ],
+      "return_mean": 91.8259453706164,
+      "return_std": 19.03074165613874,
+      "return_median": 98.41874999999999,
+      "n_episodes": 10.0,
+      "return_iqm": 98.17373066748064,
+      "optimality_gap": 8.174054629383605
+    },
+    "ball_elasticity_x4": {
+      "episode_returns": [
+        98.0375,
+        96.61428571428571,
+        99.5,
+        98.79999999999998,
+        99.0,
+        99.29999999999998,
+        97.29059829059828,
+        7.770270270270309,
+        99.49999999999999,
+        34.86842105263146
+      ],
+      "return_mean": 83.06810753277857,
+      "return_std": 31.47640564308159,
+      "return_median": 98.41874999999999,
+      "n_episodes": 10.0,
+      "return_iqm": 98.17373066748065,
+      "optimality_gap": 16.93189246722143
+    },
+    "gravity_x0.25": {
+      "episode_returns": [
+        99.5,
+        99.00000000000001,
+        99.20000000000002,
+        -49.28160919540246,
+        97.0,
+        98.13043478260869,
+        97.30000000000001,
+        98.30000000000001,
+        99.19999999999999,
+        95.35263157894737
+      ],
+      "return_mean": 83.37014571661535,
+      "return_std": 44.23378981779187,
+      "return_median": 98.21521739130435,
+      "n_episodes": 10.0,
+      "return_iqm": 98.15507246376812,
+      "optimality_gap": 16.629854283384645
+    },
+    "gravity_x0.5": {
+      "episode_returns": [
+        99.69999999999999,
+        99.2,
+        99.4,
+        98.09999999999998,
+        97.89999999999999,
+        99.39999999999999,
+        98.5,
+        97.09999999999995,
+        99.39999999999999,
+        97.19999999999999
+      ],
+      "return_mean": 98.58999999999999,
+      "return_std": 0.9191844211038482,
+      "return_median": 98.85,
+      "n_episodes": 10.0,
+      "return_iqm": 98.75,
+      "optimality_gap": 1.4100000000000108
+    },
+    "gravity_x0.75": {
+      "episode_returns": [
+        98.0375,
+        97.29999999999997,
+        99.50000000000001,
+        98.39999999999998,
+        98.89999999999998,
+        99.30000000000001,
+        98.8,
+        96.39729729729729,
+        99.39999999999999,
+        97.49999999999999
+      ],
+      "return_mean": 98.35347972972971,
+      "return_std": 0.9782935658560097,
+      "return_median": 98.6,
+      "n_episodes": 10.0,
+      "return_iqm": 98.48958333333333,
+      "optimality_gap": 1.6465202702702868
+    },
+    "gravity_x1.5": {
+      "episode_returns": [
+        24.999999999999908,
+        97.50714285714285,
+        99.60000000000001,
+        98.69999999999997,
+        99.19999999999999,
+        99.49999999999999,
+        95.78119658119657,
+        33.445945945945795,
+        99.6,
+        98.20000000000003
+      ],
+      "return_mean": 84.65342853842851,
+      "return_std": 27.80183841727014,
+      "return_median": 98.45,
+      "n_episodes": 10.0,
+      "return_iqm": 98.14805657305656,
+      "optimality_gap": 15.346571461571486
+    },
+    "gravity_x2": {
+      "episode_returns": [
+        92.30000000000004,
+        98.49999999999999,
+        99.30000000000001,
+        98.69999999999997,
+        99.3,
+        99.49999999999999,
+        99.3,
+        93.54864864864858,
+        99.69999999999999,
+        98.90000000000002
+      ],
+      "return_mean": 97.90486486486485,
+      "return_std": 2.5293086390119686,
+      "return_median": 99.10000000000001,
+      "n_episodes": 10.0,
+      "return_iqm": 99.0,
+      "optimality_gap": 2.095135135135152
+    },
+    "gravity_x3": {
+      "episode_returns": [
+        45.31249999999982,
+        97.31428571428572,
+        98.53720930232558,
+        98.8,
+        99.39999999999999,
+        99.3,
+        96.30000000000004,
+        93.49729729729731,
+        99.69999999999999,
+        97.7842105263158
+      ],
+      "return_mean": 92.59455028402242,
+      "return_std": 15.858541813711673,
+      "return_median": 98.16070991432069,
+      "n_episodes": 10.0,
+      "return_iqm": 98.0059509238212,
+      "optimality_gap": 7.405449715977582
+    },
+    "gravity_x4": {
+      "episode_returns": [
+        96.775,
+        98.70000000000002,
+        99.69999999999999,
+        95.7011494252873,
+        99.3,
+        99.3,
+        97.54529914529911,
+        96.49999999999999,
+        99.6,
+        99.2
+      ],
+      "return_mean": 98.23214485705864,
+      "return_std": 1.39510499553026,
+      "return_median": 98.95000000000002,
+      "n_episodes": 10.0,
+      "return_iqm": 98.47004985754985,
+      "optimality_gap": 1.7678551429413574
+    }
+  },
+  "context_meta": {
+    "default": {
+      "split": "id",
+      "varied_param": null,
+      "factor": 1.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_mass_x0.25": {
+      "split": "ood",
+      "varied_param": "ball_mass",
+      "factor": 0.25,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_mass_x0.5": {
+      "split": "ood",
+      "varied_param": "ball_mass",
+      "factor": 0.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_mass_x0.75": {
+      "split": "id",
+      "varied_param": "ball_mass",
+      "factor": 0.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_mass_x1.5": {
+      "split": "id",
+      "varied_param": "ball_mass",
+      "factor": 1.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_mass_x2": {
+      "split": "ood",
+      "varied_param": "ball_mass",
+      "factor": 2.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_mass_x3": {
+      "split": "ood",
+      "varied_param": "ball_mass",
+      "factor": 3.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_mass_x4": {
+      "split": "ood",
+      "varied_param": "ball_mass",
+      "factor": 4.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_friction_x0.25": {
+      "split": "ood",
+      "varied_param": "ball_friction",
+      "factor": 0.25,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_friction_x0.5": {
+      "split": "ood",
+      "varied_param": "ball_friction",
+      "factor": 0.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_friction_x0.75": {
+      "split": "id",
+      "varied_param": "ball_friction",
+      "factor": 0.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_friction_x1.5": {
+      "split": "id",
+      "varied_param": "ball_friction",
+      "factor": 1.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_friction_x2": {
+      "split": "ood",
+      "varied_param": "ball_friction",
+      "factor": 2.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_friction_x3": {
+      "split": "ood",
+      "varied_param": "ball_friction",
+      "factor": 3.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_friction_x4": {
+      "split": "ood",
+      "varied_param": "ball_friction",
+      "factor": 4.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_elasticity_x0.25": {
+      "split": "ood",
+      "varied_param": "ball_elasticity",
+      "factor": 0.25,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_elasticity_x0.5": {
+      "split": "ood",
+      "varied_param": "ball_elasticity",
+      "factor": 0.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_elasticity_x0.75": {
+      "split": "id",
+      "varied_param": "ball_elasticity",
+      "factor": 0.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_elasticity_x1.5": {
+      "split": "id",
+      "varied_param": "ball_elasticity",
+      "factor": 1.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_elasticity_x2": {
+      "split": "ood",
+      "varied_param": "ball_elasticity",
+      "factor": 2.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_elasticity_x3": {
+      "split": "ood",
+      "varied_param": "ball_elasticity",
+      "factor": 3.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_elasticity_x4": {
+      "split": "ood",
+      "varied_param": "ball_elasticity",
+      "factor": 4.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "gravity_x0.25": {
+      "split": "ood",
+      "varied_param": "gravity",
+      "factor": 0.25,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "gravity_x0.5": {
+      "split": "ood",
+      "varied_param": "gravity",
+      "factor": 0.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "gravity_x0.75": {
+      "split": "id",
+      "varied_param": "gravity",
+      "factor": 0.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "gravity_x1.5": {
+      "split": "id",
+      "varied_param": "gravity",
+      "factor": 1.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "gravity_x2": {
+      "split": "ood",
+      "varied_param": "gravity",
+      "factor": 2.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "gravity_x3": {
+      "split": "ood",
+      "varied_param": "gravity",
+      "factor": 3.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "gravity_x4": {
+      "split": "ood",
+      "varied_param": "gravity",
+      "factor": 4.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    }
+  },
+  "id_factor_low": 0.75,
+  "id_factor_high": 1.5,
+  "eval_factor_grid": [
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.5,
+    2.0,
+    3.0,
+    4.0
+  ],
+  "eval_vary_params": [
+    "ball_mass",
+    "ball_friction",
+    "ball_elasticity",
+    "gravity"
+  ],
+  "eval_grid_preset": "hard",
+  "generalization_gap_mean": 4.706437996804112,
+  "generalization_gap_iqm": 2.545470162193695,
+  "checkpoint": "runs/context5_concat_varying_randdrop__concat__varying__shared__randdrop__n5__seed1__1788879442/checkpoints/best.pt"
+}
