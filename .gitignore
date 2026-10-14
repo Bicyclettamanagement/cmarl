@@ -1,5 +1,8 @@
 runs/*
 reports/*
+logs/
+old_runs/
+notebooks/.ipynb_checkpoints/
 **/__pycache__/*
 Dockerfile
 extended_abstract*
