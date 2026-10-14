@@ -31,28 +31,29 @@ RLIABLE_SCORES_FILENAME = "rliable_scores.json"
 RUN_MANIFEST_FILENAME = "run_manifest.json"
 
 # Common N=5 experiment presets (2×2: static/varying × hidden/explicit context).
+# method_tag matches training defaults (static vs varying is in exp_name).
 EXPERIMENT_PRESETS: dict[str, dict[str, str]] = {
     "baseline5_static": {
         "exp_name": "baseline5_static_randdrop",
-        "method_tag": "hidden_context_static",
+        "method_tag": "hidden_context",
         "label": "Hidden context (static)",
         "algorithm": "matd3_pistonball",
     },
     "baseline5_varying": {
         "exp_name": "baseline5_varying_randdrop",
-        "method_tag": "hidden_context_varying",
+        "method_tag": "hidden_context",
         "label": "Hidden context (varying)",
         "algorithm": "matd3_pistonball",
     },
     "context5_static": {
         "exp_name": "context5_concat_static_randdrop",
-        "method_tag": "context_concat_static",
+        "method_tag": "context_concat",
         "label": "Context concat (static)",
         "algorithm": "matd3_pistonball_context",
     },
     "context5_varying": {
         "exp_name": "context5_concat_varying_randdrop",
-        "method_tag": "context_concat_varying",
+        "method_tag": "context_concat",
         "label": "Context concat (varying)",
         "algorithm": "matd3_pistonball_context",
     },
@@ -69,7 +70,96 @@ EXPERIMENT_PRESETS: dict[str, dict[str, str]] = {
         "label": "Context concat",
         "algorithm": "matd3_pistonball_context",
     },
+    "mw3_hidden_varying": {
+        "exp_name": "mw3_hidden_varying",
+        "method_tag": "hidden_context",
+        "label": "Multiwalker hidden (varying)",
+        "algorithm": "matd3_multiwalker",
+    },
+    "mw3_concat_varying": {
+        "exp_name": "mw3_concat_varying",
+        "method_tag": "context_concat",
+        "label": "Multiwalker concat (varying)",
+        "algorithm": "matd3_multiwalker",
+    },
+    "mw3_hidden_varying_fwd5": {
+        "exp_name": "mw3_hidden_varying_fwd5",
+        "method_tag": "hidden_context",
+        "label": "Multiwalker hidden (varying, fwd×5)",
+        "algorithm": "matd3_multiwalker",
+    },
+    "mw3_concat_varying_fwd5": {
+        "exp_name": "mw3_concat_varying_fwd5",
+        "method_tag": "context_concat",
+        "label": "Multiwalker concat (varying, fwd×5)",
+        "algorithm": "matd3_multiwalker",
+    },
+    "mw3_concat_varying_fwd5_2m": {
+        "exp_name": "mw3_concat_varying_fwd5_2m",
+        "method_tag": "context_concat",
+        "label": "Multiwalker concat (varying, fwd×5, 2M)",
+        "algorithm": "matd3_multiwalker",
+    },
+    "mw3_concat_varying_fwd5_tp0.1": {
+        "exp_name": "mw3_concat_varying_fwd5_tp0.1",
+        "method_tag": "context_concat",
+        "label": "Multiwalker concat (varying, fwd×5, time penalty)",
+        "algorithm": "matd3_multiwalker",
+    },
+    "baseline8_varying": {
+        "exp_name": "baseline8_varying_randdrop",
+        "method_tag": "hidden_context",
+        "label": "Hidden context N=8 (varying)",
+        "algorithm": "matd3_pistonball",
+    },
+    "context8_varying": {
+        "exp_name": "context8_concat_varying_randdrop",
+        "method_tag": "context_concat",
+        "label": "Context concat N=8 (varying)",
+        "algorithm": "matd3_pistonball_context",
+    },
+    "context5_agent_varying": {
+        "exp_name": "context5_concat_agent_varying_randdrop",
+        "method_tag": "context_concat_agent",
+        "label": "Context concat agent (varying)",
+        "algorithm": "matd3_pistonball_context",
+    },
+    "context5_both_varying": {
+        "exp_name": "context5_concat_both_varying_randdrop",
+        "method_tag": "context_concat_both",
+        "label": "Context concat both (varying)",
+        "algorithm": "matd3_pistonball_context",
+    },
 }
+
+# Default 2×2 comparison used by ``--compare-all``.
+MATRIX_PRESETS: tuple[str, ...] = (
+    "baseline5_static",
+    "baseline5_varying",
+    "context5_static",
+    "context5_varying",
+)
+
+# Canonical Multiwalker matrix: varying + forward_reward×5 (see cluster/submit_multiwalker_matrix.sh).
+# Plain ``mw3_*_varying`` (fwd=1) presets remain in EXPERIMENT_PRESETS for legacy discovery.
+MULTIWALKER_PRESETS: tuple[str, ...] = (
+    "mw3_hidden_varying_fwd5",
+    "mw3_concat_varying_fwd5",
+)
+
+KIND_PRESETS: tuple[str, ...] = (
+    "context5_varying",
+    "context5_agent_varying",
+    "context5_both_varying",
+)
+
+PISTONBALL8_PRESETS: tuple[str, ...] = (
+    "baseline8_varying",
+    "context8_varying",
+)
+
+# Alias kept for older scripts / notebooks that imported the fwd5 name.
+MULTIWALKER_FWD5_PRESETS: tuple[str, ...] = MULTIWALKER_PRESETS
 
 
 def require_rliable() -> None:
@@ -129,6 +219,7 @@ def save_rliable_scores(
     eval_split: str,
     reference_return: float | None = None,
     extra: dict[str, Any] | None = None,
+    scores_filename: str = RLIABLE_SCORES_FILENAME,
 ) -> Path:
     """Persist per-episode returns for cross-seed rliable aggregation."""
     per_context = {}
@@ -149,15 +240,18 @@ def save_rliable_scores(
         "scores_by_context": per_context,
         **(extra or {}),
     }
-    path = run_dir / RLIABLE_SCORES_FILENAME
+    path = run_dir / scores_filename
     run_dir.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as f:
         json.dump(payload, f, indent=2)
     return path
 
 
-def load_rliable_scores(run_dir: Path) -> dict | None:
-    path = run_dir / RLIABLE_SCORES_FILENAME
+def load_rliable_scores(
+    run_dir: Path,
+    scores_filename: str = RLIABLE_SCORES_FILENAME,
+) -> dict | None:
+    path = run_dir / scores_filename
     if not path.exists():
         return None
     with open(path) as f:
@@ -180,8 +274,20 @@ def parse_seed_from_run_name(run_name: str) -> int | None:
 
 
 def _run_matches_experiment(run_name: str, exp_name: str) -> bool:
-    """Match current and legacy run directory naming schemes."""
-    return run_name.startswith(f"{exp_name}__") or run_name.startswith(f"pistonball__{exp_name}__")
+    """Match current and legacy run directory naming schemes.
+
+    Folder names use ``sanitize_experiment_tag`` (e.g. ``tp0.1`` → ``tp0_1``), so
+    we compare both the raw and sanitized experiment tags.
+    """
+    from matd3_pistonball import sanitize_experiment_tag
+
+    needles = {exp_name, sanitize_experiment_tag(exp_name)}
+    for needle in needles:
+        if not needle:
+            continue
+        if run_name.startswith(f"{needle}__") or run_name.startswith(f"pistonball__{needle}__"):
+            return True
+    return False
 
 
 def discover_run_dirs(
@@ -195,13 +301,30 @@ def discover_run_dirs(
     """Find run directories for an experiment (newest per seed if duplicates).
 
     Supports folder names like ``baseline5_shared_randdrop__shared__...__seed3__<ts>``
-    and legacy ``pistonball__matd3_pistonball__3__<ts>``.
+    and legacy ``pistonball__matd3_pistonball__3__<ts>``. Matching also accepts
+    sanitized tags (dots → underscores) and ``run_manifest.json`` ``experiment``.
     """
     if not runs_root.is_dir():
         return []
+    from evaluation.run_paths import iter_run_dirs
+    from matd3_pistonball import sanitize_experiment_tag
+
+    needle = sanitize_experiment_tag(exp_name)
     candidates: dict[int, Path] = {}
-    for child in runs_root.iterdir():
-        if not child.is_dir() or not _run_matches_experiment(child.name, exp_name):
+    for child in iter_run_dirs(runs_root):
+        matched = _run_matches_experiment(child.name, exp_name)
+        if not matched:
+            manifest_path = child / RUN_MANIFEST_FILENAME
+            if manifest_path.exists():
+                with open(manifest_path) as f:
+                    manifest = json.load(f)
+                args_dict = dict(manifest.get("args") or {})
+                for key in ("experiment", "exp_name"):
+                    value = str(args_dict.get(key) or "")
+                    if value == exp_name or (value and sanitize_experiment_tag(value) == needle):
+                        matched = True
+                        break
+        if not matched:
             continue
         seed = parse_seed_from_run_name(child.name)
         if seed is None:
@@ -226,18 +349,50 @@ def discover_run_dirs(
     return [candidates[s] for s in sorted(candidates)]
 
 
+def discover_run_dirs_relaxed(
+    runs_root: Path,
+    exp_name: str,
+    seeds: list[int] | None = None,
+    *,
+    method_tag: str | None = None,
+    require_finished: bool = False,
+) -> list[Path]:
+    """Like ``discover_run_dirs``, but retry without ``method_tag`` if nothing matches.
+
+    Training writes ``hidden_context`` / ``context_concat`` even when a preset
+    historically used a ``_static`` / ``_varying`` suffix.
+    """
+    found = discover_run_dirs(
+        runs_root,
+        exp_name,
+        seeds,
+        method_tag=method_tag,
+        require_finished=require_finished,
+    )
+    if not found and method_tag:
+        found = discover_run_dirs(
+            runs_root,
+            exp_name,
+            seeds,
+            method_tag=None,
+            require_finished=require_finished,
+        )
+    return found
+
+
 def build_score_matrix(
     run_dirs: list[Path],
     *,
     score_key: str = "episode_returns",
     use_iqm_per_run: bool = False,
+    scores_filename: str = RLIABLE_SCORES_FILENAME,
 ) -> tuple[np.ndarray, list[str], list[int]]:
     """Build ``(num_runs, num_tasks)`` matrix from saved rliable score files."""
     rows: list[list[float]] = []
     context_order: list[str] | None = None
     seeds: list[int] = []
     for run_dir in run_dirs:
-        data = load_rliable_scores(run_dir)
+        data = load_rliable_scores(run_dir, scores_filename)
         if data is None:
             continue
         if context_order is None:
@@ -252,19 +407,51 @@ def build_score_matrix(
                 row.append(float(np.mean(episodes)) if episodes else float("nan"))
         rows.append(row)
     if context_order is None or not rows:
-        raise ValueError("No rliable_scores.json files found in the given run directories.")
+        raise ValueError(f"No {scores_filename} files found in the given run directories.")
     return np.asarray(rows, dtype=np.float64), context_order, seeds
 
 
-def split_id_ood(context_order: list[str]) -> tuple[list[int], list[int]]:
-    id_idx = [i for i, name in enumerate(context_order) if name == "train"]
-    ood_idx = [i for i, name in enumerate(context_order) if name != "train"]
+def split_id_ood(
+    context_order: list[str],
+    context_meta: dict[str, dict] | None = None,
+) -> tuple[list[int], list[int]]:
+    """Index ID vs OOD columns.
+
+    Prefers explicit ``context_meta[name]["split"]`` written by the eval grid.
+    Falls back to treating ``train`` / ``default`` as ID (legacy runs).
+    """
+    id_idx: list[int] = []
+    ood_idx: list[int] = []
+    for i, name in enumerate(context_order):
+        if context_meta and name in context_meta:
+            split = str(context_meta[name].get("split", "ood"))
+        else:
+            split = "id" if name in ("train", "default") else "ood"
+        if split == "id":
+            id_idx.append(i)
+        else:
+            ood_idx.append(i)
     return id_idx, ood_idx
 
 
-def compute_generalization_gap(matrix: np.ndarray, context_order: list[str]) -> dict[str, float]:
+def load_context_meta(
+    run_dirs: list[Path],
+    scores_filename: str = RLIABLE_SCORES_FILENAME,
+) -> dict[str, dict] | None:
+    for run_dir in run_dirs:
+        data = load_rliable_scores(run_dir, scores_filename)
+        if data and data.get("context_meta"):
+            return data["context_meta"]
+    return None
+
+
+def compute_generalization_gap(
+    matrix: np.ndarray,
+    context_order: list[str],
+    context_meta: dict[str, dict] | None = None,
+) -> dict[str, float]:
     """In-distribution vs OOD gap (mean over runs), per abstract §Evaluation."""
-    id_idx, ood_idx = split_id_ood(context_order)
+    id_idx, ood_idx = split_id_ood(context_order, context_meta)
     if not id_idx or not ood_idx:
         return {
             "id_return_mean": float("nan"),
@@ -484,9 +671,13 @@ def aggregate_sample_efficiency_iqm(
     }
 
 
-def collect_seed_stability(run_dirs: list[Path], context_order: list[str]) -> dict[str, float]:
+def collect_seed_stability(
+    run_dirs: list[Path],
+    context_order: list[str],
+    scores_filename: str = RLIABLE_SCORES_FILENAME,
+) -> dict[str, float]:
     """Convergence variability across seeds (final transfer ID return)."""
-    matrix, _, _ = build_score_matrix(run_dirs)
+    matrix, _, _ = build_score_matrix(run_dirs, scores_filename=scores_filename)
     id_idx, _ = split_id_ood(context_order)
     if not id_idx:
         return {"seed_return_std": float("nan"), "seed_return_iqm": float("nan")}
