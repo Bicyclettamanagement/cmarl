@@ -31,6 +31,7 @@ import json
 import os
 import platform
 import random
+import resource
 import subprocess
 import sys
 import time
@@ -48,8 +49,19 @@ import tyro
 from pettingzoo.butterfly import pistonball_v6
 from torch.utils.tensorboard import SummaryWriter
 
+from evaluation.context_sampling import (
+    EVAL_SEED_OFFSET,
+    SWEEP_SEED_OFFSET,
+    TrainingEnvironment,
+    apply_context_after_reset,
+    apply_context_to_env,
+    eval_points_1d,
+    make_context_rng,
+    make_replay_rng,
+    make_rollout_rng,
+    summarize_context_sweep,
+)
 from evaluation.rliable_utils import save_rliable_scores, summarize_episode_scores
-from evaluation.context_sampling import TrainingEnvironment
 
 
 @dataclass
@@ -82,16 +94,16 @@ class Args:
     """if set, log the first global step whose rolling mean episodic return exceeds this value"""
     rolling_return_window: int = 10
     """window size for the rolling episodic-return mean used in threshold tracking"""
-    log_gradient_norms: bool = True
-    """log actor/critic gradient norms for optimization-stability analysis"""
+    log_gradient_norms: bool = False
+    """if toggled, log actor/critic gradient norms (off by default to keep TensorBoard light)"""
     method_tag: str = "hidden_context"
     """label for rliable aggregation (e.g. hidden_context vs context_concat)"""
     reference_return: float = 100.0
     """reference return for optimality gap (Pistonball success-scale heuristic)"""
 
     # Environment / context arguments. These physics parameters *are* the context in
-    # contextual MARL; the baseline trains on the fixed values below and is evaluated
-    # zero-shot on perturbed values (see `build_transfer_contexts`).
+    # contextual MARL. Training (varying regime) samples inside ``id_factor_*``;
+    # the 1D eval grid includes that window plus true OOD factors below/above it.
     n_pistons: int = 20
     """number of pistons == number of agents (each agent controls one piston)"""
     max_cycles: int = 125
@@ -159,20 +171,28 @@ class Args:
 
     # Evaluation / transferability arguments.
     eval_frequency: int = 25_000
-    """run an in-distribution evaluation every `eval_frequency` steps (0 disables)"""
-    eval_episodes: int = 10
-    """number of episodes per evaluation context"""
-    transfer_eval: bool = True
-    """if toggled, run a zero-shot transfer sweep over perturbed contexts at the end"""
-    transfer_factors: tuple[float, ...] = (0.5, 2.0)
-    """multiplicative perturbations applied to each physics parameter for transfer eval"""
+    """run a cheap in-distribution KPI evaluation every `eval_frequency` steps (0 disables)"""
+    eval_episodes: int = 3
+    """episodes per training-time ID eval (dense OOD sweeps belong in the eval script)"""
+    transfer_eval: bool = False
+    """if toggled, run the full 1D ID/OOD sweep at the end of training (prefer the eval script)"""
+    id_factor_low: float = 0.75
+    """inclusive lower multiplicative bound of the in-distribution physics window"""
+    id_factor_high: float = 1.5
+    """inclusive upper multiplicative bound of the in-distribution physics window"""
+    eval_factor_grid: tuple[float, ...] = (0.5, 0.6, 0.75, 0.875, 1.0, 1.25, 1.5, 1.75, 2.0)
+    """1D eval factors (× default). Values inside [id_factor_low, id_factor_high] are ID."""
+    train_vary_params: tuple[str, ...] = ("ball_mass", "ball_friction", "ball_elasticity")
+    """physics parameters randomized during ``training_regime=varying`` (others stay at default)"""
+    eval_vary_params: tuple[str, ...] = ("ball_mass", "ball_friction", "ball_elasticity")
+    """physics parameters included in the 1D eval sweep (add ``gravity`` for a harder OOD axis)"""
+    gravity: float = 750.0
+    """Pistonball pymunk gravity y-component (env default). Scaled like other physics keys."""
 
     training_regime: TrainingRegime = "static"
-    """``static``: fixed nominal physics; ``varying``: resample physics each episode"""
+    """``static``: fixed nominal physics; ``varying``: resample physics each episode inside the ID window"""
     train_context_sampling: TrainContextSampling = "random"
-    """how to sample physics when ``training_regime=varying`` (``random`` uniform in factor range, ``grid`` uniform over transfer grid)"""
-    train_context_factors: tuple[float, ...] = ()
-    """factor endpoints for random training sampling; default = ``transfer_factors``"""
+    """how to sample physics when ``training_regime=varying`` (``random`` uniform in ID window, ``grid`` quantized ID factors)"""
 
 from typing import Literal
 
@@ -361,6 +381,7 @@ def append_training_episode_record(
     ep_len: int,
     success: bool,
     per_agent_return_variance: float,
+    context: Context | None = None,
 ) -> None:
     """Append team-level training episodes for learning-curve / seed aggregation."""
     record = {
@@ -370,23 +391,18 @@ def append_training_episode_record(
         "success": success,
         "per_agent_return_variance": per_agent_return_variance,
     }
+    if context is not None:
+        record["context"] = context
     with open(run_dir / "training_episodes.jsonl", "a") as f:
         f.write(json.dumps(record) + "\n")
 
 
 def log_eval_metrics(writer: SummaryWriter, prefix: str, stats: dict, global_step: int) -> None:
-    """Log metrics using abstract §Evaluation taxonomy (performance / coordination / …)."""
+    """TensorBoard KPIs only; full stats (including IQM inputs) go to jsonl."""
     mapping = {
-        "return_mean": f"{prefix}/performance/team_return_mean",
-        "return_std": f"{prefix}/performance/team_return_std",
-        "return_median": f"{prefix}/performance/team_return_median",
-        "return_iqm": f"{prefix}/performance/team_return_iqm",
-        "optimality_gap": f"{prefix}/performance/optimality_gap",
-        "length_mean": f"{prefix}/performance/episode_length_mean",
-        "success_rate": f"{prefix}/performance/success_rate",
-        "per_agent_return_variance_mean": f"{prefix}/coordination/per_agent_return_variance",
-        "action_std_mean": f"{prefix}/coordination/action_std_across_agents",
-        "action_saturation_mean": f"{prefix}/stability/action_saturation",
+        "return_mean": f"{prefix}/return_mean",
+        "success_rate": f"{prefix}/success_rate",
+        "length_mean": f"{prefix}/episode_length_mean",
     }
     for key, tag in mapping.items():
         if key in stats:
@@ -417,6 +433,48 @@ def log_timing_metrics(
         remaining = max(total_timesteps - global_step, 0)
         writer.add_scalar("time/eta_hours", (remaining / sps) / 3600.0, global_step)
         writer.add_scalar("time/progress", global_step / total_timesteps, global_step)
+
+
+def log_resource_metrics(writer: SummaryWriter, global_step: int) -> None:
+    """Host RSS + CUDA memory for cluster resource tuning."""
+    rss_kb = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    writer.add_scalar("resource/rss_gb", rss_kb / (1024 * 1024), global_step)
+    if torch.cuda.is_available():
+        writer.add_scalar(
+            "resource/gpu_mem_allocated_gb",
+            torch.cuda.memory_allocated() / 1e9,
+            global_step,
+        )
+        writer.add_scalar(
+            "resource/gpu_mem_reserved_gb",
+            torch.cuda.memory_reserved() / 1e9,
+            global_step,
+        )
+
+
+def configure_cpu_threads(args: Args) -> None:
+    """Use Slurm/OMP CPU count when training on CPU; leave GPU jobs single-threaded."""
+    use_cuda = bool(getattr(args, "cuda", True)) and torch.cuda.is_available()
+    if use_cuda:
+        return
+    raw = os.environ.get("SLURM_CPUS_PER_TASK") or os.environ.get("OMP_NUM_THREADS") or "1"
+    n = max(1, int(raw))
+    torch.set_num_threads(n)
+    os.environ.setdefault("OMP_NUM_THREADS", str(n))
+    os.environ.setdefault("MKL_NUM_THREADS", str(n))
+    print(f"CPU training: torch.set_num_threads({torch.get_num_threads()})")
+
+
+def seed_run(args: Args) -> tuple[np.random.Generator, np.random.Generator]:
+    """Seed Python / NumPy / Torch and return dedicated replay + rollout RNGs."""
+    configure_cpu_threads(args)
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(args.seed)
+    torch.backends.cudnn.deterministic = args.torch_deterministic
+    return make_replay_rng(args.seed), make_rollout_rng(args.seed)
 
 
 def gradient_norm(parameters) -> float:
@@ -492,27 +550,20 @@ def default_context(args: Args) -> Context:
         "ball_mass": args.ball_mass,
         "ball_friction": args.ball_friction,
         "ball_elasticity": args.ball_elasticity,
+        "gravity": float(getattr(args, "gravity", 750.0)),
         "random_drop": args.random_drop,
         "random_rotate": args.random_rotate,
     }
 
 
 def build_transfer_contexts(args: Args) -> dict[str, Context]:
-    """Build the zero-shot transfer sweep.
+    """1D ID/OOD eval grid: default plus one-parameter slices.
 
-    Returns a mapping ``name -> context``, including the ``"train"`` context and one
-    perturbed context per (physics parameter, factor) pair. Only the continuous
-    physics parameters are swept, since these define a well-ordered context space in
-    which generalization can be measured.
+    Factors inside ``[id_factor_low, id_factor_high]`` are in-distribution;
+    factors outside that window are true OOD. Only one physics parameter
+    changes per point so C.2-style curves remain interpretable.
     """
-    base = default_context(args)
-    contexts: dict[str, Context] = {"train": base}
-    for param in ("ball_mass", "ball_friction", "ball_elasticity"):
-        for factor in args.transfer_factors:
-            ctx = dict(base)
-            ctx[param] = base[param] * factor
-            contexts[f"{param}_x{factor:g}"] = ctx
-    return contexts
+    return {p.name: p.context for p in eval_points_1d(args)}
 
 
 def make_env(args: Args, context: Context, render_mode: str | None = None):
@@ -559,9 +610,11 @@ class MultiAgentReplayBuffer:
         obs_shape: tuple[int, int, int],
         act_dim: int,
         device: torch.device,
+        rng: np.random.Generator | None = None,
     ):
         self.capacity = capacity
         self.device = device
+        self.rng = rng if rng is not None else np.random.default_rng()
         self.pos = 0
         self.full = False
 
@@ -594,7 +647,7 @@ class MultiAgentReplayBuffer:
 
     def sample(self, batch_size: int):
         high = len(self)
-        idx = np.random.randint(0, high, size=batch_size)
+        idx = self.rng.integers(0, high, size=batch_size)
         to = lambda a: torch.as_tensor(a, device=self.device)
         obs = to(self.obs[idx]).float() / 255.0
         next_obs = to(self.next_obs[idx]).float() / 255.0
@@ -742,53 +795,64 @@ def evaluate(
     seed: int,
     n_episodes: int,
     render_mode: str | None = None,
+    env=None,
 ):
     """Roll out the deterministic joint policy in ``context`` and summarize returns.
 
-    Returns a dict with mean/std episodic return, mean length and success rate (the
-    fraction of episodes ending because the ball reached the wall). Actions are
-    deterministic (no exploration noise) so this measures the learned policy directly.
+    If ``env`` is provided it is mutated in-place (no recreate) so dense sweeps stay
+    RAM-safe. The caller then owns ``close()``.
     """
-    env = make_env(args, context, render_mode=render_mode)
+    owns_env = env is None
+    if owns_env:
+        env = make_env(args, context, render_mode=render_mode)
+    apply_context_to_env(env, context)
+
     episode_returns: list[float] = []
     episode_lengths: list[int] = []
     episode_successes: list[float] = []
     episode_action_stds: list[float] = []
     episode_per_agent_var: list[float] = []
     episode_saturations: list[float] = []
+    physics_probe: dict[str, float] | None = None
 
-    for ep in range(n_episodes):
-        obs_dict, _ = env.reset(seed=seed + ep)
-        ep_return, ep_len, success = 0.0, 0, 0.0
-        ep_action_stds: list[float] = []
-        ep_per_agent_vars: list[float] = []
-        ep_saturations: list[float] = []
-        while env.agents:
-            obs = torch.as_tensor(stack_obs(obs_dict, agents), device=device).float() / 255.0
-            actions = joint_policy_actions(actors, obs.unsqueeze(0)).squeeze(0).cpu().numpy()
-            ep_action_stds.append(float(np.std(actions)))
-            ep_saturations.append(
-                action_saturation_fraction(
-                    actions,
-                    threshold=args.action_saturation_threshold,
-                    action_bound=float(actors[0].action_scale.item() + abs(actors[0].action_bias.item())),
+    try:
+        for ep in range(n_episodes):
+            obs_dict, _ = env.reset(seed=seed + ep)
+            probe = apply_context_after_reset(env, context)
+            if physics_probe is None:
+                physics_probe = probe
+            ep_return, ep_len, success = 0.0, 0, 0.0
+            ep_action_stds: list[float] = []
+            ep_per_agent_vars: list[float] = []
+            ep_saturations: list[float] = []
+            while env.agents:
+                obs = torch.as_tensor(stack_obs(obs_dict, agents), device=device).float() / 255.0
+                actions = joint_policy_actions(actors, obs.unsqueeze(0)).squeeze(0).cpu().numpy()
+                ep_action_stds.append(float(np.std(actions)))
+                ep_saturations.append(
+                    action_saturation_fraction(
+                        actions,
+                        threshold=args.action_saturation_threshold,
+                        action_bound=float(actors[0].action_scale.item() + abs(actors[0].action_bias.item())),
+                    )
                 )
-            )
-            action_dict = {a: actions[i] for i, a in enumerate(agents)}
-            obs_dict, rewards, terms, truncs, _ = env.step(action_dict)
-            rew_vals = list(rewards.values())
-            ep_return += float(np.mean(rew_vals))
-            ep_per_agent_vars.append(float(np.var(rew_vals)))
-            ep_len += 1
-            if any(terms.values()):
-                success = 1.0
-        episode_returns.append(ep_return)
-        episode_lengths.append(ep_len)
-        episode_successes.append(success)
-        episode_action_stds.append(float(np.mean(ep_action_stds)) if ep_action_stds else 0.0)
-        episode_per_agent_var.append(float(np.mean(ep_per_agent_vars)) if ep_per_agent_vars else 0.0)
-        episode_saturations.append(float(np.mean(ep_saturations)) if ep_saturations else 0.0)
-    env.close()
+                action_dict = {a: actions[i] for i, a in enumerate(agents)}
+                obs_dict, rewards, terms, truncs, _ = env.step(action_dict)
+                rew_vals = list(rewards.values())
+                ep_return += float(np.mean(rew_vals))
+                ep_per_agent_vars.append(float(np.var(rew_vals)))
+                ep_len += 1
+                if any(terms.values()):
+                    success = 1.0
+            episode_returns.append(ep_return)
+            episode_lengths.append(ep_len)
+            episode_successes.append(success)
+            episode_action_stds.append(float(np.mean(ep_action_stds)) if ep_action_stds else 0.0)
+            episode_per_agent_var.append(float(np.mean(ep_per_agent_vars)) if ep_per_agent_vars else 0.0)
+            episode_saturations.append(float(np.mean(ep_saturations)) if ep_saturations else 0.0)
+    finally:
+        if owns_env:
+            env.close()
 
     summary = summarize_episode_scores(episode_returns, reference_return=args.reference_return)
     return {
@@ -801,6 +865,7 @@ def evaluate(
         "episode_returns": episode_returns,
         "episode_lengths": episode_lengths,
         "episode_successes": episode_successes,
+        "physics_probe": physics_probe,
     }
 
 
@@ -872,8 +937,10 @@ def polyak_update(source: nn.Module, target: nn.Module, tau: float) -> None:
 
 
 def train(args: Args) -> str:
+    from evaluation.run_paths import resolve_run_dir
+
     run_name = build_run_name(args)
-    run_dir = Path("runs") / run_name
+    run_dir = resolve_run_dir(args, run_name)
     run_dir.mkdir(parents=True, exist_ok=True)
     manifest = RunManifest(
         run_name=run_name,
@@ -903,10 +970,7 @@ def train(args: Args) -> str:
         "|param|value|\n|-|-|\n%s" % ("\n".join([f"|{k}|{v}|" for k, v in vars(args).items()])),
     )
 
-    random.seed(args.seed)
-    np.random.seed(args.seed)
-    torch.manual_seed(args.seed)
-    torch.backends.cudnn.deterministic = args.torch_deterministic
+    replay_rng, rollout_rng = seed_run(args)
 
     device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
     method_tag = args.method_tag or f"hidden_context_{args.training_regime}"
@@ -920,10 +984,14 @@ def train(args: Args) -> str:
     q_optimizer, actor_optimizer = nets["q_optimizer"], nets["actor_optimizer"]
     action_low, action_high = nets["action_low"], nets["action_high"]
     action_scale = actors[0].action_scale
-    action_bound = max(abs(action_low), abs(action_high))
 
     rb = MultiAgentReplayBuffer(
-        args.buffer_size, nets["n_agents"], nets["obs_shape"], nets["act_dim"], device
+        args.buffer_size,
+        nets["n_agents"],
+        nets["obs_shape"],
+        nets["act_dim"],
+        device,
+        rng=replay_rng,
     )
     buf_gb = rb.memory_gb()
     print(f"replay buffer allocation: {buf_gb:.2f} GB ({args.buffer_size} transitions)")
@@ -947,11 +1015,13 @@ def train(args: Args) -> str:
     print(
         f"training_regime={args.training_regime} "
         f"sampling={args.train_context_sampling if args.training_regime == 'varying' else 'n/a'} "
+        f"id_window=[{args.id_factor_low:g}, {args.id_factor_high:g}] "
+        f"vary={list(args.train_vary_params)} "
         f"method_tag={method_tag}"
     )
     if args.training_regime == "varying":
-        print("varying physics: in-place mutation on a single env (no per-episode recreate)")
-    training_env = TrainingEnvironment(args, rng=random.Random(args.seed))
+        print("varying physics: in-place mutation on a single env (ID window only; no per-episode recreate)")
+    training_env = TrainingEnvironment(args, rng=make_context_rng(args.seed))
     obs_dict, episode_context = training_env.reset(seed=args.seed)
     obs = stack_obs(obs_dict, agents)
     ep_return, ep_len = 0.0, 0
@@ -965,7 +1035,7 @@ def train(args: Args) -> str:
     for global_step in range(args.total_timesteps):
         # --- action selection ---------------------------------------------------
         if global_step < args.learning_starts:
-            actions = np.random.uniform(
+            actions = rollout_rng.uniform(
                 action_low, action_high, size=(nets["n_agents"], nets["act_dim"])
             ).astype(np.float32)
             explore_std = args.exploration_noise
@@ -1000,17 +1070,14 @@ def train(args: Args) -> str:
             writer.add_scalar("performance/team_episodic_return", ep_return, global_step)
             writer.add_scalar("performance/episodic_length", ep_len, global_step)
             writer.add_scalar("performance/success", float(terminated), global_step)
-            writer.add_scalar("coordination/per_agent_return_variance", ep_var_mean, global_step)
-            if args.training_regime == "varying":
-                writer.add_scalar("context/ball_mass", float(episode_context["ball_mass"]), global_step)
-                writer.add_scalar(
-                    "context/ball_friction", float(episode_context["ball_friction"]), global_step
-                )
-                writer.add_scalar(
-                    "context/ball_elasticity", float(episode_context["ball_elasticity"]), global_step
-                )
             append_training_episode_record(
-                run_dir, global_step, ep_return, ep_len, bool(terminated), ep_var_mean
+                run_dir,
+                global_step,
+                ep_return,
+                ep_len,
+                bool(terminated),
+                ep_var_mean,
+                context=episode_context,
             )
             recent_returns.append(ep_return)
             if len(recent_returns) == recent_returns.maxlen:
@@ -1081,21 +1148,10 @@ def train(args: Args) -> str:
 
             if global_step % 100 == 0:
                 log_timing_metrics(writer, global_step, start_time, args.total_timesteps)
-                writer.add_scalar("losses/qf1_values", qf1_a.mean().item(), global_step)
-                writer.add_scalar("losses/qf2_values", qf2_a.mean().item(), global_step)
+                log_resource_metrics(writer, global_step)
                 writer.add_scalar("losses/qf_loss", qf_loss.item() / 2.0, global_step)
                 writer.add_scalar("losses/actor_loss", actor_loss.item(), global_step)
                 writer.add_scalar("exploration/noise_std", explore_std, global_step)
-                sat_actions = actor_actions if actor_actions is not None else joint_policy_actions(actors, b_obs)
-                writer.add_scalar(
-                    "stability/action_saturation",
-                    action_saturation_fraction(
-                        sat_actions,
-                        threshold=args.action_saturation_threshold,
-                        action_bound=action_bound,
-                    ),
-                    global_step,
-                )
                 if args.log_gradient_norms:
                     writer.add_scalar("stability/q_grad_norm", q_grad_norm, global_step)
                     writer.add_scalar("stability/actor_grad_norm", actor_grad_norm, global_step)
@@ -1111,40 +1167,24 @@ def train(args: Args) -> str:
             eval_start = time.time()
             stats = evaluate(
                 actors, args, reference_context, agents, device,
-                seed=args.seed + 10_000, n_episodes=args.eval_episodes,
+                seed=args.seed + EVAL_SEED_OFFSET, n_episodes=args.eval_episodes,
             )
             eval_wallclock = time.time() - eval_start
             total_wallclock = time.time() - start_time
             stats["eval_wallclock_seconds"] = eval_wallclock
             stats["total_wallclock_seconds"] = total_wallclock
-            log_eval_metrics(writer, "eval_id", stats, global_step)
+            stats["split"] = "id"
+            stats["varied_param"] = None
+            stats["factor"] = 1.0
+            log_eval_metrics(writer, "eval", stats, global_step)
             writer.add_scalar("time/eval_wallclock_seconds", eval_wallclock, global_step)
-            writer.add_scalar("time/total_wallclock_seconds", total_wallclock, global_step)
             if prev_eval_returns is not None and stats["episode_returns"] == prev_eval_returns:
-                writer.add_scalar("stability/eval_returns_unchanged", 1.0, global_step)
                 print(
                     f"[warn @ {global_step}] eval episode returns identical to previous eval "
                     "(deterministic policy likely frozen / saturated)"
                 )
-            else:
-                writer.add_scalar("stability/eval_returns_unchanged", 0.0, global_step)
             prev_eval_returns = list(stats["episode_returns"])
             append_eval_record(run_dir, global_step, stats, total_wallclock)
-            save_rliable_scores(
-                run_dir,
-                algorithm=args.exp_name,
-                method_tag=method_tag,
-                seed=args.seed,
-                global_step=global_step,
-                context_order=["train"],
-                scores_by_context={"train": stats["episode_returns"]},
-                eval_split="in_distribution_eval",
-                reference_return=args.reference_return,
-                extra={
-                    "checkpoint_metric": args.checkpoint_metric,
-                    "experiment": args.experiment,
-                },
-            )
             print(
                 f"[eval @ {global_step}] return={stats['return_mean']:.2f} "
                 f"success={stats['success_rate']:.2f} "
@@ -1191,9 +1231,10 @@ def train(args: Args) -> str:
             results["checkpoint_step"] = restored_best_step
         with open(run_dir / "transfer_results.json", "w") as f:
             json.dump(results, f, indent=2)
-        log_transfer_results(writer, results, args.total_timesteps)
-        print("transfer sweep:", json.dumps(results["contexts"], indent=2))
-        print(f"generalization gap: {results['generalization_gap']:.3f}")
+        print(
+            f"ID/OOD sweep gap (mean): {results['generalization_gap']:.3f} "
+            f"(ID={results['id_return_mean']:.2f}, OOD={results['ood_return_mean']:.2f})"
+        )
 
     if args.save_model:
         model_path = run_dir / f"{args.exp_name}_final.pt"
@@ -1218,41 +1259,43 @@ def transfer_sweep(
     run_dir: Path | None = None,
     method_tag: str | None = None,
 ):
-    """Evaluate the frozen policy across the transfer contexts and summarize.
+    """Evaluate the frozen policy on the 1D ID/OOD grid (one env, in-place physics).
 
-    Reports generalization gap (ID vs OOD) using team return means and IQMs, and
-    writes ``rliable_scores.json`` for multi-seed robust aggregation.
+    Prefer ``scripts/evaluate_checkpoint.py`` after training; this path is the
+    optional ``--transfer-eval`` hook and is used by unit tests.
     """
-    contexts = build_transfer_contexts(args)
-    context_order = list(contexts.keys())
+    points = eval_points_1d(args)
+    context_order = [p.name for p in points]
     per_context: dict[str, dict] = {}
     scores_by_context: dict[str, list[float]] = {}
-    for name, ctx in contexts.items():
-        stats = evaluate(
-            actors, args, ctx, agents, device,
-            seed=args.seed + 20_000, n_episodes=args.eval_episodes,
-        )
-        stats["context"] = ctx
-        per_context[name] = stats
-        scores_by_context[name] = stats["episode_returns"]
-
-    train_stats = per_context["train"]
-    ood_names = [k for k in per_context if k != "train"]
-    ood_means = [per_context[k]["return_mean"] for k in ood_names]
-    ood_iqms = [per_context[k]["return_iqm"] for k in ood_names]
+    env = make_env(args, points[0].context)
+    try:
+        for point in points:
+            stats = evaluate(
+                actors,
+                args,
+                point.context,
+                agents,
+                device,
+                seed=args.seed + SWEEP_SEED_OFFSET,
+                n_episodes=args.eval_episodes,
+                env=env,
+            )
+            stats = dict(stats)
+            stats["context"] = point.context
+            stats.update(point.meta())
+            per_context[point.name] = stats
+            scores_by_context[point.name] = stats["episode_returns"]
+    finally:
+        env.close()
 
     results = {
         "contexts": per_context,
-        "train_return_mean": train_stats["return_mean"],
-        "train_return_iqm": train_stats["return_iqm"],
-        "ood_return_mean": float(np.mean(ood_means)) if ood_means else train_stats["return_mean"],
-        "ood_return_iqm": float(np.mean(ood_iqms)) if ood_iqms else train_stats["return_iqm"],
-        "generalization_gap_mean": train_stats["return_mean"] - (float(np.mean(ood_means)) if ood_means else train_stats["return_mean"]),
-        "generalization_gap_iqm": train_stats["return_iqm"] - (float(np.mean(ood_iqms)) if ood_iqms else train_stats["return_iqm"]),
-        # Backwards-compatible aliases
-        "train_return": train_stats["return_mean"],
-        "ood_return_mean_legacy": float(np.mean(ood_means)) if ood_means else train_stats["return_mean"],
-        "generalization_gap": train_stats["return_mean"] - (float(np.mean(ood_means)) if ood_means else train_stats["return_mean"]),
+        "context_order": context_order,
+        "context_meta": {p.name: p.meta() for p in points},
+        "id_factor_low": args.id_factor_low,
+        "id_factor_high": args.id_factor_high,
+        **summarize_context_sweep(per_context, points),
     }
 
     if run_dir is not None:
@@ -1265,25 +1308,17 @@ def transfer_sweep(
             global_step=args.total_timesteps,
             context_order=context_order,
             scores_by_context=scores_by_context,
-            eval_split="zero_shot_transfer",
+            eval_split="id_ood_1d_slice",
             reference_return=args.reference_return,
             extra={
+                "context_meta": results["context_meta"],
+                "id_factor_low": args.id_factor_low,
+                "id_factor_high": args.id_factor_high,
                 "generalization_gap_mean": results["generalization_gap_mean"],
                 "generalization_gap_iqm": results["generalization_gap_iqm"],
             },
         )
     return results
-
-
-def log_transfer_results(writer: SummaryWriter, results: dict, global_step: int) -> None:
-    for name, stats in results["contexts"].items():
-        log_eval_metrics(writer, f"transfer/{name}", stats, global_step)
-    writer.add_scalar("generalization/id_return_mean", results["train_return_mean"], global_step)
-    writer.add_scalar("generalization/ood_return_mean", results["ood_return_mean"], global_step)
-    writer.add_scalar("generalization/gap_mean", results["generalization_gap_mean"], global_step)
-    writer.add_scalar("generalization/id_return_iqm", results["train_return_iqm"], global_step)
-    writer.add_scalar("generalization/ood_return_iqm", results["ood_return_iqm"], global_step)
-    writer.add_scalar("generalization/gap_iqm", results["generalization_gap_iqm"], global_step)
 
 
 if __name__ == "__main__":
