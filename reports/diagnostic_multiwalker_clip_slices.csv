@@ -1,0 +1,10 @@
+method,param,ID,OOD,drop,flat,corr
+"Multiwalker hidden (varying, fwd×5)",gravity,24.683,-36.553,61.236,False,-0.964
+"Multiwalker hidden (varying, fwd×5)",package_mass,30.200,23.369,6.831,False,-0.771
+"Multiwalker hidden (varying, fwd×5)",terrain_friction,39.440,28.372,11.068,False,-0.918
+"Multiwalker concat (varying, fwd×5)",gravity,43.748,-43.568,87.315,False,-0.896
+"Multiwalker concat (varying, fwd×5)",package_mass,64.895,-4.240,69.135,False,-0.849
+"Multiwalker concat (varying, fwd×5)",terrain_friction,63.576,-1.347,64.923,False,-0.751
+"Multiwalker concat, context clipped to ID",gravity,38.412,-15.579,53.991,False,-0.745
+"Multiwalker concat, context clipped to ID",package_mass,69.293,54.830,14.463,False,-0.832
+"Multiwalker concat, context clipped to ID",terrain_friction,62.404,53.740,8.664,False,-0.383

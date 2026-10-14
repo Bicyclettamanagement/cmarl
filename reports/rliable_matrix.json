@@ -1,0 +1,5539 @@
+{
+  "experiments": [
+    {
+      "exp_name": "baseline5_static_randdrop",
+      "method_tag": "hidden_context",
+      "label": "Hidden context (static)",
+      "algorithm": "matd3_pistonball",
+      "preset": "baseline5_static",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_seeds": 5,
+      "run_dirs": [
+        "runs/baseline5_static_randdrop__static__shared__randdrop__n5__seed1__1788874125",
+        "runs/baseline5_static_randdrop__static__shared__randdrop__n5__seed2__1788990885",
+        "runs/baseline5_static_randdrop__static__shared__randdrop__n5__seed3__1788990885",
+        "runs/baseline5_static_randdrop__static__shared__randdrop__n5__seed4__1788993938",
+        "runs/baseline5_static_randdrop__static__shared__randdrop__n5__seed5__1788950107"
+      ],
+      "context_order": [
+        "default",
+        "ball_mass_x0.5",
+        "ball_mass_x0.6",
+        "ball_mass_x0.75",
+        "ball_mass_x0.875",
+        "ball_mass_x1.25",
+        "ball_mass_x1.5",
+        "ball_mass_x1.75",
+        "ball_mass_x2",
+        "ball_friction_x0.5",
+        "ball_friction_x0.6",
+        "ball_friction_x0.75",
+        "ball_friction_x0.875",
+        "ball_friction_x1.25",
+        "ball_friction_x1.5",
+        "ball_friction_x1.75",
+        "ball_friction_x2",
+        "ball_elasticity_x0.5",
+        "ball_elasticity_x0.6",
+        "ball_elasticity_x0.75",
+        "ball_elasticity_x0.875",
+        "ball_elasticity_x1.25",
+        "ball_elasticity_x1.5",
+        "ball_elasticity_x1.75",
+        "ball_elasticity_x2"
+      ],
+      "context_meta": {
+        "default": {
+          "split": "id",
+          "varied_param": null,
+          "factor": 1.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x0.75": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x0.875": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.25": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.5": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x2": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.75": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x0.875": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.25": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.5": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x2": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.75": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x0.875": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.25": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.5": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x2": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        }
+      },
+      "generalization": {
+        "id_return_mean": 64.47883101116503,
+        "ood_return_mean": 63.515967481325006,
+        "generalization_gap": 0.9628635298400212,
+        "id_return_iqm": 67.69824952868613,
+        "ood_return_iqm": 66.2259504849669,
+        "generalization_gap_iqm": 1.4722990437192323
+      },
+      "per_context": {
+        "default": {
+          "return_mean": 70.23014006836817,
+          "return_std": 22.811986465450257,
+          "return_median": 77.63713406358166,
+          "n_seeds": 5.0,
+          "return_iqm": 72.240525989336
+        },
+        "ball_mass_x0.5": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_mass_x0.6": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_mass_x0.75": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_mass_x0.875": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_mass_x1.25": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_mass_x1.5": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_mass_x1.75": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_mass_x2": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_friction_x0.5": {
+          "return_mean": 55.258859446804806,
+          "return_std": 29.68061921611793,
+          "return_median": 50.148509822989936,
+          "n_seeds": 5.0,
+          "return_iqm": 51.70384705860811
+        },
+        "ball_friction_x0.6": {
+          "return_mean": 68.60416842190928,
+          "return_std": 28.6572838921198,
+          "return_median": 76.14830003916958,
+          "n_seeds": 5.0,
+          "return_iqm": 72.67646827270094
+        },
+        "ball_friction_x0.75": {
+          "return_mean": 62.17557798186347,
+          "return_std": 30.35849964996143,
+          "return_median": 75.52541128084604,
+          "n_seeds": 5.0,
+          "return_iqm": 62.76575179820912
+        },
+        "ball_friction_x0.875": {
+          "return_mean": 68.42058386045589,
+          "return_std": 22.858821159659477,
+          "return_median": 84.04556248764082,
+          "n_seeds": 5.0,
+          "return_iqm": 71.35539874296985
+        },
+        "ball_friction_x1.25": {
+          "return_mean": 60.97039697323072,
+          "return_std": 29.14656040438616,
+          "return_median": 74.34785005037433,
+          "n_seeds": 5.0,
+          "return_iqm": 64.14632992720314
+        },
+        "ball_friction_x1.5": {
+          "return_mean": 61.048348699623524,
+          "return_std": 29.44475361825829,
+          "return_median": 75.26315078236128,
+          "n_seeds": 5.0,
+          "return_iqm": 65.78059766625746
+        },
+        "ball_friction_x1.75": {
+          "return_mean": 60.643550771202186,
+          "return_std": 29.60956336583507,
+          "return_median": 74.10036751573853,
+          "n_seeds": 5.0,
+          "return_iqm": 65.32173065244166
+        },
+        "ball_friction_x2": {
+          "return_mean": 62.30527557438005,
+          "return_std": 30.14351449648599,
+          "return_median": 74.63324221547597,
+          "n_seeds": 5.0,
+          "return_iqm": 67.59291222908593
+        },
+        "ball_elasticity_x0.5": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_elasticity_x0.6": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_elasticity_x0.75": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_elasticity_x0.875": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_elasticity_x1.25": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_elasticity_x1.5": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_elasticity_x1.75": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        },
+        "ball_elasticity_x2": {
+          "return_mean": 64.42246944520046,
+          "return_std": 26.331733876589393,
+          "return_median": 71.46815934012743,
+          "n_seeds": 5.0,
+          "return_iqm": 66.29174002865464
+        }
+      },
+      "seed_stability": {
+        "seed_return_std": 22.811986465450257,
+        "seed_return_mean": 70.23014006836817,
+        "seed_return_iqm": 72.240525989336
+      },
+      "sample_efficiency": {
+        "median_steps_to_threshold": {
+          "median_steps_to_threshold": null,
+          "n_seeds_reached": 0
+        },
+        "eval_iqm_curve": {
+          "seeds": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "global_steps": [
+            25000,
+            50000,
+            75000,
+            100000,
+            125000,
+            150000,
+            175000
+          ],
+          "iqm": [
+            97.97783251231526,
+            89.21889328559767,
+            70.53224894691728,
+            75.82977382276611,
+            53.40910064680935,
+            78.43884774020442,
+            75.96859885469458
+          ],
+          "ci_low": [
+            33.68288276846781,
+            61.99885057471266,
+            42.61492108289636,
+            19.287353152759195,
+            17.80587167127769,
+            33.142073546656185,
+            24.16388009469222
+          ],
+          "ci_high": [
+            98.85568326947636,
+            98.30038314176244,
+            98.40038314176245,
+            98.75581098339717,
+            98.94457215836526,
+            98.75581098339718,
+            99.07228607918263
+          ]
+        }
+      },
+      "rliable": {
+        "algorithms": {
+          "Hidden context (static)": {
+            "score_matrix_shape": [
+              5,
+              25
+            ],
+            "metrics": {
+              "median": {
+                "point": 64.42246944520046,
+                "ci_low": 57.92982914876152,
+                "ci_high": 69.994176488585
+              },
+              "iqm": {
+                "point": 66.99715474596267,
+                "ci_low": 58.596234583745435,
+                "ci_high": 75.51891132844739
+              },
+              "mean": {
+                "point": 64.01665651684182,
+                "ci_low": 59.42218578304812,
+                "ci_high": 68.84746335748561
+              },
+              "optimality_gap": {
+                "point": 35.98334348315818,
+                "ci_low": 31.1525366425144,
+                "ci_high": 40.57781421695187
+              }
+            }
+          }
+        },
+        "bootstrap_reps": 5000,
+        "performance_profiles": {
+          "Hidden context (static)": {
+            "thresholds": [
+              -50.0,
+              -45.0,
+              -40.0,
+              -35.0,
+              -30.0,
+              -25.0,
+              -20.0,
+              -15.0,
+              -10.0,
+              -5.0,
+              0.0,
+              5.0,
+              10.0,
+              15.0,
+              20.0,
+              25.0,
+              30.0,
+              35.0,
+              40.0,
+              45.0,
+              50.0,
+              55.0,
+              60.0,
+              65.0,
+              70.0,
+              75.0,
+              80.0,
+              85.0,
+              90.0,
+              95.0,
+              100.0
+            ],
+            "profile": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.976,
+              0.944,
+              0.928,
+              0.792,
+              0.632,
+              0.608,
+              0.6,
+              0.592,
+              0.592,
+              0.592,
+              0.592,
+              0.44,
+              0.408,
+              0.384,
+              0.352,
+              0.032,
+              0.0
+            ],
+            "ci_low": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.952,
+              0.904,
+              0.888,
+              0.72,
+              0.552,
+              0.528,
+              0.52,
+              0.512,
+              0.512,
+              0.512,
+              0.512,
+              0.352,
+              0.32,
+              0.304,
+              0.272,
+              0.008,
+              0.0
+            ],
+            "ci_high": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.976,
+              0.968,
+              0.856,
+              0.72,
+              0.696,
+              0.688,
+              0.688,
+              0.688,
+              0.688,
+              0.688,
+              0.528,
+              0.488,
+              0.472,
+              0.432,
+              0.064,
+              0.0
+            ]
+          }
+        }
+      },
+      "rliable_by_split": {
+        "all_contexts": {
+          "algorithms": {
+            "Hidden context (static)": {
+              "score_matrix_shape": [
+                5,
+                25
+              ],
+              "metrics": {
+                "median": {
+                  "point": 64.42246944520046,
+                  "ci_low": 57.92982914876152,
+                  "ci_high": 69.994176488585
+                },
+                "iqm": {
+                  "point": 66.99715474596267,
+                  "ci_low": 58.596234583745435,
+                  "ci_high": 75.51891132844739
+                },
+                "mean": {
+                  "point": 64.01665651684182,
+                  "ci_low": 59.42218578304812,
+                  "ci_high": 68.84746335748561
+                },
+                "optimality_gap": {
+                  "point": 35.98334348315818,
+                  "ci_low": 31.1525366425144,
+                  "ci_high": 40.57781421695187
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000,
+          "performance_profiles": {
+            "Hidden context (static)": {
+              "thresholds": [
+                -50.0,
+                -45.0,
+                -40.0,
+                -35.0,
+                -30.0,
+                -25.0,
+                -20.0,
+                -15.0,
+                -10.0,
+                -5.0,
+                0.0,
+                5.0,
+                10.0,
+                15.0,
+                20.0,
+                25.0,
+                30.0,
+                35.0,
+                40.0,
+                45.0,
+                50.0,
+                55.0,
+                60.0,
+                65.0,
+                70.0,
+                75.0,
+                80.0,
+                85.0,
+                90.0,
+                95.0,
+                100.0
+              ],
+              "profile": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.976,
+                0.944,
+                0.928,
+                0.792,
+                0.632,
+                0.608,
+                0.6,
+                0.592,
+                0.592,
+                0.592,
+                0.592,
+                0.44,
+                0.408,
+                0.384,
+                0.352,
+                0.032,
+                0.0
+              ],
+              "ci_low": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.952,
+                0.904,
+                0.888,
+                0.72,
+                0.552,
+                0.528,
+                0.52,
+                0.512,
+                0.512,
+                0.512,
+                0.512,
+                0.352,
+                0.32,
+                0.304,
+                0.272,
+                0.008,
+                0.0
+              ],
+              "ci_high": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.976,
+                0.968,
+                0.856,
+                0.72,
+                0.696,
+                0.688,
+                0.688,
+                0.688,
+                0.688,
+                0.688,
+                0.528,
+                0.488,
+                0.472,
+                0.432,
+                0.064,
+                0.0
+              ]
+            }
+          }
+        },
+        "in_distribution": {
+          "algorithms": {
+            "Hidden context (static)": {
+              "score_matrix_shape": [
+                5,
+                13
+              ],
+              "metrics": {
+                "median": {
+                  "point": 64.42246944520046,
+                  "ci_low": 56.593718969508174,
+                  "ci_high": 72.92620592361786
+                },
+                "iqm": {
+                  "point": 67.69824952868613,
+                  "ci_low": 55.92191277179099,
+                  "ci_high": 79.07655398299018
+                },
+                "mean": {
+                  "point": 64.47883101116504,
+                  "ci_low": 58.03292539108995,
+                  "ci_high": 70.85467787912671
+                },
+                "optimality_gap": {
+                  "point": 35.52116898883497,
+                  "ci_low": 29.145322120873303,
+                  "ci_high": 41.967074608910046
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        },
+        "out_of_distribution": {
+          "algorithms": {
+            "Hidden context (static)": {
+              "score_matrix_shape": [
+                5,
+                12
+              ],
+              "metrics": {
+                "median": {
+                  "point": 64.42246944520046,
+                  "ci_low": 55.06625624626351,
+                  "ci_high": 72.16495702855794
+                },
+                "iqm": {
+                  "point": 66.2259504849669,
+                  "ci_low": 53.283269553297814,
+                  "ci_high": 78.22742190597936
+                },
+                "mean": {
+                  "point": 63.515967481325,
+                  "ci_low": 56.4401191767807,
+                  "ci_high": 70.29648097987925
+                },
+                "optimality_gap": {
+                  "point": 36.484032518674994,
+                  "ci_low": 29.703519020120755,
+                  "ci_high": 43.55988082321931
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        }
+      },
+      "id_factor_low": 0.75,
+      "id_factor_high": 1.5,
+      "eval_factor_grid": [
+        0.5,
+        0.6,
+        0.75,
+        0.875,
+        1.0,
+        1.25,
+        1.5,
+        1.75,
+        2.0
+      ]
+    },
+    {
+      "exp_name": "baseline5_varying_randdrop",
+      "method_tag": "hidden_context",
+      "label": "Hidden context (varying)",
+      "algorithm": "matd3_pistonball",
+      "preset": "baseline5_varying",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_seeds": 5,
+      "run_dirs": [
+        "runs/baseline5_varying_randdrop__varying__shared__randdrop__n5__seed1__1788876249",
+        "runs/baseline5_varying_randdrop__varying__shared__randdrop__n5__seed2__1788950107",
+        "runs/baseline5_varying_randdrop__varying__shared__randdrop__n5__seed3__1788950290",
+        "runs/baseline5_varying_randdrop__varying__shared__randdrop__n5__seed4__1788953533",
+        "runs/baseline5_varying_randdrop__varying__shared__randdrop__n5__seed5__1788953806"
+      ],
+      "context_order": [
+        "default",
+        "ball_mass_x0.5",
+        "ball_mass_x0.6",
+        "ball_mass_x0.75",
+        "ball_mass_x0.875",
+        "ball_mass_x1.25",
+        "ball_mass_x1.5",
+        "ball_mass_x1.75",
+        "ball_mass_x2",
+        "ball_friction_x0.5",
+        "ball_friction_x0.6",
+        "ball_friction_x0.75",
+        "ball_friction_x0.875",
+        "ball_friction_x1.25",
+        "ball_friction_x1.5",
+        "ball_friction_x1.75",
+        "ball_friction_x2",
+        "ball_elasticity_x0.5",
+        "ball_elasticity_x0.6",
+        "ball_elasticity_x0.75",
+        "ball_elasticity_x0.875",
+        "ball_elasticity_x1.25",
+        "ball_elasticity_x1.5",
+        "ball_elasticity_x1.75",
+        "ball_elasticity_x2"
+      ],
+      "context_meta": {
+        "default": {
+          "split": "id",
+          "varied_param": null,
+          "factor": 1.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x0.75": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x0.875": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.25": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.5": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x2": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.75": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x0.875": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.25": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.5": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x2": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.75": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x0.875": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.25": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.5": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x2": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        }
+      },
+      "generalization": {
+        "id_return_mean": 80.09907820483748,
+        "ood_return_mean": 79.84066342340672,
+        "generalization_gap": 0.25841478143075847,
+        "id_return_iqm": 88.4172665566012,
+        "ood_return_iqm": 87.80207216530717,
+        "generalization_gap_iqm": 0.6151943912940396
+      },
+      "per_context": {
+        "default": {
+          "return_mean": 84.369061807517,
+          "return_std": 15.366499754517683,
+          "return_median": 89.41328296622412,
+          "n_seeds": 5.0,
+          "return_iqm": 90.80523372463516
+        },
+        "ball_mass_x0.5": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_mass_x0.6": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_mass_x0.75": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_mass_x0.875": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_mass_x1.25": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_mass_x1.5": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_mass_x1.75": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_mass_x2": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_friction_x0.5": {
+          "return_mean": 76.8910372176387,
+          "return_std": 21.952171117281527,
+          "return_median": 85.81417417417416,
+          "n_seeds": 5.0,
+          "return_iqm": 86.10428125199478
+        },
+        "ball_friction_x0.6": {
+          "return_mean": 76.85973449133505,
+          "return_std": 21.672874138127597,
+          "return_median": 85.80046964467252,
+          "n_seeds": 5.0,
+          "return_iqm": 86.35793481368042
+        },
+        "ball_friction_x0.75": {
+          "return_mean": 78.01470477870814,
+          "return_std": 22.661873805450718,
+          "return_median": 86.01333596754647,
+          "n_seeds": 5.0,
+          "return_iqm": 86.06083465253052
+        },
+        "ball_friction_x0.875": {
+          "return_mean": 78.24306478656042,
+          "return_std": 22.099794251203036,
+          "return_median": 87.67205115830112,
+          "n_seeds": 5.0,
+          "return_iqm": 88.22712593659877
+        },
+        "ball_friction_x1.25": {
+          "return_mean": 79.78305515833031,
+          "return_std": 22.897423672554485,
+          "return_median": 91.6494265273677,
+          "n_seeds": 5.0,
+          "return_iqm": 90.1404295776075
+        },
+        "ball_friction_x1.5": {
+          "return_mean": 80.30729716966026,
+          "return_std": 17.194604497137107,
+          "return_median": 86.34136213932264,
+          "n_seeds": 5.0,
+          "return_iqm": 87.91550535251429
+        },
+        "ball_friction_x1.75": {
+          "return_mean": 81.72828615845572,
+          "return_std": 14.364897908431253,
+          "return_median": 85.44271440876089,
+          "n_seeds": 5.0,
+          "return_iqm": 87.53903920002563
+        },
+        "ball_friction_x2": {
+          "return_mean": 82.03807025133993,
+          "return_std": 14.106735339865368,
+          "return_median": 86.0184557925734,
+          "n_seeds": 5.0,
+          "return_iqm": 87.82041439140552
+        },
+        "ball_elasticity_x0.5": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_elasticity_x0.6": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_elasticity_x0.75": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_elasticity_x0.875": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_elasticity_x1.25": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_elasticity_x1.5": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_elasticity_x1.75": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        },
+        "ball_elasticity_x2": {
+          "return_mean": 80.07135412026389,
+          "return_std": 19.69307027423233,
+          "return_median": 86.44726785609136,
+          "n_seeds": 5.0,
+          "return_iqm": 88.31013717535905
+        }
+      },
+      "seed_stability": {
+        "seed_return_std": 15.366499754517683,
+        "seed_return_mean": 84.369061807517,
+        "seed_return_iqm": 90.80523372463516
+      },
+      "sample_efficiency": {
+        "median_steps_to_threshold": {
+          "median_steps_to_threshold": null,
+          "n_seeds_reached": 0
+        },
+        "eval_iqm_curve": {
+          "seeds": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "global_steps": [
+            25000,
+            50000,
+            75000,
+            100000,
+            125000,
+            150000,
+            175000
+          ],
+          "iqm": [
+            49.450016030571796,
+            49.74861875132135,
+            82.4779348030903,
+            98.1670498084291,
+            92.83026819923369,
+            97.35389527458493,
+            98.52222222222224
+          ],
+          "ci_low": [
+            19.938630274526204,
+            17.384386582240328,
+            37.94782727620873,
+            66.10618889098255,
+            38.41595377174813,
+            66.1539538973684,
+            97.01584699453555
+          ],
+          "ci_high": [
+            73.68092456503985,
+            91.79120009887527,
+            98.71070972450282,
+            99.3,
+            99.30000000000001,
+            98.95568326947635,
+            99.25555555555555
+          ]
+        }
+      },
+      "rliable": {
+        "algorithms": {
+          "Hidden context (varying)": {
+            "score_matrix_shape": [
+              5,
+              25
+            ],
+            "metrics": {
+              "median": {
+                "point": 80.07135412026389,
+                "ci_low": 78.0321047065873,
+                "ci_high": 86.39512865187166
+              },
+              "iqm": {
+                "point": 88.13020026345575,
+                "ci_low": 85.76181725298729,
+                "ci_high": 89.14939427575571
+              },
+              "mean": {
+                "point": 79.97503910975071,
+                "ci_low": 76.41344793223188,
+                "ci_high": 83.32233214944898
+              },
+              "optimality_gap": {
+                "point": 20.024960890249332,
+                "ci_low": 16.677667850551018,
+                "ci_high": 23.586552067768103
+              }
+            }
+          }
+        },
+        "bootstrap_reps": 5000,
+        "performance_profiles": {
+          "Hidden context (varying)": {
+            "thresholds": [
+              -50.0,
+              -45.0,
+              -40.0,
+              -35.0,
+              -30.0,
+              -25.0,
+              -20.0,
+              -15.0,
+              -10.0,
+              -5.0,
+              0.0,
+              5.0,
+              10.0,
+              15.0,
+              20.0,
+              25.0,
+              30.0,
+              35.0,
+              40.0,
+              45.0,
+              50.0,
+              55.0,
+              60.0,
+              65.0,
+              70.0,
+              75.0,
+              80.0,
+              85.0,
+              90.0,
+              95.0,
+              100.0
+            ],
+            "profile": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.96,
+              0.96,
+              0.832,
+              0.824,
+              0.8,
+              0.8,
+              0.8,
+              0.8,
+              0.8,
+              0.8,
+              0.784,
+              0.4,
+              0.016,
+              0.0
+            ],
+            "ci_low": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.928,
+              0.928,
+              0.768,
+              0.76,
+              0.728,
+              0.728,
+              0.728,
+              0.728,
+              0.728,
+              0.728,
+              0.712,
+              0.312,
+              0.0,
+              0.0
+            ],
+            "ci_high": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.992,
+              0.992,
+              0.896,
+              0.888,
+              0.864,
+              0.864,
+              0.864,
+              0.864,
+              0.864,
+              0.864,
+              0.856,
+              0.488,
+              0.04,
+              0.0
+            ]
+          }
+        }
+      },
+      "rliable_by_split": {
+        "all_contexts": {
+          "algorithms": {
+            "Hidden context (varying)": {
+              "score_matrix_shape": [
+                5,
+                25
+              ],
+              "metrics": {
+                "median": {
+                  "point": 80.07135412026389,
+                  "ci_low": 78.0321047065873,
+                  "ci_high": 86.39512865187166
+                },
+                "iqm": {
+                  "point": 88.13020026345575,
+                  "ci_low": 85.76181725298729,
+                  "ci_high": 89.14939427575571
+                },
+                "mean": {
+                  "point": 79.97503910975071,
+                  "ci_low": 76.41344793223188,
+                  "ci_high": 83.32233214944898
+                },
+                "optimality_gap": {
+                  "point": 20.024960890249332,
+                  "ci_low": 16.677667850551018,
+                  "ci_high": 23.586552067768103
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000,
+          "performance_profiles": {
+            "Hidden context (varying)": {
+              "thresholds": [
+                -50.0,
+                -45.0,
+                -40.0,
+                -35.0,
+                -30.0,
+                -25.0,
+                -20.0,
+                -15.0,
+                -10.0,
+                -5.0,
+                0.0,
+                5.0,
+                10.0,
+                15.0,
+                20.0,
+                25.0,
+                30.0,
+                35.0,
+                40.0,
+                45.0,
+                50.0,
+                55.0,
+                60.0,
+                65.0,
+                70.0,
+                75.0,
+                80.0,
+                85.0,
+                90.0,
+                95.0,
+                100.0
+              ],
+              "profile": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.96,
+                0.96,
+                0.832,
+                0.824,
+                0.8,
+                0.8,
+                0.8,
+                0.8,
+                0.8,
+                0.8,
+                0.784,
+                0.4,
+                0.016,
+                0.0
+              ],
+              "ci_low": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.928,
+                0.928,
+                0.768,
+                0.76,
+                0.728,
+                0.728,
+                0.728,
+                0.728,
+                0.728,
+                0.728,
+                0.712,
+                0.312,
+                0.0,
+                0.0
+              ],
+              "ci_high": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.992,
+                0.992,
+                0.896,
+                0.888,
+                0.864,
+                0.864,
+                0.864,
+                0.864,
+                0.864,
+                0.864,
+                0.856,
+                0.488,
+                0.04,
+                0.0
+              ]
+            }
+          }
+        },
+        "in_distribution": {
+          "algorithms": {
+            "Hidden context (varying)": {
+              "score_matrix_shape": [
+                5,
+                13
+              ],
+              "metrics": {
+                "median": {
+                  "point": 80.07135412026389,
+                  "ci_low": 75.21091463624607,
+                  "ci_high": 88.68271103921256
+                },
+                "iqm": {
+                  "point": 88.4172665566012,
+                  "ci_low": 83.4556454502965,
+                  "ci_high": 89.81396539786353
+                },
+                "mean": {
+                  "point": 80.0990782048375,
+                  "ci_low": 75.09125215805336,
+                  "ci_high": 84.70938845201634
+                },
+                "optimality_gap": {
+                  "point": 19.900921795162517,
+                  "ci_low": 15.290611547983657,
+                  "ci_high": 24.90874784194665
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        },
+        "out_of_distribution": {
+          "algorithms": {
+            "Hidden context (varying)": {
+              "score_matrix_shape": [
+                5,
+                12
+              ],
+              "metrics": {
+                "median": {
+                  "point": 80.07135412026389,
+                  "ci_low": 74.92340539947445,
+                  "ci_high": 87.79198418230196
+                },
+                "iqm": {
+                  "point": 87.80207216530717,
+                  "ci_low": 83.0281669880839,
+                  "ci_high": 89.29018463374287
+                },
+                "mean": {
+                  "point": 79.84066342340671,
+                  "ci_low": 74.84012971909061,
+                  "ci_high": 84.57758207282455
+                },
+                "optimality_gap": {
+                  "point": 20.159336576593276,
+                  "ci_low": 15.42241792717545,
+                  "ci_high": 25.159870280909416
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        }
+      },
+      "id_factor_low": 0.75,
+      "id_factor_high": 1.5,
+      "eval_factor_grid": [
+        0.5,
+        0.6,
+        0.75,
+        0.875,
+        1.0,
+        1.25,
+        1.5,
+        1.75,
+        2.0
+      ]
+    },
+    {
+      "exp_name": "context5_concat_static_randdrop",
+      "method_tag": "context_concat",
+      "label": "Context concat (static)",
+      "algorithm": "matd3_pistonball_context",
+      "preset": "context5_static",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_seeds": 5,
+      "run_dirs": [
+        "runs/context5_concat_static_randdrop__concat__static__shared__randdrop__n5__seed1__1788876819",
+        "runs/context5_concat_static_randdrop__concat__static__shared__randdrop__n5__seed2__1788993938",
+        "runs/context5_concat_static_randdrop__concat__static__shared__randdrop__n5__seed3__1788957686",
+        "runs/context5_concat_static_randdrop__concat__static__shared__randdrop__n5__seed4__1788958238",
+        "runs/context5_concat_static_randdrop__concat__static__shared__randdrop__n5__seed5__1788958238"
+      ],
+      "context_order": [
+        "default",
+        "ball_mass_x0.5",
+        "ball_mass_x0.6",
+        "ball_mass_x0.75",
+        "ball_mass_x0.875",
+        "ball_mass_x1.25",
+        "ball_mass_x1.5",
+        "ball_mass_x1.75",
+        "ball_mass_x2",
+        "ball_friction_x0.5",
+        "ball_friction_x0.6",
+        "ball_friction_x0.75",
+        "ball_friction_x0.875",
+        "ball_friction_x1.25",
+        "ball_friction_x1.5",
+        "ball_friction_x1.75",
+        "ball_friction_x2",
+        "ball_elasticity_x0.5",
+        "ball_elasticity_x0.6",
+        "ball_elasticity_x0.75",
+        "ball_elasticity_x0.875",
+        "ball_elasticity_x1.25",
+        "ball_elasticity_x1.5",
+        "ball_elasticity_x1.75",
+        "ball_elasticity_x2"
+      ],
+      "context_meta": {
+        "default": {
+          "split": "id",
+          "varied_param": null,
+          "factor": 1.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x0.75": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x0.875": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.25": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.5": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x2": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.75": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x0.875": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.25": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.5": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x2": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.75": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x0.875": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.25": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.5": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x2": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        }
+      },
+      "generalization": {
+        "id_return_mean": 65.44384699979798,
+        "ood_return_mean": 64.03728917273381,
+        "generalization_gap": 1.4065578270641765,
+        "id_return_iqm": 71.34850253842755,
+        "ood_return_iqm": 69.84779202228806,
+        "generalization_gap_iqm": 1.5007105161394918
+      },
+      "per_context": {
+        "default": {
+          "return_mean": 71.71482061778593,
+          "return_std": 21.893105756033208,
+          "return_median": 85.44156878047482,
+          "n_seeds": 5.0,
+          "return_iqm": 73.64315249061747
+        },
+        "ball_mass_x0.5": {
+          "return_mean": 66.67452516666799,
+          "return_std": 28.593323944986423,
+          "return_median": 86.40657183499286,
+          "n_seeds": 5.0,
+          "return_iqm": 70.16369642796404
+        },
+        "ball_mass_x0.6": {
+          "return_mean": 65.55134195054153,
+          "return_std": 27.61272415297546,
+          "return_median": 85.78123470298907,
+          "n_seeds": 5.0,
+          "return_iqm": 68.41410535346756
+        },
+        "ball_mass_x0.75": {
+          "return_mean": 65.46708866552706,
+          "return_std": 27.524467092042226,
+          "return_median": 85.48223045509884,
+          "n_seeds": 5.0,
+          "return_iqm": 68.33110393750415
+        },
+        "ball_mass_x0.875": {
+          "return_mean": 64.66400852732369,
+          "return_std": 27.037645555332986,
+          "return_median": 81.27403941461729,
+          "n_seeds": 5.0,
+          "return_iqm": 66.89722132730249
+        },
+        "ball_mass_x1.25": {
+          "return_mean": 63.514808242757965,
+          "return_std": 28.488334323123862,
+          "return_median": 81.22463744060231,
+          "n_seeds": 5.0,
+          "return_iqm": 66.0893837434828
+        },
+        "ball_mass_x1.5": {
+          "return_mean": 64.47157894693642,
+          "return_std": 29.128158724273952,
+          "return_median": 86.30268069689119,
+          "n_seeds": 5.0,
+          "return_iqm": 67.78206482891243
+        },
+        "ball_mass_x1.75": {
+          "return_mean": 63.39175825566631,
+          "return_std": 28.31959243884699,
+          "return_median": 81.01570717333874,
+          "n_seeds": 5.0,
+          "return_iqm": 66.0197403210616
+        },
+        "ball_mass_x2": {
+          "return_mean": 64.46118754516654,
+          "return_std": 29.067511509874585,
+          "return_median": 86.06800040642142,
+          "n_seeds": 5.0,
+          "return_iqm": 67.7038380654225
+        },
+        "ball_friction_x0.5": {
+          "return_mean": 60.444724855252865,
+          "return_std": 32.80199833423145,
+          "return_median": 84.86905500973477,
+          "n_seeds": 5.0,
+          "return_iqm": 64.56383693612594
+        },
+        "ball_friction_x0.6": {
+          "return_mean": 63.57147258448318,
+          "return_std": 28.444460520642295,
+          "return_median": 81.18538135880237,
+          "n_seeds": 5.0,
+          "return_iqm": 69.58710001950986
+        },
+        "ball_friction_x0.75": {
+          "return_mean": 62.66397196477904,
+          "return_std": 30.25765413896852,
+          "return_median": 85.23562490272747,
+          "n_seeds": 5.0,
+          "return_iqm": 66.0253288894218
+        },
+        "ball_friction_x0.875": {
+          "return_mean": 66.57771239630013,
+          "return_std": 30.338577545833036,
+          "return_median": 87.18830115830113,
+          "n_seeds": 5.0,
+          "return_iqm": 74.31300080300993
+        },
+        "ball_friction_x1.25": {
+          "return_mean": 65.70964851249553,
+          "return_std": 30.256837775345833,
+          "return_median": 86.46469399223783,
+          "n_seeds": 5.0,
+          "return_iqm": 71.85853711493426
+        },
+        "ball_friction_x1.5": {
+          "return_mean": 64.8362079952944,
+          "return_std": 32.90657152424362,
+          "return_median": 90.36730529379952,
+          "n_seeds": 5.0,
+          "return_iqm": 71.74350301754976
+        },
+        "ball_friction_x1.75": {
+          "return_mean": 64.6918249631693,
+          "return_std": 33.33539209677765,
+          "return_median": 90.80542843792385,
+          "n_seeds": 5.0,
+          "return_iqm": 71.72664693544262
+        },
+        "ball_friction_x2": {
+          "return_mean": 61.18287028033624,
+          "return_std": 34.6097741193107,
+          "return_median": 85.21888427563863,
+          "n_seeds": 5.0,
+          "return_iqm": 65.74742988387031
+        },
+        "ball_elasticity_x0.5": {
+          "return_mean": 64.3388268790924,
+          "return_std": 28.92616353285072,
+          "return_median": 85.53535200331325,
+          "n_seeds": 5.0,
+          "return_iqm": 67.48457688600807
+        },
+        "ball_elasticity_x0.6": {
+          "return_mean": 64.3460814473211,
+          "return_std": 28.919507425384737,
+          "return_median": 85.7494537918252,
+          "n_seeds": 5.0,
+          "return_iqm": 67.5976558605571
+        },
+        "ball_elasticity_x0.75": {
+          "return_mean": 65.58879609204871,
+          "return_std": 29.984145016761598,
+          "return_median": 86.40657183499286,
+          "n_seeds": 5.0,
+          "return_iqm": 69.54685357442013
+        },
+        "ball_elasticity_x0.875": {
+          "return_mean": 65.71612384830588,
+          "return_std": 30.153766592563407,
+          "return_median": 86.27469399223783,
+          "n_seeds": 5.0,
+          "return_iqm": 69.69207684722855
+        },
+        "ball_elasticity_x1.25": {
+          "return_mean": 64.43221021807646,
+          "return_std": 29.1087338139656,
+          "return_median": 85.93217487392924,
+          "n_seeds": 5.0,
+          "return_iqm": 67.63340619276842
+        },
+        "ball_elasticity_x1.5": {
+          "return_mean": 65.41303496974258,
+          "return_std": 27.466108080412685,
+          "return_median": 85.41541806864299,
+          "n_seeds": 5.0,
+          "return_iqm": 68.29367644686218
+        },
+        "ball_elasticity_x1.75": {
+          "return_mean": 64.36363346058627,
+          "return_std": 28.96225750769971,
+          "return_median": 85.85782092722233,
+          "n_seeds": 5.0,
+          "return_iqm": 67.52564591866826
+        },
+        "ball_elasticity_x2": {
+          "return_mean": 65.42922268452207,
+          "return_std": 27.603061482772368,
+          "return_median": 86.07311504486941,
+          "n_seeds": 5.0,
+          "return_iqm": 68.3318586173027
+        }
+      },
+      "seed_stability": {
+        "seed_return_std": 21.893105756033208,
+        "seed_return_mean": 71.71482061778593,
+        "seed_return_iqm": 73.64315249061747
+      },
+      "sample_efficiency": {
+        "median_steps_to_threshold": {
+          "median_steps_to_threshold": null,
+          "n_seeds_reached": 0
+        },
+        "eval_iqm_curve": {
+          "seeds": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "global_steps": [
+            25000,
+            50000,
+            75000,
+            100000,
+            125000,
+            150000,
+            175000
+          ],
+          "iqm": [
+            74.9088163350677,
+            80.32569014637978,
+            80.34290268706285,
+            85.19449834143938,
+            95.16807151979572,
+            97.97503810818603,
+            97.84389709906951
+          ],
+          "ci_low": [
+            43.92630553642804,
+            11.645473242081408,
+            15.445950599031407,
+            50.647812723674896,
+            70.17592101385212,
+            61.30425015179114,
+            67.37099246075881
+          ],
+          "ci_high": [
+            98.34183248877353,
+            99.01123882503191,
+            98.54457215836526,
+            99.01123882503191,
+            99.23333333333333,
+            98.50038314176244,
+            99.05568326947638
+          ]
+        }
+      },
+      "rliable": {
+        "algorithms": {
+          "Context concat (static)": {
+            "score_matrix_shape": [
+              5,
+              25
+            ],
+            "metrics": {
+              "median": {
+                "point": 64.66400852732369,
+                "ci_low": 59.62800748090917,
+                "ci_high": 73.73965261737983
+              },
+              "iqm": {
+                "point": 70.62377377931018,
+                "ci_low": 60.920769312486605,
+                "ci_high": 79.66614997902732
+              },
+              "mean": {
+                "point": 64.76869924280719,
+                "ci_low": 59.52821864941824,
+                "ci_high": 69.68964399434225
+              },
+              "optimality_gap": {
+                "point": 35.23130075719281,
+                "ci_low": 30.31035600565777,
+                "ci_high": 40.47178135058175
+              }
+            }
+          }
+        },
+        "bootstrap_reps": 5000,
+        "performance_profiles": {
+          "Context concat (static)": {
+            "thresholds": [
+              -50.0,
+              -45.0,
+              -40.0,
+              -35.0,
+              -30.0,
+              -25.0,
+              -20.0,
+              -15.0,
+              -10.0,
+              -5.0,
+              0.0,
+              5.0,
+              10.0,
+              15.0,
+              20.0,
+              25.0,
+              30.0,
+              35.0,
+              40.0,
+              45.0,
+              50.0,
+              55.0,
+              60.0,
+              65.0,
+              70.0,
+              75.0,
+              80.0,
+              85.0,
+              90.0,
+              95.0,
+              100.0
+            ],
+            "profile": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.952,
+              0.92,
+              0.832,
+              0.64,
+              0.632,
+              0.608,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.6,
+              0.552,
+              0.28,
+              0.0,
+              0.0
+            ],
+            "ci_low": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.92,
+              0.88,
+              0.768,
+              0.56,
+              0.552,
+              0.528,
+              0.52,
+              0.52,
+              0.52,
+              0.52,
+              0.52,
+              0.52,
+              0.52,
+              0.472,
+              0.208,
+              0.0,
+              0.0
+            ],
+            "ci_high": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.984,
+              0.96,
+              0.896,
+              0.72,
+              0.712,
+              0.688,
+              0.688,
+              0.688,
+              0.688,
+              0.688,
+              0.688,
+              0.688,
+              0.688,
+              0.632,
+              0.36,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      },
+      "rliable_by_split": {
+        "all_contexts": {
+          "algorithms": {
+            "Context concat (static)": {
+              "score_matrix_shape": [
+                5,
+                25
+              ],
+              "metrics": {
+                "median": {
+                  "point": 64.66400852732369,
+                  "ci_low": 59.62800748090917,
+                  "ci_high": 73.73965261737983
+                },
+                "iqm": {
+                  "point": 70.62377377931018,
+                  "ci_low": 60.920769312486605,
+                  "ci_high": 79.66614997902732
+                },
+                "mean": {
+                  "point": 64.76869924280719,
+                  "ci_low": 59.52821864941824,
+                  "ci_high": 69.68964399434225
+                },
+                "optimality_gap": {
+                  "point": 35.23130075719281,
+                  "ci_low": 30.31035600565777,
+                  "ci_high": 40.47178135058175
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000,
+          "performance_profiles": {
+            "Context concat (static)": {
+              "thresholds": [
+                -50.0,
+                -45.0,
+                -40.0,
+                -35.0,
+                -30.0,
+                -25.0,
+                -20.0,
+                -15.0,
+                -10.0,
+                -5.0,
+                0.0,
+                5.0,
+                10.0,
+                15.0,
+                20.0,
+                25.0,
+                30.0,
+                35.0,
+                40.0,
+                45.0,
+                50.0,
+                55.0,
+                60.0,
+                65.0,
+                70.0,
+                75.0,
+                80.0,
+                85.0,
+                90.0,
+                95.0,
+                100.0
+              ],
+              "profile": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.952,
+                0.92,
+                0.832,
+                0.64,
+                0.632,
+                0.608,
+                0.6,
+                0.6,
+                0.6,
+                0.6,
+                0.6,
+                0.6,
+                0.6,
+                0.552,
+                0.28,
+                0.0,
+                0.0
+              ],
+              "ci_low": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.92,
+                0.88,
+                0.768,
+                0.56,
+                0.552,
+                0.528,
+                0.52,
+                0.52,
+                0.52,
+                0.52,
+                0.52,
+                0.52,
+                0.52,
+                0.472,
+                0.208,
+                0.0,
+                0.0
+              ],
+              "ci_high": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.984,
+                0.96,
+                0.896,
+                0.72,
+                0.712,
+                0.688,
+                0.688,
+                0.688,
+                0.688,
+                0.688,
+                0.688,
+                0.688,
+                0.688,
+                0.632,
+                0.36,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "in_distribution": {
+          "algorithms": {
+            "Context concat (static)": {
+              "score_matrix_shape": [
+                5,
+                13
+              ],
+              "metrics": {
+                "median": {
+                  "point": 65.41303496974258,
+                  "ci_low": 54.45733974698462,
+                  "ci_high": 75.81793450335161
+                },
+                "iqm": {
+                  "point": 71.34850253842755,
+                  "ci_low": 58.00635220834358,
+                  "ci_high": 83.74608293822644
+                },
+                "mean": {
+                  "point": 65.44384699979798,
+                  "ci_low": 58.17518439711925,
+                  "ci_high": 72.34542411115225
+                },
+                "optimality_gap": {
+                  "point": 34.556153000202016,
+                  "ci_low": 27.654575888847756,
+                  "ci_high": 41.82481560288075
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        },
+        "out_of_distribution": {
+          "algorithms": {
+            "Context concat (static)": {
+              "score_matrix_shape": [
+                5,
+                12
+              ],
+              "metrics": {
+                "median": {
+                  "point": 64.35485745395368,
+                  "ci_low": 54.335084212070136,
+                  "ci_high": 75.04151619132182
+                },
+                "iqm": {
+                  "point": 69.84779202228806,
+                  "ci_low": 56.44651053356112,
+                  "ci_high": 83.11460876541561
+                },
+                "mean": {
+                  "point": 64.03728917273382,
+                  "ci_low": 56.54314706348837,
+                  "ci_high": 71.20669572771813
+                },
+                "optimality_gap": {
+                  "point": 35.96271082726619,
+                  "ci_low": 28.79330427228187,
+                  "ci_high": 43.456852936511616
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        }
+      },
+      "id_factor_low": 0.75,
+      "id_factor_high": 1.5,
+      "eval_factor_grid": [
+        0.5,
+        0.6,
+        0.75,
+        0.875,
+        1.0,
+        1.25,
+        1.5,
+        1.75,
+        2.0
+      ]
+    },
+    {
+      "exp_name": "context5_concat_varying_randdrop",
+      "method_tag": "context_concat",
+      "label": "Context concat (varying)",
+      "algorithm": "matd3_pistonball_context",
+      "preset": "context5_varying",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_seeds": 5,
+      "run_dirs": [
+        "runs/context5_concat_varying_randdrop__concat__varying__shared__randdrop__n5__seed1__1788879442",
+        "runs/context5_concat_varying_randdrop__concat__varying__shared__randdrop__n5__seed2__1788958238",
+        "runs/context5_concat_varying_randdrop__concat__varying__shared__randdrop__n5__seed3__1788959140",
+        "runs/context5_concat_varying_randdrop__concat__varying__shared__randdrop__n5__seed4__1788959140",
+        "runs/context5_concat_varying_randdrop__concat__varying__shared__randdrop__n5__seed5__1788960897"
+      ],
+      "context_order": [
+        "default",
+        "ball_mass_x0.5",
+        "ball_mass_x0.6",
+        "ball_mass_x0.75",
+        "ball_mass_x0.875",
+        "ball_mass_x1.25",
+        "ball_mass_x1.5",
+        "ball_mass_x1.75",
+        "ball_mass_x2",
+        "ball_friction_x0.5",
+        "ball_friction_x0.6",
+        "ball_friction_x0.75",
+        "ball_friction_x0.875",
+        "ball_friction_x1.25",
+        "ball_friction_x1.5",
+        "ball_friction_x1.75",
+        "ball_friction_x2",
+        "ball_elasticity_x0.5",
+        "ball_elasticity_x0.6",
+        "ball_elasticity_x0.75",
+        "ball_elasticity_x0.875",
+        "ball_elasticity_x1.25",
+        "ball_elasticity_x1.5",
+        "ball_elasticity_x1.75",
+        "ball_elasticity_x2"
+      ],
+      "context_meta": {
+        "default": {
+          "split": "id",
+          "varied_param": null,
+          "factor": 1.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x0.75": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x0.875": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.25": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.5": {
+          "split": "id",
+          "varied_param": "ball_mass",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_mass_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_mass_x2": {
+          "split": "ood",
+          "varied_param": "ball_mass",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x0.75": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x0.875": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.25": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.5": {
+          "split": "id",
+          "varied_param": "ball_friction",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_friction_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_friction_x2": {
+          "split": "ood",
+          "varied_param": "ball_friction",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.5": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.6": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 0.6,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x0.75": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x0.875": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 0.875,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.25": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 1.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.5": {
+          "split": "id",
+          "varied_param": "ball_elasticity",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "ball_elasticity_x1.75": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 1.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "ball_elasticity_x2": {
+          "split": "ood",
+          "varied_param": "ball_elasticity",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        }
+      },
+      "generalization": {
+        "id_return_mean": 85.41861778883307,
+        "ood_return_mean": 85.1495874291841,
+        "generalization_gap": 0.2690303596489798,
+        "id_return_iqm": 85.7762899385889,
+        "ood_return_iqm": 85.92769596818349,
+        "generalization_gap_iqm": -0.1514060295945825
+      },
+      "per_context": {
+        "default": {
+          "return_mean": 88.41018175435097,
+          "return_std": 3.5400152624929655,
+          "return_median": 88.83839652941816,
+          "n_seeds": 5.0,
+          "return_iqm": 87.90805352201978
+        },
+        "ball_mass_x0.5": {
+          "return_mean": 86.4756861540886,
+          "return_std": 3.5572106886145978,
+          "return_median": 86.09457935378985,
+          "n_seeds": 5.0,
+          "return_iqm": 86.51086341464564
+        },
+        "ball_mass_x0.6": {
+          "return_mean": 86.44373016002712,
+          "return_std": 3.470487856564497,
+          "return_median": 87.18594145579942,
+          "n_seeds": 5.0,
+          "return_iqm": 86.7395798489802
+        },
+        "ball_mass_x0.75": {
+          "return_mean": 86.20913812195867,
+          "return_std": 3.6004928224281327,
+          "return_median": 85.74256254706717,
+          "n_seeds": 5.0,
+          "return_iqm": 86.09896070477079
+        },
+        "ball_mass_x0.875": {
+          "return_mean": 86.80796064498664,
+          "return_std": 3.6635685991701843,
+          "return_median": 87.30499288762446,
+          "n_seeds": 5.0,
+          "return_iqm": 86.89086646947707
+        },
+        "ball_mass_x1.25": {
+          "return_mean": 86.3236394743758,
+          "return_std": 3.1669479270310648,
+          "return_median": 86.25815078236128,
+          "n_seeds": 5.0,
+          "return_iqm": 86.50317437193102
+        },
+        "ball_mass_x1.5": {
+          "return_mean": 86.12576012340614,
+          "return_std": 3.711773311214915,
+          "return_median": 85.78464949996945,
+          "n_seeds": 5.0,
+          "return_iqm": 85.65979070577453
+        },
+        "ball_mass_x1.75": {
+          "return_mean": 85.72526427233686,
+          "return_std": 1.2163602205659878,
+          "return_median": 85.8979990270644,
+          "n_seeds": 5.0,
+          "return_iqm": 85.90386624811003
+        },
+        "ball_mass_x2": {
+          "return_mean": 90.28105855928199,
+          "return_std": 5.486559346791233,
+          "return_median": 91.64151877557649,
+          "n_seeds": 5.0,
+          "return_iqm": 90.48208046431023
+        },
+        "ball_friction_x0.5": {
+          "return_mean": 75.01100521887578,
+          "return_std": 15.2547119005935,
+          "return_median": 83.26303823790093,
+          "n_seeds": 5.0,
+          "return_iqm": 77.56689447955547
+        },
+        "ball_friction_x0.6": {
+          "return_mean": 81.44678492374672,
+          "return_std": 10.80718529972614,
+          "return_median": 84.50057245021996,
+          "n_seeds": 5.0,
+          "return_iqm": 83.64656171943251
+        },
+        "ball_friction_x0.75": {
+          "return_mean": 77.53130726286405,
+          "return_std": 4.966023774227235,
+          "return_median": 78.02356558957754,
+          "n_seeds": 5.0,
+          "return_iqm": 77.99906022383941
+        },
+        "ball_friction_x0.875": {
+          "return_mean": 80.4324750612092,
+          "return_std": 7.709461727499636,
+          "return_median": 80.22524123029011,
+          "n_seeds": 5.0,
+          "return_iqm": 80.13074637971003
+        },
+        "ball_friction_x1.25": {
+          "return_mean": 86.18488029108354,
+          "return_std": 4.723550077574622,
+          "return_median": 85.51052841023682,
+          "n_seeds": 5.0,
+          "return_iqm": 86.07163641592841
+        },
+        "ball_friction_x1.5": {
+          "return_mean": 82.9540611943867,
+          "return_std": 5.137674556243712,
+          "return_median": 83.38909495313305,
+          "n_seeds": 5.0,
+          "return_iqm": 82.75839324144933
+        },
+        "ball_friction_x1.75": {
+          "return_mean": 84.44240930992882,
+          "return_std": 1.8821932546308655,
+          "return_median": 84.72955815464584,
+          "n_seeds": 5.0,
+          "return_iqm": 84.56941009659177
+        },
+        "ball_friction_x2": {
+          "return_mean": 86.1842376505438,
+          "return_std": 6.501628225112564,
+          "return_median": 85.34869869869866,
+          "n_seeds": 5.0,
+          "return_iqm": 84.18461398742096
+        },
+        "ball_elasticity_x0.5": {
+          "return_mean": 87.54076413408293,
+          "return_std": 4.54607107324294,
+          "return_median": 87.29499288762446,
+          "n_seeds": 5.0,
+          "return_iqm": 88.55992461363552
+        },
+        "ball_elasticity_x0.6": {
+          "return_mean": 86.38951632254634,
+          "return_std": 3.6306513314687066,
+          "return_median": 86.35657183499286,
+          "n_seeds": 5.0,
+          "return_iqm": 86.6624697771761
+        },
+        "ball_elasticity_x0.75": {
+          "return_mean": 87.83977435796196,
+          "return_std": 2.1450561915457635,
+          "return_median": 87.09622730642403,
+          "n_seeds": 5.0,
+          "return_iqm": 86.96703766052428
+        },
+        "ball_elasticity_x0.875": {
+          "return_mean": 87.48876425343431,
+          "return_std": 2.256845966394166,
+          "return_median": 86.94256605337984,
+          "n_seeds": 5.0,
+          "return_iqm": 86.80577219779785
+        },
+        "ball_elasticity_x1.25": {
+          "return_mean": 86.53355826208043,
+          "return_std": 3.6648646781464715,
+          "return_median": 86.42491491491488,
+          "n_seeds": 5.0,
+          "return_iqm": 86.70268619496687
+        },
+        "ball_elasticity_x1.5": {
+          "return_mean": 87.60053045273159,
+          "return_std": 5.700540144248527,
+          "return_median": 86.03491491491488,
+          "n_seeds": 5.0,
+          "return_iqm": 85.65312901874303
+        },
+        "ball_elasticity_x1.75": {
+          "return_mean": 87.33858990258992,
+          "return_std": 5.715514842677353,
+          "return_median": 85.42172057031868,
+          "n_seeds": 5.0,
+          "return_iqm": 85.87003006666752
+        },
+        "ball_elasticity_x2": {
+          "return_mean": 84.5160025421601,
+          "return_std": 3.3202535438853764,
+          "return_median": 86.00778041199092,
+          "n_seeds": 5.0,
+          "return_iqm": 85.75004417147689
+        }
+      },
+      "seed_stability": {
+        "seed_return_std": 3.5400152624929655,
+        "seed_return_mean": 88.41018175435097,
+        "seed_return_iqm": 87.90805352201978
+      },
+      "sample_efficiency": {
+        "median_steps_to_threshold": {
+          "median_steps_to_threshold": null,
+          "n_seeds_reached": 0
+        },
+        "eval_iqm_curve": {
+          "seeds": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "global_steps": [
+            25000,
+            50000,
+            75000,
+            100000,
+            125000,
+            150000,
+            175000
+          ],
+          "iqm": [
+            92.31277268494756,
+            70.11097056501427,
+            92.28072237625655,
+            97.96242279588803,
+            97.87701009080318,
+            98.68539149228803,
+            98.41885253954217
+          ],
+          "ci_low": [
+            48.088399925091096,
+            18.809883409549897,
+            47.44453213741324,
+            84.28579444339759,
+            96.19036142970572,
+            96.8690346083789,
+            96.5970039570379
+          ],
+          "ci_high": [
+            99.42222222222222,
+            99.14007285974498,
+            98.94391534391535,
+            99.31111111111112,
+            98.93333333333332,
+            98.991010904804,
+            99.13532763532764
+          ]
+        }
+      },
+      "rliable": {
+        "algorithms": {
+          "Context concat (varying)": {
+            "score_matrix_shape": [
+              5,
+              25
+            ],
+            "metrics": {
+              "median": {
+                "point": 86.3236394743758,
+                "ci_low": 85.09054544498255,
+                "ci_high": 87.035987395606
+              },
+              "iqm": {
+                "point": 85.85467812284026,
+                "ci_low": 85.15765958694038,
+                "ci_high": 86.53015096990873
+              },
+              "mean": {
+                "point": 85.28948321620155,
+                "ci_low": 84.28943222092728,
+                "ci_high": 86.28466531165535
+              },
+              "optimality_gap": {
+                "point": 14.71051678379844,
+                "ci_low": 13.715334688344672,
+                "ci_high": 15.710567779072724
+              }
+            }
+          }
+        },
+        "bootstrap_reps": 5000,
+        "performance_profiles": {
+          "Context concat (varying)": {
+            "thresholds": [
+              -50.0,
+              -45.0,
+              -40.0,
+              -35.0,
+              -30.0,
+              -25.0,
+              -20.0,
+              -15.0,
+              -10.0,
+              -5.0,
+              0.0,
+              5.0,
+              10.0,
+              15.0,
+              20.0,
+              25.0,
+              30.0,
+              35.0,
+              40.0,
+              45.0,
+              50.0,
+              55.0,
+              60.0,
+              65.0,
+              70.0,
+              75.0,
+              80.0,
+              85.0,
+              90.0,
+              95.0,
+              100.0
+            ],
+            "profile": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.992,
+              0.992,
+              0.976,
+              0.96,
+              0.944,
+              0.896,
+              0.64,
+              0.216,
+              0.032,
+              0.0
+            ],
+            "ci_low": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.976,
+              0.976,
+              0.952,
+              0.928,
+              0.912,
+              0.848,
+              0.568,
+              0.152,
+              0.008,
+              0.0
+            ],
+            "ci_high": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.984,
+              0.976,
+              0.936,
+              0.704,
+              0.288,
+              0.064,
+              0.0
+            ]
+          }
+        }
+      },
+      "rliable_by_split": {
+        "all_contexts": {
+          "algorithms": {
+            "Context concat (varying)": {
+              "score_matrix_shape": [
+                5,
+                25
+              ],
+              "metrics": {
+                "median": {
+                  "point": 86.3236394743758,
+                  "ci_low": 85.09054544498255,
+                  "ci_high": 87.035987395606
+                },
+                "iqm": {
+                  "point": 85.85467812284026,
+                  "ci_low": 85.15765958694038,
+                  "ci_high": 86.53015096990873
+                },
+                "mean": {
+                  "point": 85.28948321620155,
+                  "ci_low": 84.28943222092728,
+                  "ci_high": 86.28466531165535
+                },
+                "optimality_gap": {
+                  "point": 14.71051678379844,
+                  "ci_low": 13.715334688344672,
+                  "ci_high": 15.710567779072724
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000,
+          "performance_profiles": {
+            "Context concat (varying)": {
+              "thresholds": [
+                -50.0,
+                -45.0,
+                -40.0,
+                -35.0,
+                -30.0,
+                -25.0,
+                -20.0,
+                -15.0,
+                -10.0,
+                -5.0,
+                0.0,
+                5.0,
+                10.0,
+                15.0,
+                20.0,
+                25.0,
+                30.0,
+                35.0,
+                40.0,
+                45.0,
+                50.0,
+                55.0,
+                60.0,
+                65.0,
+                70.0,
+                75.0,
+                80.0,
+                85.0,
+                90.0,
+                95.0,
+                100.0
+              ],
+              "profile": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.992,
+                0.992,
+                0.976,
+                0.96,
+                0.944,
+                0.896,
+                0.64,
+                0.216,
+                0.032,
+                0.0
+              ],
+              "ci_low": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.976,
+                0.976,
+                0.952,
+                0.928,
+                0.912,
+                0.848,
+                0.568,
+                0.152,
+                0.008,
+                0.0
+              ],
+              "ci_high": [
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                1.0,
+                0.984,
+                0.976,
+                0.936,
+                0.704,
+                0.288,
+                0.064,
+                0.0
+              ]
+            }
+          }
+        },
+        "in_distribution": {
+          "algorithms": {
+            "Context concat (varying)": {
+              "score_matrix_shape": [
+                5,
+                13
+              ],
+              "metrics": {
+                "median": {
+                  "point": 86.3236394743758,
+                  "ci_low": 84.9654221313789,
+                  "ci_high": 87.61125067386985
+                },
+                "iqm": {
+                  "point": 85.7762899385889,
+                  "ci_low": 84.7887831905494,
+                  "ci_high": 86.84537464974119
+                },
+                "mean": {
+                  "point": 85.41861778883306,
+                  "ci_low": 84.34121455419047,
+                  "ci_high": 86.52398962896363
+                },
+                "optimality_gap": {
+                  "point": 14.581382211166925,
+                  "ci_low": 13.476010371036379,
+                  "ci_high": 15.658785445809533
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        },
+        "out_of_distribution": {
+          "algorithms": {
+            "Context concat (varying)": {
+              "score_matrix_shape": [
+                5,
+                12
+              ],
+              "metrics": {
+                "median": {
+                  "point": 86.28687698654508,
+                  "ci_low": 84.59572015698419,
+                  "ci_high": 87.10120991224044
+                },
+                "iqm": {
+                  "point": 85.92769596818349,
+                  "ci_low": 84.8539310560178,
+                  "ci_high": 86.9642386308041
+                },
+                "mean": {
+                  "point": 85.14958742918408,
+                  "ci_low": 83.42720153631748,
+                  "ci_high": 86.82634296989916
+                },
+                "optimality_gap": {
+                  "point": 14.850412570815905,
+                  "ci_low": 13.17365703010087,
+                  "ci_high": 16.572798463682524
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        }
+      },
+      "id_factor_low": 0.75,
+      "id_factor_high": 1.5,
+      "eval_factor_grid": [
+        0.5,
+        0.6,
+        0.75,
+        0.875,
+        1.0,
+        1.25,
+        1.5,
+        1.75,
+        2.0
+      ]
+    }
+  ],
+  "rliable_combined": {
+    "algorithms": {
+      "Hidden context (static)": {
+        "score_matrix_shape": [
+          5,
+          25
+        ],
+        "metrics": {
+          "median": {
+            "point": 64.42246944520046,
+            "ci_low": 57.61911206843736,
+            "ci_high": 70.41121571594012
+          },
+          "iqm": {
+            "point": 66.99715474596267,
+            "ci_low": 58.14193565178467,
+            "ci_high": 75.1907370488125
+          },
+          "mean": {
+            "point": 64.01665651684182,
+            "ci_low": 59.15067862788363,
+            "ci_high": 68.65189221759586
+          },
+          "optimality_gap": {
+            "point": 35.98334348315818,
+            "ci_low": 31.348107782404128,
+            "ci_high": 40.849321372116364
+          }
+        }
+      },
+      "Hidden context (varying)": {
+        "score_matrix_shape": [
+          5,
+          25
+        ],
+        "metrics": {
+          "median": {
+            "point": 80.07135412026389,
+            "ci_low": 77.66712048957186,
+            "ci_high": 86.29085024343226
+          },
+          "iqm": {
+            "point": 88.13020026345575,
+            "ci_low": 85.65535647231248,
+            "ci_high": 89.16294950011996
+          },
+          "mean": {
+            "point": 79.97503910975071,
+            "ci_low": 76.3592849163572,
+            "ci_high": 83.25325212745108
+          },
+          "optimality_gap": {
+            "point": 20.024960890249332,
+            "ci_low": 16.74674787254893,
+            "ci_high": 23.64071508364278
+          }
+        }
+      },
+      "Context concat (static)": {
+        "score_matrix_shape": [
+          5,
+          25
+        ],
+        "metrics": {
+          "median": {
+            "point": 64.66400852732369,
+            "ci_low": 59.81423403049854,
+            "ci_high": 73.97343564578641
+          },
+          "iqm": {
+            "point": 70.62377377931018,
+            "ci_low": 61.056601429552714,
+            "ci_high": 80.30963441493135
+          },
+          "mean": {
+            "point": 64.76869924280719,
+            "ci_low": 59.46912206028208,
+            "ci_high": 69.99304896431418
+          },
+          "optimality_gap": {
+            "point": 35.23130075719281,
+            "ci_low": 30.00695103568581,
+            "ci_high": 40.530877939717904
+          }
+        }
+      },
+      "Context concat (varying)": {
+        "score_matrix_shape": [
+          5,
+          25
+        ],
+        "metrics": {
+          "median": {
+            "point": 86.3236394743758,
+            "ci_low": 85.12929245927458,
+            "ci_high": 86.9600434783941
+          },
+          "iqm": {
+            "point": 85.85467812284026,
+            "ci_low": 85.1492775234663,
+            "ci_high": 86.50984622227804
+          },
+          "mean": {
+            "point": 85.28948321620155,
+            "ci_low": 84.30387161768797,
+            "ci_high": 86.23735444330086
+          },
+          "optimality_gap": {
+            "point": 14.71051678379844,
+            "ci_low": 13.76264555669914,
+            "ci_high": 15.696128382311999
+          }
+        }
+      }
+    },
+    "bootstrap_reps": 5000,
+    "performance_profiles": {
+      "Hidden context (static)": {
+        "thresholds": [
+          -50.0,
+          -45.0,
+          -40.0,
+          -35.0,
+          -30.0,
+          -25.0,
+          -20.0,
+          -15.0,
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0,
+          15.0,
+          20.0,
+          25.0,
+          30.0,
+          35.0,
+          40.0,
+          45.0,
+          50.0,
+          55.0,
+          60.0,
+          65.0,
+          70.0,
+          75.0,
+          80.0,
+          85.0,
+          90.0,
+          95.0,
+          100.0
+        ],
+        "profile": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.976,
+          0.944,
+          0.928,
+          0.792,
+          0.632,
+          0.608,
+          0.6,
+          0.592,
+          0.592,
+          0.592,
+          0.592,
+          0.44,
+          0.408,
+          0.384,
+          0.352,
+          0.032,
+          0.0
+        ],
+        "ci_low": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.952,
+          0.904,
+          0.888,
+          0.72,
+          0.544,
+          0.52,
+          0.512,
+          0.504,
+          0.504,
+          0.504,
+          0.504,
+          0.352,
+          0.328,
+          0.304,
+          0.272,
+          0.008,
+          0.0
+        ],
+        "ci_high": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.976,
+          0.96,
+          0.856,
+          0.712,
+          0.688,
+          0.68,
+          0.6721999999999989,
+          0.6721999999999989,
+          0.6721999999999989,
+          0.6721999999999989,
+          0.528,
+          0.496,
+          0.472,
+          0.44,
+          0.064,
+          0.0
+        ]
+      },
+      "Hidden context (varying)": {
+        "thresholds": [
+          -50.0,
+          -45.0,
+          -40.0,
+          -35.0,
+          -30.0,
+          -25.0,
+          -20.0,
+          -15.0,
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0,
+          15.0,
+          20.0,
+          25.0,
+          30.0,
+          35.0,
+          40.0,
+          45.0,
+          50.0,
+          55.0,
+          60.0,
+          65.0,
+          70.0,
+          75.0,
+          80.0,
+          85.0,
+          90.0,
+          95.0,
+          100.0
+        ],
+        "profile": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.96,
+          0.96,
+          0.832,
+          0.824,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.8,
+          0.784,
+          0.4,
+          0.016,
+          0.0
+        ],
+        "ci_low": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.928,
+          0.928,
+          0.768,
+          0.76,
+          0.728,
+          0.728,
+          0.728,
+          0.728,
+          0.728,
+          0.728,
+          0.712,
+          0.32,
+          0.0,
+          0.0
+        ],
+        "ci_high": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.9841999999999989,
+          0.9841999999999989,
+          0.896,
+          0.888,
+          0.864,
+          0.864,
+          0.864,
+          0.864,
+          0.864,
+          0.864,
+          0.8481999999999988,
+          0.488,
+          0.04,
+          0.0
+        ]
+      },
+      "Context concat (static)": {
+        "thresholds": [
+          -50.0,
+          -45.0,
+          -40.0,
+          -35.0,
+          -30.0,
+          -25.0,
+          -20.0,
+          -15.0,
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0,
+          15.0,
+          20.0,
+          25.0,
+          30.0,
+          35.0,
+          40.0,
+          45.0,
+          50.0,
+          55.0,
+          60.0,
+          65.0,
+          70.0,
+          75.0,
+          80.0,
+          85.0,
+          90.0,
+          95.0,
+          100.0
+        ],
+        "profile": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.952,
+          0.92,
+          0.832,
+          0.64,
+          0.632,
+          0.608,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.6,
+          0.552,
+          0.28,
+          0.0,
+          0.0
+        ],
+        "ci_low": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.912,
+          0.88,
+          0.768,
+          0.56,
+          0.552,
+          0.52,
+          0.512,
+          0.512,
+          0.512,
+          0.512,
+          0.512,
+          0.512,
+          0.512,
+          0.464,
+          0.208,
+          0.0,
+          0.0
+        ],
+        "ci_high": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.984,
+          0.96,
+          0.888,
+          0.72,
+          0.712,
+          0.688,
+          0.6801999999999989,
+          0.6801999999999989,
+          0.6801999999999989,
+          0.6801999999999989,
+          0.6801999999999989,
+          0.6801999999999989,
+          0.6801999999999989,
+          0.632,
+          0.352,
+          0.0,
+          0.0
+        ]
+      },
+      "Context concat (varying)": {
+        "thresholds": [
+          -50.0,
+          -45.0,
+          -40.0,
+          -35.0,
+          -30.0,
+          -25.0,
+          -20.0,
+          -15.0,
+          -10.0,
+          -5.0,
+          0.0,
+          5.0,
+          10.0,
+          15.0,
+          20.0,
+          25.0,
+          30.0,
+          35.0,
+          40.0,
+          45.0,
+          50.0,
+          55.0,
+          60.0,
+          65.0,
+          70.0,
+          75.0,
+          80.0,
+          85.0,
+          90.0,
+          95.0,
+          100.0
+        ],
+        "profile": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.992,
+          0.992,
+          0.976,
+          0.96,
+          0.944,
+          0.896,
+          0.64,
+          0.216,
+          0.032,
+          0.0
+        ],
+        "ci_low": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.976,
+          0.976,
+          0.952,
+          0.928,
+          0.912,
+          0.848,
+          0.568,
+          0.152,
+          0.008,
+          0.0
+        ],
+        "ci_high": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          0.992,
+          0.976,
+          0.936,
+          0.712,
+          0.28,
+          0.064,
+          0.0
+        ]
+      }
+    }
+  },
+  "rliable_combined_by_split": {
+    "all_contexts": {
+      "algorithms": {
+        "Hidden context (static)": {
+          "score_matrix_shape": [
+            5,
+            25
+          ],
+          "metrics": {
+            "median": {
+              "point": 64.42246944520046,
+              "ci_low": 57.61911206843736,
+              "ci_high": 70.41121571594012
+            },
+            "iqm": {
+              "point": 66.99715474596267,
+              "ci_low": 58.14193565178467,
+              "ci_high": 75.1907370488125
+            },
+            "mean": {
+              "point": 64.01665651684182,
+              "ci_low": 59.15067862788363,
+              "ci_high": 68.65189221759586
+            },
+            "optimality_gap": {
+              "point": 35.98334348315818,
+              "ci_low": 31.348107782404128,
+              "ci_high": 40.849321372116364
+            }
+          }
+        },
+        "Hidden context (varying)": {
+          "score_matrix_shape": [
+            5,
+            25
+          ],
+          "metrics": {
+            "median": {
+              "point": 80.07135412026389,
+              "ci_low": 77.66712048957186,
+              "ci_high": 86.29085024343226
+            },
+            "iqm": {
+              "point": 88.13020026345575,
+              "ci_low": 85.65535647231248,
+              "ci_high": 89.16294950011996
+            },
+            "mean": {
+              "point": 79.97503910975071,
+              "ci_low": 76.3592849163572,
+              "ci_high": 83.25325212745108
+            },
+            "optimality_gap": {
+              "point": 20.024960890249332,
+              "ci_low": 16.74674787254893,
+              "ci_high": 23.64071508364278
+            }
+          }
+        },
+        "Context concat (static)": {
+          "score_matrix_shape": [
+            5,
+            25
+          ],
+          "metrics": {
+            "median": {
+              "point": 64.66400852732369,
+              "ci_low": 59.81423403049854,
+              "ci_high": 73.97343564578641
+            },
+            "iqm": {
+              "point": 70.62377377931018,
+              "ci_low": 61.056601429552714,
+              "ci_high": 80.30963441493135
+            },
+            "mean": {
+              "point": 64.76869924280719,
+              "ci_low": 59.46912206028208,
+              "ci_high": 69.99304896431418
+            },
+            "optimality_gap": {
+              "point": 35.23130075719281,
+              "ci_low": 30.00695103568581,
+              "ci_high": 40.530877939717904
+            }
+          }
+        },
+        "Context concat (varying)": {
+          "score_matrix_shape": [
+            5,
+            25
+          ],
+          "metrics": {
+            "median": {
+              "point": 86.3236394743758,
+              "ci_low": 85.12929245927458,
+              "ci_high": 86.9600434783941
+            },
+            "iqm": {
+              "point": 85.85467812284026,
+              "ci_low": 85.1492775234663,
+              "ci_high": 86.50984622227804
+            },
+            "mean": {
+              "point": 85.28948321620155,
+              "ci_low": 84.30387161768797,
+              "ci_high": 86.23735444330086
+            },
+            "optimality_gap": {
+              "point": 14.71051678379844,
+              "ci_low": 13.76264555669914,
+              "ci_high": 15.696128382311999
+            }
+          }
+        }
+      },
+      "bootstrap_reps": 5000,
+      "performance_profiles": {
+        "Hidden context (static)": {
+          "thresholds": [
+            -50.0,
+            -45.0,
+            -40.0,
+            -35.0,
+            -30.0,
+            -25.0,
+            -20.0,
+            -15.0,
+            -10.0,
+            -5.0,
+            0.0,
+            5.0,
+            10.0,
+            15.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0,
+            100.0
+          ],
+          "profile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.976,
+            0.944,
+            0.928,
+            0.792,
+            0.632,
+            0.608,
+            0.6,
+            0.592,
+            0.592,
+            0.592,
+            0.592,
+            0.44,
+            0.408,
+            0.384,
+            0.352,
+            0.032,
+            0.0
+          ],
+          "ci_low": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.952,
+            0.904,
+            0.888,
+            0.72,
+            0.544,
+            0.52,
+            0.512,
+            0.504,
+            0.504,
+            0.504,
+            0.504,
+            0.352,
+            0.328,
+            0.304,
+            0.272,
+            0.008,
+            0.0
+          ],
+          "ci_high": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.976,
+            0.96,
+            0.856,
+            0.712,
+            0.688,
+            0.68,
+            0.6721999999999989,
+            0.6721999999999989,
+            0.6721999999999989,
+            0.6721999999999989,
+            0.528,
+            0.496,
+            0.472,
+            0.44,
+            0.064,
+            0.0
+          ]
+        },
+        "Hidden context (varying)": {
+          "thresholds": [
+            -50.0,
+            -45.0,
+            -40.0,
+            -35.0,
+            -30.0,
+            -25.0,
+            -20.0,
+            -15.0,
+            -10.0,
+            -5.0,
+            0.0,
+            5.0,
+            10.0,
+            15.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0,
+            100.0
+          ],
+          "profile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.96,
+            0.96,
+            0.832,
+            0.824,
+            0.8,
+            0.8,
+            0.8,
+            0.8,
+            0.8,
+            0.8,
+            0.784,
+            0.4,
+            0.016,
+            0.0
+          ],
+          "ci_low": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.928,
+            0.928,
+            0.768,
+            0.76,
+            0.728,
+            0.728,
+            0.728,
+            0.728,
+            0.728,
+            0.728,
+            0.712,
+            0.32,
+            0.0,
+            0.0
+          ],
+          "ci_high": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.9841999999999989,
+            0.9841999999999989,
+            0.896,
+            0.888,
+            0.864,
+            0.864,
+            0.864,
+            0.864,
+            0.864,
+            0.864,
+            0.8481999999999988,
+            0.488,
+            0.04,
+            0.0
+          ]
+        },
+        "Context concat (static)": {
+          "thresholds": [
+            -50.0,
+            -45.0,
+            -40.0,
+            -35.0,
+            -30.0,
+            -25.0,
+            -20.0,
+            -15.0,
+            -10.0,
+            -5.0,
+            0.0,
+            5.0,
+            10.0,
+            15.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0,
+            100.0
+          ],
+          "profile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.952,
+            0.92,
+            0.832,
+            0.64,
+            0.632,
+            0.608,
+            0.6,
+            0.6,
+            0.6,
+            0.6,
+            0.6,
+            0.6,
+            0.6,
+            0.552,
+            0.28,
+            0.0,
+            0.0
+          ],
+          "ci_low": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.912,
+            0.88,
+            0.768,
+            0.56,
+            0.552,
+            0.52,
+            0.512,
+            0.512,
+            0.512,
+            0.512,
+            0.512,
+            0.512,
+            0.512,
+            0.464,
+            0.208,
+            0.0,
+            0.0
+          ],
+          "ci_high": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.984,
+            0.96,
+            0.888,
+            0.72,
+            0.712,
+            0.688,
+            0.6801999999999989,
+            0.6801999999999989,
+            0.6801999999999989,
+            0.6801999999999989,
+            0.6801999999999989,
+            0.6801999999999989,
+            0.6801999999999989,
+            0.632,
+            0.352,
+            0.0,
+            0.0
+          ]
+        },
+        "Context concat (varying)": {
+          "thresholds": [
+            -50.0,
+            -45.0,
+            -40.0,
+            -35.0,
+            -30.0,
+            -25.0,
+            -20.0,
+            -15.0,
+            -10.0,
+            -5.0,
+            0.0,
+            5.0,
+            10.0,
+            15.0,
+            20.0,
+            25.0,
+            30.0,
+            35.0,
+            40.0,
+            45.0,
+            50.0,
+            55.0,
+            60.0,
+            65.0,
+            70.0,
+            75.0,
+            80.0,
+            85.0,
+            90.0,
+            95.0,
+            100.0
+          ],
+          "profile": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.992,
+            0.992,
+            0.976,
+            0.96,
+            0.944,
+            0.896,
+            0.64,
+            0.216,
+            0.032,
+            0.0
+          ],
+          "ci_low": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.976,
+            0.976,
+            0.952,
+            0.928,
+            0.912,
+            0.848,
+            0.568,
+            0.152,
+            0.008,
+            0.0
+          ],
+          "ci_high": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            0.992,
+            0.976,
+            0.936,
+            0.712,
+            0.28,
+            0.064,
+            0.0
+          ]
+        }
+      }
+    },
+    "in_distribution": {
+      "algorithms": {
+        "Hidden context (static)": {
+          "score_matrix_shape": [
+            5,
+            13
+          ],
+          "metrics": {
+            "median": {
+              "point": 64.42246944520046,
+              "ci_low": 56.30715210853994,
+              "ci_high": 72.73646798314016
+            },
+            "iqm": {
+              "point": 67.69824952868613,
+              "ci_low": 55.94363104972202,
+              "ci_high": 78.73145773532465
+            },
+            "mean": {
+              "point": 64.47883101116504,
+              "ci_low": 57.90826383194306,
+              "ci_high": 70.7693750837341
+            },
+            "optimality_gap": {
+              "point": 35.52116898883497,
+              "ci_low": 29.230624916265906,
+              "ci_high": 42.091736168056954
+            }
+          }
+        },
+        "Hidden context (varying)": {
+          "score_matrix_shape": [
+            5,
+            13
+          ],
+          "metrics": {
+            "median": {
+              "point": 80.07135412026389,
+              "ci_low": 76.09118949445747,
+              "ci_high": 88.68271103921256
+            },
+            "iqm": {
+              "point": 88.4172665566012,
+              "ci_low": 83.61691791308573,
+              "ci_high": 89.87809329746666
+            },
+            "mean": {
+              "point": 80.0990782048375,
+              "ci_low": 75.17558842257232,
+              "ci_high": 84.72211887742976
+            },
+            "optimality_gap": {
+              "point": 19.900921795162517,
+              "ci_low": 15.277881122570234,
+              "ci_high": 24.824411577427682
+            }
+          }
+        },
+        "Context concat (static)": {
+          "score_matrix_shape": [
+            5,
+            13
+          ],
+          "metrics": {
+            "median": {
+              "point": 65.41303496974258,
+              "ci_low": 54.52367079157406,
+              "ci_high": 75.81793450335161
+            },
+            "iqm": {
+              "point": 71.34850253842755,
+              "ci_low": 58.271232617174206,
+              "ci_high": 83.47865776173295
+            },
+            "mean": {
+              "point": 65.44384699979798,
+              "ci_low": 58.28982617378998,
+              "ci_high": 72.14627802099982
+            },
+            "optimality_gap": {
+              "point": 34.556153000202016,
+              "ci_low": 27.85372197900019,
+              "ci_high": 41.71017382621001
+            }
+          }
+        },
+        "Context concat (varying)": {
+          "score_matrix_shape": [
+            5,
+            13
+          ],
+          "metrics": {
+            "median": {
+              "point": 86.3236394743758,
+              "ci_low": 84.99155080604208,
+              "ci_high": 87.60053045273158
+            },
+            "iqm": {
+              "point": 85.7762899385889,
+              "ci_low": 84.77125449239004,
+              "ci_high": 86.89808906225706
+            },
+            "mean": {
+              "point": 85.41861778883306,
+              "ci_low": 84.33883739917097,
+              "ci_high": 86.52142515738781
+            },
+            "optimality_gap": {
+              "point": 14.581382211166925,
+              "ci_low": 13.478574842612199,
+              "ci_high": 15.661162600829018
+            }
+          }
+        }
+      },
+      "bootstrap_reps": 5000
+    },
+    "out_of_distribution": {
+      "algorithms": {
+        "Hidden context (static)": {
+          "score_matrix_shape": [
+            5,
+            12
+          ],
+          "metrics": {
+            "median": {
+              "point": 64.42246944520046,
+              "ci_low": 55.06546426941058,
+              "ci_high": 72.41997842012552
+            },
+            "iqm": {
+              "point": 66.2259504849669,
+              "ci_low": 53.61606049514618,
+              "ci_high": 78.6847732304792
+            },
+            "mean": {
+              "point": 63.515967481325,
+              "ci_low": 56.56127601804411,
+              "ci_high": 70.59880377865835
+            },
+            "optimality_gap": {
+              "point": 36.484032518674994,
+              "ci_low": 29.401196221341667,
+              "ci_high": 43.43872398195589
+            }
+          }
+        },
+        "Hidden context (varying)": {
+          "score_matrix_shape": [
+            5,
+            12
+          ],
+          "metrics": {
+            "median": {
+              "point": 80.07135412026389,
+              "ci_low": 74.46626029848325,
+              "ci_high": 87.79284578163737
+            },
+            "iqm": {
+              "point": 87.80207216530717,
+              "ci_low": 83.16827575152114,
+              "ci_high": 89.33500121071074
+            },
+            "mean": {
+              "point": 79.84066342340671,
+              "ci_low": 74.86899365306493,
+              "ci_high": 84.54523241094962
+            },
+            "optimality_gap": {
+              "point": 20.159336576593276,
+              "ci_low": 15.454767589050354,
+              "ci_high": 25.131006346935084
+            }
+          }
+        },
+        "Context concat (static)": {
+          "score_matrix_shape": [
+            5,
+            12
+          ],
+          "metrics": {
+            "median": {
+              "point": 64.35485745395368,
+              "ci_low": 53.80811074775985,
+              "ci_high": 75.17459238525454
+            },
+            "iqm": {
+              "point": 69.84779202228806,
+              "ci_low": 56.09884667051033,
+              "ci_high": 83.92848392461744
+            },
+            "mean": {
+              "point": 64.03728917273382,
+              "ci_low": 56.47398446119071,
+              "ci_high": 71.65414168238175
+            },
+            "optimality_gap": {
+              "point": 35.96271082726619,
+              "ci_low": 28.345858317618234,
+              "ci_high": 43.526015538809276
+            }
+          }
+        },
+        "Context concat (varying)": {
+          "score_matrix_shape": [
+            5,
+            12
+          ],
+          "metrics": {
+            "median": {
+              "point": 86.28687698654508,
+              "ci_low": 84.58370631652294,
+              "ci_high": 87.02451273105308
+            },
+            "iqm": {
+              "point": 85.92769596818349,
+              "ci_low": 84.87865973868841,
+              "ci_high": 86.94227901434147
+            },
+            "mean": {
+              "point": 85.14958742918408,
+              "ci_low": 83.43277639135978,
+              "ci_high": 86.75933117281514
+            },
+            "optimality_gap": {
+              "point": 14.850412570815905,
+              "ci_low": 13.240668827184864,
+              "ci_high": 16.567223608640237
+            }
+          }
+        }
+      },
+      "bootstrap_reps": 5000
+    }
+  },
+  "pairwise_poi": [
+    {
+      "a": "Hidden context (static)",
+      "b": "Hidden context (varying)",
+      "a_exp_name": "baseline5_static_randdrop",
+      "b_exp_name": "baseline5_varying_randdrop",
+      "probability_a_beats_b": {
+        "probability_of_improvement": 0.3168,
+        "ci_low": 0.248,
+        "ci_high": 0.38880000000000003
+      },
+      "probability_b_beats_a": {
+        "probability_of_improvement": 0.6831999999999999,
+        "ci_low": 0.6128000000000001,
+        "ci_high": 0.752
+      }
+    },
+    {
+      "a": "Hidden context (static)",
+      "b": "Context concat (static)",
+      "a_exp_name": "baseline5_static_randdrop",
+      "b_exp_name": "context5_concat_static_randdrop",
+      "probability_a_beats_b": {
+        "probability_of_improvement": 0.5192,
+        "ci_low": 0.44160000000000005,
+        "ci_high": 0.5976
+      },
+      "probability_b_beats_a": {
+        "probability_of_improvement": 0.4808,
+        "ci_low": 0.4056,
+        "ci_high": 0.5536
+      }
+    },
+    {
+      "a": "Hidden context (static)",
+      "b": "Context concat (varying)",
+      "a_exp_name": "baseline5_static_randdrop",
+      "b_exp_name": "context5_concat_varying_randdrop",
+      "probability_a_beats_b": {
+        "probability_of_improvement": 0.3568,
+        "ci_low": 0.2831600000000001,
+        "ci_high": 0.43200000000000005
+      },
+      "probability_b_beats_a": {
+        "probability_of_improvement": 0.6432000000000001,
+        "ci_low": 0.5648000000000001,
+        "ci_high": 0.7152000000000001
+      }
+    },
+    {
+      "a": "Hidden context (varying)",
+      "b": "Context concat (static)",
+      "a_exp_name": "baseline5_varying_randdrop",
+      "b_exp_name": "context5_concat_static_randdrop",
+      "probability_a_beats_b": {
+        "probability_of_improvement": 0.7120000000000001,
+        "ci_low": 0.6448,
+        "ci_high": 0.77604
+      },
+      "probability_b_beats_a": {
+        "probability_of_improvement": 0.28800000000000003,
+        "ci_low": 0.22240000000000001,
+        "ci_high": 0.35840000000000005
+      }
+    },
+    {
+      "a": "Hidden context (varying)",
+      "b": "Context concat (varying)",
+      "a_exp_name": "baseline5_varying_randdrop",
+      "b_exp_name": "context5_concat_varying_randdrop",
+      "probability_a_beats_b": {
+        "probability_of_improvement": 0.5968000000000001,
+        "ci_low": 0.5184000000000001,
+        "ci_high": 0.6720399999999999
+      },
+      "probability_b_beats_a": {
+        "probability_of_improvement": 0.40319999999999995,
+        "ci_low": 0.32480000000000003,
+        "ci_high": 0.4816
+      }
+    },
+    {
+      "a": "Context concat (static)",
+      "b": "Context concat (varying)",
+      "a_exp_name": "context5_concat_static_randdrop",
+      "b_exp_name": "context5_concat_varying_randdrop",
+      "probability_a_beats_b": {
+        "probability_of_improvement": 0.4,
+        "ci_low": 0.32480000000000003,
+        "ci_high": 0.47679999999999995
+      },
+      "probability_b_beats_a": {
+        "probability_of_improvement": 0.6,
+        "ci_low": 0.5296,
+        "ci_high": 0.6751999999999999
+      }
+    }
+  ],
+  "context_order": [
+    "default",
+    "ball_mass_x0.5",
+    "ball_mass_x0.6",
+    "ball_mass_x0.75",
+    "ball_mass_x0.875",
+    "ball_mass_x1.25",
+    "ball_mass_x1.5",
+    "ball_mass_x1.75",
+    "ball_mass_x2",
+    "ball_friction_x0.5",
+    "ball_friction_x0.6",
+    "ball_friction_x0.75",
+    "ball_friction_x0.875",
+    "ball_friction_x1.25",
+    "ball_friction_x1.5",
+    "ball_friction_x1.75",
+    "ball_friction_x2",
+    "ball_elasticity_x0.5",
+    "ball_elasticity_x0.6",
+    "ball_elasticity_x0.75",
+    "ball_elasticity_x0.875",
+    "ball_elasticity_x1.25",
+    "ball_elasticity_x1.5",
+    "ball_elasticity_x1.75",
+    "ball_elasticity_x2"
+  ],
+  "context_meta": {
+    "default": {
+      "split": "id",
+      "varied_param": null,
+      "factor": 1.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_mass_x0.5": {
+      "split": "ood",
+      "varied_param": "ball_mass",
+      "factor": 0.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_mass_x0.6": {
+      "split": "ood",
+      "varied_param": "ball_mass",
+      "factor": 0.6,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_mass_x0.75": {
+      "split": "id",
+      "varied_param": "ball_mass",
+      "factor": 0.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_mass_x0.875": {
+      "split": "id",
+      "varied_param": "ball_mass",
+      "factor": 0.875,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_mass_x1.25": {
+      "split": "id",
+      "varied_param": "ball_mass",
+      "factor": 1.25,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_mass_x1.5": {
+      "split": "id",
+      "varied_param": "ball_mass",
+      "factor": 1.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_mass_x1.75": {
+      "split": "ood",
+      "varied_param": "ball_mass",
+      "factor": 1.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_mass_x2": {
+      "split": "ood",
+      "varied_param": "ball_mass",
+      "factor": 2.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_friction_x0.5": {
+      "split": "ood",
+      "varied_param": "ball_friction",
+      "factor": 0.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_friction_x0.6": {
+      "split": "ood",
+      "varied_param": "ball_friction",
+      "factor": 0.6,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_friction_x0.75": {
+      "split": "id",
+      "varied_param": "ball_friction",
+      "factor": 0.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_friction_x0.875": {
+      "split": "id",
+      "varied_param": "ball_friction",
+      "factor": 0.875,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_friction_x1.25": {
+      "split": "id",
+      "varied_param": "ball_friction",
+      "factor": 1.25,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_friction_x1.5": {
+      "split": "id",
+      "varied_param": "ball_friction",
+      "factor": 1.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_friction_x1.75": {
+      "split": "ood",
+      "varied_param": "ball_friction",
+      "factor": 1.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_friction_x2": {
+      "split": "ood",
+      "varied_param": "ball_friction",
+      "factor": 2.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_elasticity_x0.5": {
+      "split": "ood",
+      "varied_param": "ball_elasticity",
+      "factor": 0.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_elasticity_x0.6": {
+      "split": "ood",
+      "varied_param": "ball_elasticity",
+      "factor": 0.6,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_elasticity_x0.75": {
+      "split": "id",
+      "varied_param": "ball_elasticity",
+      "factor": 0.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_elasticity_x0.875": {
+      "split": "id",
+      "varied_param": "ball_elasticity",
+      "factor": 0.875,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_elasticity_x1.25": {
+      "split": "id",
+      "varied_param": "ball_elasticity",
+      "factor": 1.25,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_elasticity_x1.5": {
+      "split": "id",
+      "varied_param": "ball_elasticity",
+      "factor": 1.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "ball_elasticity_x1.75": {
+      "split": "ood",
+      "varied_param": "ball_elasticity",
+      "factor": 1.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "ball_elasticity_x2": {
+      "split": "ood",
+      "varied_param": "ball_elasticity",
+      "factor": 2.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    }
+  },
+  "presets": [
+    "baseline5_static",
+    "baseline5_varying",
+    "context5_static",
+    "context5_varying"
+  ],
+  "exp_names": [
+    "baseline5_static_randdrop",
+    "baseline5_varying_randdrop",
+    "context5_concat_static_randdrop",
+    "context5_concat_varying_randdrop"
+  ],
+  "labels": [
+    "Hidden context (static)",
+    "Hidden context (varying)",
+    "Context concat (static)",
+    "Context concat (varying)"
+  ]
+}

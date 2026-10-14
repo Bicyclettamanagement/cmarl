@@ -1,0 +1,113 @@
+{
+  "note": "Seed-1 pilot. In-training eval is the native far-spawn task, not the short curriculum court. Do not put this in the main results table.",
+  "runs": [
+    {
+      "run_dir": "/gpfs/bwfor/home/fr/fr_fr/fr_jk1376/projects/cmarl/runs/pistonball/n10/curriculum10_concat_static_randdrop__concat__physics__static__shared__randdrop__curr__n10__seed1__1791282912",
+      "method": "concat",
+      "seed": 1,
+      "graduation_step": 43207,
+      "n_advances": 6,
+      "n_forced_advances": 6,
+      "post_graduation_success_rate": 0.03180760279286268,
+      "post_graduation_episodes": 1289,
+      "in_training_eval": [
+        {
+          "global_step": 25000,
+          "return_mean": -1.092014576461848,
+          "success_rate": 0.0
+        },
+        {
+          "global_step": 50000,
+          "return_mean": 13.786557369672492,
+          "success_rate": 0.0
+        },
+        {
+          "global_step": 75000,
+          "return_mean": 49.606785684389926,
+          "success_rate": 0.3333333333333333
+        },
+        {
+          "global_step": 100000,
+          "return_mean": 60.21385902031064,
+          "success_rate": 0.6666666666666666
+        },
+        {
+          "global_step": 125000,
+          "return_mean": -3.9340705934045737,
+          "success_rate": 0.0
+        },
+        {
+          "global_step": 150000,
+          "return_mean": -3.9340705934045737,
+          "success_rate": 0.0
+        },
+        {
+          "global_step": 175000,
+          "return_mean": -3.9340705934045737,
+          "success_rate": 0.0
+        }
+      ],
+      "offline": {
+        "id_return_mean": 8.629286303426598,
+        "ood_return_mean": 7.534825215845342,
+        "generalization_gap": 1.094461087581256,
+        "default_return_mean": 8.112801853930698,
+        "default_success_rate": 0.1
+      }
+    },
+    {
+      "run_dir": "/gpfs/bwfor/home/fr/fr_fr/fr_jk1376/projects/cmarl/runs/pistonball/n10/curriculum10_hidden_static_randdrop__static__shared__randdrop__curr__n10__seed1__1791282815",
+      "method": "hidden",
+      "seed": 1,
+      "graduation_step": 39694,
+      "n_advances": 6,
+      "n_forced_advances": 5,
+      "post_graduation_success_rate": 0.07111436950146628,
+      "post_graduation_episodes": 1364,
+      "in_training_eval": [
+        {
+          "global_step": 25000,
+          "return_mean": -5.178112180126707,
+          "success_rate": 0.0
+        },
+        {
+          "global_step": 50000,
+          "return_mean": -0.54600935611926,
+          "success_rate": 0.0
+        },
+        {
+          "global_step": 75000,
+          "return_mean": -23.002994798516642,
+          "success_rate": 0.0
+        },
+        {
+          "global_step": 100000,
+          "return_mean": 4.072776267392023,
+          "success_rate": 0.0
+        },
+        {
+          "global_step": 125000,
+          "return_mean": 10.880090768715007,
+          "success_rate": 0.0
+        },
+        {
+          "global_step": 150000,
+          "return_mean": 46.47270784510528,
+          "success_rate": 0.0
+        },
+        {
+          "global_step": 175000,
+          "return_mean": 67.78998774817565,
+          "success_rate": 0.3333333333333333
+        }
+      ],
+      "offline": {
+        "id_return_mean": 27.691265745020857,
+        "ood_return_mean": 27.627716638089453,
+        "generalization_gap": 0.06354910693140425,
+        "default_return_mean": 30.597077200570048,
+        "default_success_rate": 0.3
+      }
+    }
+  ]
+}

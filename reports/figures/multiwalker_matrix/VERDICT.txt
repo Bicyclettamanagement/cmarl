@@ -1,0 +1,39 @@
+MULTIWALKER MATRIX VERDICT (hard OOD grid, fwd×5, 1M steps, N=5)
+=================================================================
+Compared to Pistonball diagnostic day:
+
+H1 Env-insensitive
+  Pistonball: SUPPORTED (all axes flat/cloned)
+  Multiwalker: REJECTED — gravity, package_mass, terrain_friction all SENSITIVE
+    hidden drops:  gravity 61, mass 7, friction 11
+    concat drops:  gravity 87, mass 69, friction 65
+  → This env IS a valid testbed for contextual MARL (C.2 trapezoid exists).
+
+H2 Context redundant (sensitive env but concat ≈ hidden)
+  REJECTED as a blanket claim — methods differ sharply by split:
+    ID IQM:  concat 61.3  >>  hidden 29.4
+    OOD IQM: concat -15.5  <<  hidden 15.5
+    Overall IQM: hidden 21.4 vs concat 11.9
+    PoI(hidden > concat) ≈ 0.52 (no clear overall winner)
+  → Explicit physics context is NOT unused; it changes behaviour.
+
+H3 Wrong context kind (need agent-local, not physics)
+  PREMATURE / weakly supported — global physics IS task-relevant here.
+  Remaining issue is OOD brittleness of concat, not “physics uninformative”.
+
+Interpretation (thesis-ready)
+  1. Domain choice matters: Pistonball physics OOD was a null stress test; Multiwalker is not.
+  2. Oracle concat improves in-distribution specialization (higher ID return).
+  3. The same concat policy has a much larger ID→OOD gap and worse OOD IQM than hidden —
+     i.e. explicit context did NOT buy robust zero-shot transfer under hard factor extrapolation.
+  4. Training-regime / env-sensitivity ≫ “just add context” as a research takeaway.
+
+Caveats
+  - Seed-health “collapse” threshold (45) is Pistonball-calibrated; MW defaults often sit near it.
+  - Eval uses checkpoints/best.pt; late training can be unstable.
+  - PoI near 0.5 on the pooled seed×context matrix; the ID/OOD split is the informative contrast.
+
+Next (only if budget remains)
+  Optional cheap follow-up: check whether OOD context magnitudes are the failure mode
+  (e.g. clip/normalize OOD context to ID range at eval) — distinguishes “wrong numbers”
+  from “cannot use context”. Otherwise stop experiments and write up the contrast.

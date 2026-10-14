@@ -1,0 +1,17 @@
+DIAGNOSTIC DAY VERDICT (hard OOD grid)
+=======================================
+H1 Env-insensitive: SUPPORTED
+  - Every C.2 axis FLAT for every method (incl. gravity)
+  - mass/elasticity often CLONED (identical returns across factors)
+  - env advice: switch_to_multiwalker
+
+H2 Context redundant: NOT TESTABLE on Pistonball (needs non-flat slices)
+H3 Wrong context kind: PREMATURE (physics itself looks uninformative)
+
+Main effects:
+  - Training regime >> context: varying ≫ static
+  - PoI(hidden>concat)=0.564 [0.494, 0.634]
+  - Explicit concat does not clearly beat hidden on IQM
+
+NEXT: one Multiwalker concat-vs-hidden matrix (same ID/OOD protocol).
+SKIP: FiLM/latent, actor/critic, transfer study, agent-kind on flat Pistonball.

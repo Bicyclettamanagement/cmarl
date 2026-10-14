@@ -232,11 +232,15 @@ Argue the hypotheses. The numbers stay in Results. One short paragraph per verdi
 
 ## Appendix B — Figure checklist
 
-- Pistonball 2×2 IQM bars and ID/OOD: `reports/figures/diagnostic_day/`
-- Pistonball slice plot with flat/clone marks
-- Multiwalker hidden vs concat ID/OOD: `reports/figures/multiwalker_matrix/`
-- Three-way clip bars and per-axis drops: `reports/figures/multiwalker_context_clip/`
-- Optional, one panel: N=10 learning curves labeled as pilot
+Canonical set, with place and why: `reports/figures/report/FIGURES.md`.
+Regenerate with `scripts/collect_report_series.py` then `scripts/export_report_figures.py`.
+
+- Pistonball 2×2 and flat/clone drops: `reports/figures/report/pb_iqm_id_ood.png`, `pb_axis_drops.png`, `pb_slices_varying.png`
+- Pistonball learning curves (secondary): `pb_learning.png`
+- Multiwalker ID/OOD and slices: `mw_id_ood.png`, `mw_slices.png`
+- Clip probe, three methods: `clip_id_ood.png`, `clip_axis_drops.png`, `clip_slices.png`
+- N=10 native-task eval, appendix only: `n10_eval.png`
+- Do not use `reports/figures/multiwalker_context_clip/compare_context_slices.png` (drawn on Pistonball axes) or `compare_sample_efficiency.png` there (clip is not a separate training run)
 
 ## Talk map (~10 slides)
 

@@ -1,0 +1,17 @@
+method,param,ID,OOD,drop,flat,corr,cloned,max_abs_diff
+Hidden context (static),ball_mass,64.4225,64.4225,0.0,True,,True,0.0
+Hidden context (static),ball_friction,62.5488,60.3358,2.213,True,-0.2287,False,39.1265
+Hidden context (static),ball_elasticity,64.4225,64.4225,0.0,True,,True,0.0
+Hidden context (static),gravity,66.8227,66.4994,0.3232,True,0.0904,False,24.3829
+Hidden context (varying),ball_mass,80.0467,80.0467,0.0,True,,True,0.0
+Hidden context (varying),ball_friction,79.4554,79.8207,-0.3653,True,0.1166,False,24.3112
+Hidden context (varying),ball_elasticity,80.0467,80.0467,0.0,True,,True,0.0
+Hidden context (varying),gravity,79.4625,81.7382,-2.2757,True,0.5524,False,34.3731
+Context concat (static),ball_mass,64.4958,64.8959,-0.4001,True,0.1217,False,15.5225
+Context concat (static),ball_friction,63.6982,61.7484,1.9498,True,-0.396,False,18.7725
+Context concat (static),ball_elasticity,65.2236,64.9306,0.293,True,-0.0889,False,13.0461
+Context concat (static),gravity,65.7429,69.8719,-4.1289,True,0.6352,False,24.3829
+Context concat (varying),ball_mass,85.5129,86.1264,-0.6136,True,-0.2337,False,25.5015
+Context concat (varying),ball_friction,81.859,82.0393,-0.1802,True,-0.0602,False,30.2653
+Context concat (varying),ball_elasticity,86.8271,86.1537,0.6733,True,-0.2935,False,16.3684
+Context concat (varying),gravity,85.3766,88.1157,-2.7391,True,0.4831,False,30.6776

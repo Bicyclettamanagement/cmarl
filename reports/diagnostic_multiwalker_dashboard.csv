@@ -1,0 +1,3 @@
+method,IQM,IQM_lo,IQM_hi,ID_IQM,OOD_IQM,gap_IQM,flat,sensitive
+"Multiwalker hidden (varying, fwd×5)",21.423,17.944,24.905,29.419,15.544,13.875,—,"gravity,package_mass,terrain_friction"
+"Multiwalker concat (varying, fwd×5)",11.948,2.924,19.938,61.266,-15.542,76.808,—,"gravity,package_mass,terrain_friction"

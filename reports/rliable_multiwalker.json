@@ -1,0 +1,3346 @@
+{
+  "experiments": [
+    {
+      "exp_name": "mw3_hidden_varying_fwd5",
+      "method_tag": "hidden_context",
+      "label": "Multiwalker hidden (varying, fwd\u00d75)",
+      "algorithm": "matd3_multiwalker",
+      "preset": "mw3_hidden_varying_fwd5",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_seeds": 5,
+      "run_dirs": [
+        "runs/multiwalker/mw3_hidden_varying_fwd5__hidden__varying__shared__n3__seed1__1791187103",
+        "runs/multiwalker/mw3_hidden_varying_fwd5__hidden__varying__shared__n3__seed2__1791187103",
+        "runs/multiwalker/mw3_hidden_varying_fwd5__hidden__varying__shared__n3__seed3__1791187374",
+        "runs/multiwalker/mw3_hidden_varying_fwd5__hidden__varying__shared__n3__seed4__1791188071",
+        "runs/multiwalker/mw3_hidden_varying_fwd5__hidden__varying__shared__n3__seed5__1791192094"
+      ],
+      "context_order": [
+        "default",
+        "gravity_x0.25",
+        "gravity_x0.5",
+        "gravity_x0.75",
+        "gravity_x1.5",
+        "gravity_x2",
+        "gravity_x3",
+        "gravity_x4",
+        "package_mass_x0.25",
+        "package_mass_x0.5",
+        "package_mass_x0.75",
+        "package_mass_x1.5",
+        "package_mass_x2",
+        "package_mass_x3",
+        "package_mass_x4",
+        "terrain_friction_x0.25",
+        "terrain_friction_x0.5",
+        "terrain_friction_x0.75",
+        "terrain_friction_x1.5",
+        "terrain_friction_x2",
+        "terrain_friction_x3",
+        "terrain_friction_x4"
+      ],
+      "context_meta": {
+        "default": {
+          "split": "id",
+          "varied_param": null,
+          "factor": 1.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "gravity_x0.25": {
+          "split": "ood",
+          "varied_param": "gravity",
+          "factor": 0.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "gravity_x0.5": {
+          "split": "ood",
+          "varied_param": "gravity",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "gravity_x0.75": {
+          "split": "id",
+          "varied_param": "gravity",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "gravity_x1.5": {
+          "split": "id",
+          "varied_param": "gravity",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "gravity_x2": {
+          "split": "ood",
+          "varied_param": "gravity",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "gravity_x3": {
+          "split": "ood",
+          "varied_param": "gravity",
+          "factor": 3.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "gravity_x4": {
+          "split": "ood",
+          "varied_param": "gravity",
+          "factor": 4.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "package_mass_x0.25": {
+          "split": "ood",
+          "varied_param": "package_mass",
+          "factor": 0.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "package_mass_x0.5": {
+          "split": "ood",
+          "varied_param": "package_mass",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "package_mass_x0.75": {
+          "split": "id",
+          "varied_param": "package_mass",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "package_mass_x1.5": {
+          "split": "id",
+          "varied_param": "package_mass",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "package_mass_x2": {
+          "split": "ood",
+          "varied_param": "package_mass",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "package_mass_x3": {
+          "split": "ood",
+          "varied_param": "package_mass",
+          "factor": 3.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "package_mass_x4": {
+          "split": "ood",
+          "varied_param": "package_mass",
+          "factor": 4.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "terrain_friction_x0.25": {
+          "split": "ood",
+          "varied_param": "terrain_friction",
+          "factor": 0.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "terrain_friction_x0.5": {
+          "split": "ood",
+          "varied_param": "terrain_friction",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "terrain_friction_x0.75": {
+          "split": "id",
+          "varied_param": "terrain_friction",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "terrain_friction_x1.5": {
+          "split": "id",
+          "varied_param": "terrain_friction",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "terrain_friction_x2": {
+          "split": "ood",
+          "varied_param": "terrain_friction",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "terrain_friction_x3": {
+          "split": "ood",
+          "varied_param": "terrain_friction",
+          "factor": 3.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "terrain_friction_x4": {
+          "split": "ood",
+          "varied_param": "terrain_friction",
+          "factor": 4.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        }
+      },
+      "generalization": {
+        "id_return_mean": 28.856182664805765,
+        "ood_return_mean": 5.062822194522281,
+        "generalization_gap": 23.793360470283485,
+        "id_return_iqm": 29.419451342184367,
+        "ood_return_iqm": 15.54416215287646,
+        "generalization_gap_iqm": 13.875289189307907
+      },
+      "per_context": {
+        "default": {
+          "return_mean": 40.48842324233847,
+          "return_std": 9.195572888792482,
+          "return_median": 37.8411804878463,
+          "n_seeds": 5.0,
+          "return_iqm": 38.227476719592225
+        },
+        "gravity_x0.25": {
+          "return_mean": -51.357251700464005,
+          "return_std": 16.141134835899233,
+          "return_median": -43.7511179433204,
+          "n_seeds": 5.0,
+          "return_iqm": -50.37150847712635
+        },
+        "gravity_x0.5": {
+          "return_mean": 4.767001925706677,
+          "return_std": 27.28999948065284,
+          "return_median": 2.751327224153416,
+          "n_seeds": 5.0,
+          "return_iqm": 7.9430171822249465
+        },
+        "gravity_x0.75": {
+          "return_mean": 28.639714259160485,
+          "return_std": 21.552147776503176,
+          "return_median": 23.77338779484856,
+          "n_seeds": 5.0,
+          "return_iqm": 23.14637028674284
+        },
+        "gravity_x1.5": {
+          "return_mean": 4.922352370546047,
+          "return_std": 25.987063727361917,
+          "return_median": 12.604496241081508,
+          "n_seeds": 5.0,
+          "return_iqm": 11.715207712556657
+        },
+        "gravity_x2": {
+          "return_mean": -26.441407353233068,
+          "return_std": 37.423054751196695,
+          "return_median": -31.33349245939945,
+          "n_seeds": 5.0,
+          "return_iqm": -30.24991219003761
+        },
+        "gravity_x3": {
+          "return_mean": -41.46303605995392,
+          "return_std": 26.412514365243407,
+          "return_median": -59.56477008449534,
+          "n_seeds": 5.0,
+          "return_iqm": -48.59604138870619
+        },
+        "gravity_x4": {
+          "return_mean": -68.26971034756131,
+          "return_std": 20.45967772676022,
+          "return_median": -67.34424523388346,
+          "n_seeds": 5.0,
+          "return_iqm": -69.83589625389625
+        },
+        "package_mass_x0.25": {
+          "return_mean": 9.357803394707554,
+          "return_std": 26.07572416078715,
+          "return_median": -1.4095158763229634,
+          "n_seeds": 5.0,
+          "return_iqm": 0.7181787497053715
+        },
+        "package_mass_x0.5": {
+          "return_mean": 31.18220571700174,
+          "return_std": 15.471573067617717,
+          "return_median": 30.715564406166482,
+          "n_seeds": 5.0,
+          "return_iqm": 28.19408459982111
+        },
+        "package_mass_x0.75": {
+          "return_mean": 23.31800602621322,
+          "return_std": 19.815764654593252,
+          "return_median": 30.54617826015845,
+          "n_seeds": 5.0,
+          "return_iqm": 30.774870293874613
+        },
+        "package_mass_x1.5": {
+          "return_mean": 26.792407000595524,
+          "return_std": 13.157083060605359,
+          "return_median": 30.308001894581462,
+          "n_seeds": 5.0,
+          "return_iqm": 26.968242104398104
+        },
+        "package_mass_x2": {
+          "return_mean": 31.26571879938129,
+          "return_std": 9.490813103601663,
+          "return_median": 32.53617955511437,
+          "n_seeds": 5.0,
+          "return_iqm": 31.869621125619034
+        },
+        "package_mass_x3": {
+          "return_mean": 25.567637006902086,
+          "return_std": 11.155828871110362,
+          "return_median": 20.596297110527917,
+          "n_seeds": 5.0,
+          "return_iqm": 24.893711974462757
+        },
+        "package_mass_x4": {
+          "return_mean": 19.471854250022453,
+          "return_std": 9.289163479942333,
+          "return_median": 23.849693375018752,
+          "n_seeds": 5.0,
+          "return_iqm": 20.121883896486715
+        },
+        "terrain_friction_x0.25": {
+          "return_mean": 22.31550939792651,
+          "return_std": 17.38447236468728,
+          "return_median": 17.75199716795273,
+          "n_seeds": 5.0,
+          "return_iqm": 23.45982042843954
+        },
+        "terrain_friction_x0.5": {
+          "return_mean": 30.772249104010324,
+          "return_std": 17.443261473295248,
+          "return_median": 30.35441662448771,
+          "n_seeds": 5.0,
+          "return_iqm": 33.72452321869141
+        },
+        "terrain_friction_x0.75": {
+          "return_mean": 36.46173051886339,
+          "return_std": 20.721052198021624,
+          "return_median": 25.34023070360613,
+          "n_seeds": 5.0,
+          "return_iqm": 32.913039659130554
+        },
+        "terrain_friction_x1.5": {
+          "return_mean": 41.3706452359232,
+          "return_std": 18.147340647541867,
+          "return_median": 33.892599228895655,
+          "n_seeds": 5.0,
+          "return_iqm": 38.55548394084973
+        },
+        "terrain_friction_x2": {
+          "return_mean": 32.46625795377817,
+          "return_std": 9.16036431538789,
+          "return_median": 35.71063568813649,
+          "n_seeds": 5.0,
+          "return_iqm": 32.00859735278451
+        },
+        "terrain_friction_x3": {
+          "return_mean": 28.477938382281007,
+          "return_std": 15.308320002523239,
+          "return_median": 22.44970568909776,
+          "n_seeds": 5.0,
+          "return_iqm": 24.64625878643712
+        },
+        "terrain_friction_x4": {
+          "return_mean": 27.829562447328748,
+          "return_std": 9.580070324229334,
+          "return_median": 23.89232079808909,
+          "n_seeds": 5.0,
+          "return_iqm": 25.91653145166735
+        }
+      },
+      "seed_stability": {
+        "seed_return_std": 9.195572888792482,
+        "seed_return_mean": 40.48842324233847,
+        "seed_return_iqm": 38.227476719592225
+      },
+      "sample_efficiency": {
+        "median_steps_to_threshold": {
+          "median_steps_to_threshold": 287164.0,
+          "n_seeds_reached": 5
+        },
+        "eval_iqm_curve": {
+          "seeds": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "global_steps": [
+            25000,
+            50000,
+            75000,
+            100000,
+            125000,
+            150000,
+            175000,
+            200000,
+            225000,
+            250000,
+            275000,
+            300000,
+            325000,
+            350000,
+            375000,
+            400000,
+            425000,
+            450000,
+            475000,
+            500000,
+            525000,
+            550000,
+            575000,
+            600000,
+            625000,
+            650000,
+            675000,
+            700000,
+            725000,
+            750000,
+            775000,
+            800000,
+            825000,
+            850000,
+            875000,
+            900000,
+            925000,
+            950000,
+            975000
+          ],
+          "iqm": [
+            -95.77665107531679,
+            -110.72330667602792,
+            -87.08943886406443,
+            -59.92403010324643,
+            5.124094900632017,
+            -35.20045405359402,
+            -69.05104992068017,
+            -62.707186718643804,
+            -58.084160799712485,
+            -28.5129679703257,
+            0.04832150518067024,
+            -18.280567197405052,
+            -38.740839384090904,
+            -68.26145440615988,
+            -14.781672186848775,
+            -49.52747842521165,
+            -93.62895222311771,
+            -56.991475187414494,
+            -8.131533519330384,
+            -17.19248253093272,
+            -12.02167601878668,
+            -24.060876273153422,
+            -76.03777331679507,
+            -66.63590335045699,
+            8.029070074769171,
+            1.291941377092843,
+            -68.16165509426759,
+            -18.84246337443107,
+            -59.12390850542577,
+            -50.05412569183303,
+            -12.210537219943935,
+            -60.58767196032458,
+            -61.467752084136,
+            5.074484122710094,
+            15.496408575973325,
+            -47.95143160348135,
+            -16.683069857449635,
+            -7.7839073269731465,
+            -2.397227514949087
+          ],
+          "ci_low": [
+            -103.53972064503641,
+            -118.61599178501852,
+            -112.63085532933474,
+            -75.80686526511003,
+            -23.905494792076443,
+            -84.65067949096448,
+            -145.09374319679205,
+            -100.21239888854323,
+            -87.9648774060317,
+            -83.07194347803791,
+            -23.919756673621354,
+            -56.85411871307426,
+            -90.56877441566299,
+            -102.83937840998446,
+            -114.79662805071307,
+            -92.23485597098868,
+            -117.86118426877592,
+            -118.93008290220878,
+            -57.22610966061,
+            -77.773545253332,
+            -94.19679593398338,
+            -92.80766887357458,
+            -94.79052483207649,
+            -105.13796723551219,
+            -44.89256495036975,
+            -48.084263720860065,
+            -114.6447660698107,
+            -76.88798587708904,
+            -87.92806717670624,
+            -102.4459541816678,
+            -46.96687126325236,
+            -101.89785301547359,
+            -120.32057135986783,
+            -82.41510487747964,
+            -31.1974652370231,
+            -96.12839552884299,
+            -81.03939454347169,
+            -53.52938709953039,
+            -110.28530520490473
+          ],
+          "ci_high": [
+            -90.5223646159801,
+            -94.14041158501747,
+            -22.905784614591116,
+            -20.293977279259163,
+            31.804688723404322,
+            4.39144778686266,
+            -15.236995146387246,
+            -10.38614688544636,
+            -3.3260396140933923,
+            28.09268425805153,
+            27.087343328942847,
+            9.962275850552123,
+            36.5011730231345,
+            -13.419346673138152,
+            34.83070433852847,
+            -1.864707589114986,
+            -17.322296781672375,
+            35.92666045935065,
+            6.9852541055944455,
+            9.706490052760486,
+            24.268835019471165,
+            82.17449056941808,
+            -5.6669060320213935,
+            -9.098832785945248,
+            22.870145647752043,
+            13.472912774800713,
+            10.432210204157025,
+            28.83234202033945,
+            10.587640055476827,
+            10.461861735330565,
+            17.488045157364557,
+            25.20445158153224,
+            37.74451258730281,
+            72.58340039393964,
+            35.832637507399475,
+            -8.100251011826371,
+            21.86663462883897,
+            20.67127827865383,
+            54.02381226329859
+          ]
+        }
+      },
+      "rliable": {
+        "algorithms": {
+          "Multiwalker hidden (varying, fwd\u00d75)": {
+            "score_matrix_shape": [
+              5,
+              22
+            ],
+            "metrics": {
+              "median": {
+                "point": 26.180022003748803,
+                "ci_low": 19.800481801130058,
+                "ci_high": 28.821207796821433
+              },
+              "iqm": {
+                "point": 21.42290851426944,
+                "ci_low": 17.944246256543543,
+                "ci_high": 24.905365908369546
+              },
+              "mean": {
+                "point": 12.633436889612481,
+                "ci_low": 9.104285092143714,
+                "ci_high": 16.191871341349543
+              },
+              "optimality_gap": {
+                "point": 287.3665631103875,
+                "ci_low": 283.8081286586505,
+                "ci_high": 290.8957149078563
+              }
+            }
+          }
+        },
+        "bootstrap_reps": 5000,
+        "performance_profiles": {
+          "Multiwalker hidden (varying, fwd\u00d75)": {
+            "thresholds": [
+              -50.0,
+              -38.333333333333336,
+              -26.666666666666668,
+              -15.0,
+              -3.3333333333333357,
+              8.333333333333329,
+              20.0,
+              31.666666666666657,
+              43.33333333333333,
+              55.0,
+              66.66666666666666,
+              78.33333333333331,
+              90.0,
+              101.66666666666666,
+              113.33333333333331,
+              125.0,
+              136.66666666666666,
+              148.33333333333331,
+              160.0,
+              171.66666666666666,
+              183.33333333333331,
+              195.0,
+              206.66666666666663,
+              218.33333333333331,
+              230.0,
+              241.66666666666663,
+              253.33333333333331,
+              265.0,
+              276.66666666666663,
+              288.3333333333333,
+              300.0
+            ],
+            "profile": [
+              0.9,
+              0.8636363636363636,
+              0.8363636363636363,
+              0.8181818181818182,
+              0.8,
+              0.7090909090909091,
+              0.5545454545454546,
+              0.3181818181818182,
+              0.11818181818181818,
+              0.07272727272727272,
+              0.01818181818181818,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "ci_low": [
+              0.8636363636363636,
+              0.8181818181818182,
+              0.8,
+              0.7818181818181819,
+              0.7545454545454545,
+              0.6545454545454545,
+              0.4818181818181818,
+              0.24545454545454545,
+              0.06363636363636363,
+              0.02727272727272727,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "ci_high": [
+              0.9363636363636364,
+              0.9,
+              0.8727272727272727,
+              0.8545454545454545,
+              0.8454545454545455,
+              0.7636363636363637,
+              0.6272727272727273,
+              0.39090909090909093,
+              0.17272727272727273,
+              0.11818181818181818,
+              0.045454545454545456,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      },
+      "rliable_by_split": {
+        "all_contexts": {
+          "algorithms": {
+            "Multiwalker hidden (varying, fwd\u00d75)": {
+              "score_matrix_shape": [
+                5,
+                22
+              ],
+              "metrics": {
+                "median": {
+                  "point": 26.180022003748803,
+                  "ci_low": 19.800481801130058,
+                  "ci_high": 28.821207796821433
+                },
+                "iqm": {
+                  "point": 21.42290851426944,
+                  "ci_low": 17.944246256543543,
+                  "ci_high": 24.905365908369546
+                },
+                "mean": {
+                  "point": 12.633436889612481,
+                  "ci_low": 9.104285092143714,
+                  "ci_high": 16.191871341349543
+                },
+                "optimality_gap": {
+                  "point": 287.3665631103875,
+                  "ci_low": 283.8081286586505,
+                  "ci_high": 290.8957149078563
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000,
+          "performance_profiles": {
+            "Multiwalker hidden (varying, fwd\u00d75)": {
+              "thresholds": [
+                -50.0,
+                -38.333333333333336,
+                -26.666666666666668,
+                -15.0,
+                -3.3333333333333357,
+                8.333333333333329,
+                20.0,
+                31.666666666666657,
+                43.33333333333333,
+                55.0,
+                66.66666666666666,
+                78.33333333333331,
+                90.0,
+                101.66666666666666,
+                113.33333333333331,
+                125.0,
+                136.66666666666666,
+                148.33333333333331,
+                160.0,
+                171.66666666666666,
+                183.33333333333331,
+                195.0,
+                206.66666666666663,
+                218.33333333333331,
+                230.0,
+                241.66666666666663,
+                253.33333333333331,
+                265.0,
+                276.66666666666663,
+                288.3333333333333,
+                300.0
+              ],
+              "profile": [
+                0.9,
+                0.8636363636363636,
+                0.8363636363636363,
+                0.8181818181818182,
+                0.8,
+                0.7090909090909091,
+                0.5545454545454546,
+                0.3181818181818182,
+                0.11818181818181818,
+                0.07272727272727272,
+                0.01818181818181818,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "ci_low": [
+                0.8636363636363636,
+                0.8181818181818182,
+                0.8,
+                0.7818181818181819,
+                0.7545454545454545,
+                0.6545454545454545,
+                0.4818181818181818,
+                0.24545454545454545,
+                0.06363636363636363,
+                0.02727272727272727,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "ci_high": [
+                0.9363636363636364,
+                0.9,
+                0.8727272727272727,
+                0.8545454545454545,
+                0.8454545454545455,
+                0.7636363636363637,
+                0.6272727272727273,
+                0.39090909090909093,
+                0.17272727272727273,
+                0.11818181818181818,
+                0.045454545454545456,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "in_distribution": {
+          "algorithms": {
+            "Multiwalker hidden (varying, fwd\u00d75)": {
+              "score_matrix_shape": [
+                5,
+                7
+              ],
+              "metrics": {
+                "median": {
+                  "point": 28.639714259160485,
+                  "ci_low": 21.87556144275005,
+                  "ci_high": 38.74273666076673
+                },
+                "iqm": {
+                  "point": 29.419451342184367,
+                  "ci_low": 24.083758672436723,
+                  "ci_high": 35.20235068625803
+                },
+                "mean": {
+                  "point": 28.856182664805765,
+                  "ci_low": 22.48307622351168,
+                  "ci_high": 35.20554045208122
+                },
+                "optimality_gap": {
+                  "point": 271.1438173351942,
+                  "ci_low": 264.7944595479188,
+                  "ci_high": 277.51692377648834
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        },
+        "out_of_distribution": {
+          "algorithms": {
+            "Multiwalker hidden (varying, fwd\u00d75)": {
+              "score_matrix_shape": [
+                5,
+                15
+              ],
+              "metrics": {
+                "median": {
+                  "point": 22.31550939792651,
+                  "ci_low": 15.445293362112722,
+                  "ci_high": 26.86232573577805
+                },
+                "iqm": {
+                  "point": 15.54416215287646,
+                  "ci_low": 10.534621431728368,
+                  "ci_high": 20.32302719977293
+                },
+                "mean": {
+                  "point": 5.062822194522284,
+                  "ci_low": 0.642633204680173,
+                  "ci_high": 9.452274538670345
+                },
+                "optimality_gap": {
+                  "point": 294.93717780547775,
+                  "ci_low": 290.5477254613296,
+                  "ci_high": 299.3573667953198
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        }
+      },
+      "id_factor_low": 0.75,
+      "id_factor_high": 1.5,
+      "eval_factor_grid": [
+        0.25,
+        0.5,
+        0.75,
+        1.0,
+        1.5,
+        2.0,
+        3.0,
+        4.0
+      ],
+      "eval_vary_params": [
+        "gravity",
+        "package_mass",
+        "terrain_friction"
+      ],
+      "eval_grid_preset": "hard",
+      "diagnostics": {
+        "clones": [
+          {
+            "param": "gravity",
+            "contexts": [
+              "gravity_x0.25",
+              "gravity_x0.5",
+              "gravity_x0.75",
+              "gravity_x1.5",
+              "gravity_x2",
+              "gravity_x3",
+              "gravity_x4"
+            ],
+            "cloned": false,
+            "cloned_seed_count": 0,
+            "n_seeds": 5,
+            "n_factors": 7,
+            "max_abs_diff": 111.32177636617169,
+            "per_seed_unique_returns": [
+              7,
+              7,
+              7,
+              7,
+              7
+            ]
+          },
+          {
+            "param": "package_mass",
+            "contexts": [
+              "package_mass_x0.25",
+              "package_mass_x0.5",
+              "package_mass_x0.75",
+              "package_mass_x1.5",
+              "package_mass_x2",
+              "package_mass_x3",
+              "package_mass_x4"
+            ],
+            "cloned": false,
+            "cloned_seed_count": 0,
+            "n_seeds": 5,
+            "n_factors": 7,
+            "max_abs_diff": 54.46040659820815,
+            "per_seed_unique_returns": [
+              7,
+              7,
+              7,
+              7,
+              7
+            ]
+          },
+          {
+            "param": "terrain_friction",
+            "contexts": [
+              "terrain_friction_x0.25",
+              "terrain_friction_x0.5",
+              "terrain_friction_x0.75",
+              "terrain_friction_x1.5",
+              "terrain_friction_x2",
+              "terrain_friction_x3",
+              "terrain_friction_x4"
+            ],
+            "cloned": false,
+            "cloned_seed_count": 0,
+            "n_seeds": 5,
+            "n_factors": 7,
+            "max_abs_diff": 52.6817208360008,
+            "per_seed_unique_returns": [
+              7,
+              7,
+              7,
+              7,
+              7
+            ]
+          }
+        ],
+        "slices": [
+          {
+            "param": "gravity",
+            "id_return_mean": 24.683496624015003,
+            "ood_return_mean": -36.552880707101124,
+            "ood_drop": 61.23637733111613,
+            "flat": false,
+            "logdev_return_corr": -0.9643076883230776,
+            "n_id": 3,
+            "n_ood": 5
+          },
+          {
+            "param": "package_mass",
+            "id_return_mean": 30.19961208971574,
+            "ood_return_mean": 23.369043833603023,
+            "ood_drop": 6.830568256112716,
+            "flat": false,
+            "logdev_return_corr": -0.7708856244872933,
+            "n_id": 3,
+            "n_ood": 5
+          },
+          {
+            "param": "terrain_friction",
+            "id_return_mean": 39.44026633237502,
+            "ood_return_mean": 28.37230345706495,
+            "ood_drop": 11.067962875310066,
+            "flat": false,
+            "logdev_return_corr": -0.9182192078562449,
+            "n_id": 3,
+            "n_ood": 5
+          }
+        ],
+        "seed_health": [
+          {
+            "seed": 1,
+            "default_return": 30.773519498645335,
+            "mean_return_all_contexts": 8.66718286129739,
+            "min_return": -75.43523617181926,
+            "max_return": 43.71366460504942,
+            "collapsed": true
+          },
+          {
+            "seed": 2,
+            "default_return": 37.8411804878463,
+            "mean_return_all_contexts": 2.6027456303070973,
+            "min_return": -69.82663342411009,
+            "max_return": 37.8411804878463,
+            "collapsed": true
+          },
+          {
+            "seed": 3,
+            "default_return": 33.91072240161399,
+            "mean_return_all_contexts": 8.707991766109037,
+            "min_return": -97.7589016429459,
+            "max_return": 66.96775897778573,
+            "collapsed": true
+          },
+          {
+            "seed": 4,
+            "default_return": 42.930527269316386,
+            "mean_return_all_contexts": 29.687097840713367,
+            "min_return": -43.7511179433204,
+            "max_return": 66.38087329663297,
+            "collapsed": true
+          },
+          {
+            "seed": 5,
+            "default_return": 56.98616655427035,
+            "mean_return_all_contexts": 13.502166349635507,
+            "min_return": -75.16741817289343,
+            "max_return": 70.43371800395353,
+            "collapsed": false
+          }
+        ],
+        "n_collapsed_seeds": 4,
+        "coordination": {
+          "per_agent_return_variance_mean": 0.0,
+          "success_rate_mean": 1.0,
+          "episode_length_mean": 392.0300000000001
+        },
+        "env_switch": {
+          "switch_env": false,
+          "reason": "at_least_one_physics_axis_is_sensitive",
+          "sensitive_params": [
+            "gravity",
+            "package_mass",
+            "terrain_friction"
+          ],
+          "action": "keep_pistonball_train_on_sensitive_axes"
+        }
+      }
+    },
+    {
+      "exp_name": "mw3_concat_varying_fwd5",
+      "method_tag": "context_concat",
+      "label": "Multiwalker concat (varying, fwd\u00d75)",
+      "algorithm": "matd3_multiwalker",
+      "preset": "mw3_concat_varying_fwd5",
+      "seeds": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_seeds": 5,
+      "run_dirs": [
+        "runs/multiwalker/mw3_concat_varying_fwd5__concat__varying__shared__n3__seed1__1791192099",
+        "runs/multiwalker/mw3_concat_varying_fwd5__concat__varying__shared__n3__seed2__1791196988",
+        "runs/multiwalker/mw3_concat_varying_fwd5__concat__varying__shared__n3__seed3__1791197454",
+        "runs/multiwalker/mw3_concat_varying_fwd5__concat__varying__shared__n3__seed4__1791197454",
+        "runs/multiwalker/mw3_concat_varying_fwd5__concat__varying__shared__n3__seed5__1791202476"
+      ],
+      "context_order": [
+        "default",
+        "gravity_x0.25",
+        "gravity_x0.5",
+        "gravity_x0.75",
+        "gravity_x1.5",
+        "gravity_x2",
+        "gravity_x3",
+        "gravity_x4",
+        "package_mass_x0.25",
+        "package_mass_x0.5",
+        "package_mass_x0.75",
+        "package_mass_x1.5",
+        "package_mass_x2",
+        "package_mass_x3",
+        "package_mass_x4",
+        "terrain_friction_x0.25",
+        "terrain_friction_x0.5",
+        "terrain_friction_x0.75",
+        "terrain_friction_x1.5",
+        "terrain_friction_x2",
+        "terrain_friction_x3",
+        "terrain_friction_x4"
+      ],
+      "context_meta": {
+        "default": {
+          "split": "id",
+          "varied_param": null,
+          "factor": 1.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "gravity_x0.25": {
+          "split": "ood",
+          "varied_param": "gravity",
+          "factor": 0.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "gravity_x0.5": {
+          "split": "ood",
+          "varied_param": "gravity",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "gravity_x0.75": {
+          "split": "id",
+          "varied_param": "gravity",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "gravity_x1.5": {
+          "split": "id",
+          "varied_param": "gravity",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "gravity_x2": {
+          "split": "ood",
+          "varied_param": "gravity",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "gravity_x3": {
+          "split": "ood",
+          "varied_param": "gravity",
+          "factor": 3.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "gravity_x4": {
+          "split": "ood",
+          "varied_param": "gravity",
+          "factor": 4.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "package_mass_x0.25": {
+          "split": "ood",
+          "varied_param": "package_mass",
+          "factor": 0.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "package_mass_x0.5": {
+          "split": "ood",
+          "varied_param": "package_mass",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "package_mass_x0.75": {
+          "split": "id",
+          "varied_param": "package_mass",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "package_mass_x1.5": {
+          "split": "id",
+          "varied_param": "package_mass",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "package_mass_x2": {
+          "split": "ood",
+          "varied_param": "package_mass",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "package_mass_x3": {
+          "split": "ood",
+          "varied_param": "package_mass",
+          "factor": 3.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "package_mass_x4": {
+          "split": "ood",
+          "varied_param": "package_mass",
+          "factor": 4.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "terrain_friction_x0.25": {
+          "split": "ood",
+          "varied_param": "terrain_friction",
+          "factor": 0.25,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "terrain_friction_x0.5": {
+          "split": "ood",
+          "varied_param": "terrain_friction",
+          "factor": 0.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "terrain_friction_x0.75": {
+          "split": "id",
+          "varied_param": "terrain_friction",
+          "factor": 0.75,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "terrain_friction_x1.5": {
+          "split": "id",
+          "varied_param": "terrain_friction",
+          "factor": 1.5,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "interpolation"
+        },
+        "terrain_friction_x2": {
+          "split": "ood",
+          "varied_param": "terrain_friction",
+          "factor": 2.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "terrain_friction_x3": {
+          "split": "ood",
+          "varied_param": "terrain_friction",
+          "factor": 3.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        },
+        "terrain_friction_x4": {
+          "split": "ood",
+          "varied_param": "terrain_friction",
+          "factor": 4.0,
+          "factor_b": null,
+          "varied_param_b": null,
+          "region": "extrapolation"
+        }
+      },
+      "generalization": {
+        "id_return_mean": 54.161513842466306,
+        "ood_return_mean": -16.384661103144452,
+        "generalization_gap": 70.54617494561076,
+        "id_return_iqm": 61.26640576470222,
+        "ood_return_iqm": -15.541931049265122,
+        "generalization_gap_iqm": 76.80833681396734
+      },
+      "per_context": {
+        "default": {
+          "return_mean": 68.7633971250616,
+          "return_std": 21.91857433417978,
+          "return_median": 68.00748601571345,
+          "n_seeds": 5.0,
+          "return_iqm": 64.36102872140084
+        },
+        "gravity_x0.25": {
+          "return_mean": -57.72589860719938,
+          "return_std": 36.4694732495065,
+          "return_median": -65.0052177403122,
+          "n_seeds": 5.0,
+          "return_iqm": -61.34952317028202
+        },
+        "gravity_x0.5": {
+          "return_mean": -22.637007033334992,
+          "return_std": 52.69148806597212,
+          "return_median": -33.904509691633066,
+          "n_seeds": 5.0,
+          "return_iqm": -27.69859102159938
+        },
+        "gravity_x0.75": {
+          "return_mean": 7.057043888245258,
+          "return_std": 56.81888931452366,
+          "return_median": 23.580355383989314,
+          "n_seeds": 5.0,
+          "return_iqm": 4.219387586406417
+        },
+        "gravity_x1.5": {
+          "return_mean": 55.422252250268755,
+          "return_std": 27.938469605960023,
+          "return_median": 59.600479685080565,
+          "n_seeds": 5.0,
+          "return_iqm": 54.563113886035175
+        },
+        "gravity_x2": {
+          "return_mean": 15.3683741835043,
+          "return_std": 38.458863114437996,
+          "return_median": 13.013174540828924,
+          "n_seeds": 5.0,
+          "return_iqm": 17.5730440852187
+        },
+        "gravity_x3": {
+          "return_mean": -85.83644881504004,
+          "return_std": 21.541391510234604,
+          "return_median": -82.084544831266,
+          "n_seeds": 5.0,
+          "return_iqm": -85.38353221294365
+        },
+        "gravity_x4": {
+          "return_mean": -67.00807282003662,
+          "return_std": 34.44068065871902,
+          "return_median": -70.12115900218485,
+          "n_seeds": 5.0,
+          "return_iqm": -60.43021392144468
+        },
+        "package_mass_x0.25": {
+          "return_mean": 3.024775098714373,
+          "return_std": 41.69522870572671,
+          "return_median": 22.854947462988413,
+          "n_seeds": 5.0,
+          "return_iqm": 9.824106478701465
+        },
+        "package_mass_x0.5": {
+          "return_mean": 62.081896833260565,
+          "return_std": 42.22847241370123,
+          "return_median": 55.11246016299513,
+          "n_seeds": 5.0,
+          "return_iqm": 63.787765737842896
+        },
+        "package_mass_x0.75": {
+          "return_mean": 58.55055568092505,
+          "return_std": 33.28505046947428,
+          "return_median": 65.97321650168549,
+          "n_seeds": 5.0,
+          "return_iqm": 52.700175142717676
+        },
+        "package_mass_x1.5": {
+          "return_mean": 67.37218722981828,
+          "return_std": 15.88344443359779,
+          "return_median": 68.20104803796858,
+          "n_seeds": 5.0,
+          "return_iqm": 70.42420634713038
+        },
+        "package_mass_x2": {
+          "return_mean": 3.8242252939283725,
+          "return_std": 32.96928288460135,
+          "return_median": 20.220077004196366,
+          "n_seeds": 5.0,
+          "return_iqm": 10.181794307527737
+        },
+        "package_mass_x3": {
+          "return_mean": -32.63556050040642,
+          "return_std": 35.67694405632402,
+          "return_median": -24.72352949467798,
+          "n_seeds": 5.0,
+          "return_iqm": -23.26122945407728
+        },
+        "package_mass_x4": {
+          "return_mean": -57.493614487937876,
+          "return_std": 47.034276207424256,
+          "return_median": -82.18542703815424,
+          "n_seeds": 5.0,
+          "return_iqm": -60.54984710702814
+        },
+        "terrain_friction_x0.25": {
+          "return_mean": 34.67394825919766,
+          "return_std": 37.10740344365864,
+          "return_median": 38.62104121719799,
+          "n_seeds": 5.0,
+          "return_iqm": 36.64225546974276
+        },
+        "terrain_friction_x0.5": {
+          "return_mean": 50.279875574389024,
+          "return_std": 20.36390490787633,
+          "return_median": 57.78567384400717,
+          "n_seeds": 5.0,
+          "return_iqm": 48.698691598967564
+        },
+        "terrain_friction_x0.75": {
+          "return_mean": 69.63822509747311,
+          "return_std": 19.15758647932152,
+          "return_median": 80.19694956166984,
+          "n_seeds": 5.0,
+          "return_iqm": 72.91273264475687
+        },
+        "terrain_friction_x1.5": {
+          "return_mean": 52.32693562547213,
+          "return_std": 36.89034554192511,
+          "return_median": 71.52806403394791,
+          "n_seeds": 5.0,
+          "return_iqm": 66.28006373257897
+        },
+        "terrain_friction_x2": {
+          "return_mean": -1.6477890045381947,
+          "return_std": 17.85435375311608,
+          "return_median": 0.3046633467699131,
+          "n_seeds": 5.0,
+          "return_iqm": 1.0352246398106353
+        },
+        "terrain_friction_x3": {
+          "return_mean": -22.082425500743547,
+          "return_std": 25.954722045392565,
+          "return_median": -26.65081188082694,
+          "n_seeds": 5.0,
+          "return_iqm": -27.89422628314544
+        },
+        "terrain_friction_x4": {
+          "return_mean": -67.95619502092401,
+          "return_std": 35.285535065336475,
+          "return_median": -80.259395878762,
+          "n_seeds": 5.0,
+          "return_iqm": -79.23247992371519
+        }
+      },
+      "seed_stability": {
+        "seed_return_std": 21.91857433417978,
+        "seed_return_mean": 68.7633971250616,
+        "seed_return_iqm": 64.36102872140084
+      },
+      "sample_efficiency": {
+        "median_steps_to_threshold": {
+          "median_steps_to_threshold": 253877.0,
+          "n_seeds_reached": 5
+        },
+        "eval_iqm_curve": {
+          "seeds": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "global_steps": [
+            25000,
+            50000,
+            75000,
+            100000,
+            125000,
+            150000,
+            175000,
+            200000,
+            225000,
+            250000,
+            275000,
+            300000,
+            325000,
+            350000,
+            375000,
+            400000,
+            425000,
+            450000,
+            475000,
+            500000,
+            525000,
+            550000,
+            575000,
+            600000,
+            625000,
+            650000,
+            675000,
+            700000,
+            725000,
+            750000,
+            775000,
+            800000,
+            825000,
+            850000,
+            875000,
+            900000,
+            925000,
+            950000,
+            975000
+          ],
+          "iqm": [
+            -100.3939710366022,
+            -93.69313475848348,
+            -95.17903889322447,
+            -49.06656049674859,
+            -9.61984559790127,
+            -28.883029349251753,
+            5.079726885693781,
+            -23.671746352446018,
+            -58.89070382341742,
+            -16.865382858517524,
+            -50.98951601112881,
+            -37.00061576009762,
+            14.661984560683507,
+            23.554346955001918,
+            -68.13179521407518,
+            -41.47820144266545,
+            17.124136499715622,
+            -38.694912127771026,
+            -65.00012001591838,
+            16.714573645602098,
+            22.907121884119206,
+            -65.49231148894047,
+            -27.223684830177138,
+            -5.379812214351084,
+            0.25473551014094653,
+            13.087939659685462,
+            11.150612625534892,
+            29.94470173768975,
+            37.624812837414176,
+            24.587854660219605,
+            44.485246164517264,
+            32.42895488144349,
+            -43.75848230336688,
+            -30.37054859394965,
+            25.539403142174717,
+            -3.654509461571074,
+            -41.80033101320817,
+            26.47628687477364,
+            -8.425010712989776
+          ],
+          "ci_low": [
+            -108.61468185256751,
+            -108.90916638490224,
+            -129.24220141575293,
+            -87.83101240172982,
+            -84.17701619228829,
+            -70.67356762700472,
+            -13.71436850702458,
+            -64.44831081114157,
+            -89.23162688673646,
+            -68.44472370765827,
+            -96.50379211814312,
+            -81.58550066287043,
+            3.9702878377607362,
+            -79.53557457085007,
+            -127.00139452254884,
+            -89.3013226388764,
+            -60.76656130039029,
+            -58.349389275686825,
+            -95.03734838079522,
+            -86.12713411088204,
+            -13.12721893018868,
+            -105.54206967284831,
+            -103.43361946029795,
+            -54.56192105594608,
+            -20.89937050688872,
+            -51.03639427227554,
+            -29.373407562228806,
+            -51.56290417088678,
+            19.55047060114643,
+            -40.4411806869838,
+            -4.18892543900895,
+            -62.27447626629361,
+            -74.63438662872822,
+            -54.2062949180534,
+            -15.36269313065093,
+            -91.12979745561324,
+            -99.02922749105426,
+            -89.35169833591551,
+            -78.94228689769211
+          ],
+          "ci_high": [
+            -71.46205029191655,
+            -73.51769428838183,
+            -27.985784603903678,
+            5.630939721509268,
+            9.81749229400454,
+            6.855620162354588,
+            47.80655714471961,
+            3.21895444696702,
+            -9.730600829029244,
+            17.720486772488144,
+            15.914253207544505,
+            25.743299917214472,
+            20.515249503293532,
+            29.586760357229277,
+            -3.0343201873754837,
+            38.389478100601686,
+            35.341040654866795,
+            -0.2684091712796229,
+            11.060344966956357,
+            64.76117352549745,
+            50.568364228087454,
+            16.68748036268408,
+            65.61010948347824,
+            45.46537834633559,
+            72.03884300586111,
+            50.452449875942705,
+            65.79550120565631,
+            68.68146027757409,
+            58.770677696877705,
+            41.49928341550685,
+            68.28281794433242,
+            77.45897994066281,
+            -0.3827603078550565,
+            7.4407915595091,
+            44.924744976753395,
+            65.65669983875486,
+            57.12378198211946,
+            85.95847168799355,
+            67.80199340924071
+          ]
+        }
+      },
+      "rliable": {
+        "algorithms": {
+          "Multiwalker concat (varying, fwd\u00d75)": {
+            "score_matrix_shape": [
+              5,
+              22
+            ],
+            "metrics": {
+              "median": {
+                "point": 5.440634591086815,
+                "ci_low": -5.155426449371982,
+                "ci_high": 26.064447117225047
+              },
+              "iqm": {
+                "point": 11.948478759495163,
+                "ci_low": 2.9243326268041727,
+                "ci_high": 19.938115707164037
+              },
+              "mean": {
+                "point": 6.061849106822607,
+                "ci_low": -0.675189102748442,
+                "ci_high": 12.678172160061658
+              },
+              "optimality_gap": {
+                "point": 293.9381508931774,
+                "ci_low": 287.32182783993835,
+                "ci_high": 300.67518910274845
+              }
+            }
+          }
+        },
+        "bootstrap_reps": 5000,
+        "performance_profiles": {
+          "Multiwalker concat (varying, fwd\u00d75)": {
+            "thresholds": [
+              -50.0,
+              -38.333333333333336,
+              -26.666666666666668,
+              -15.0,
+              -3.3333333333333357,
+              8.333333333333329,
+              20.0,
+              31.666666666666657,
+              43.33333333333333,
+              55.0,
+              66.66666666666666,
+              78.33333333333331,
+              90.0,
+              101.66666666666666,
+              113.33333333333331,
+              125.0,
+              136.66666666666666,
+              148.33333333333331,
+              160.0,
+              171.66666666666666,
+              183.33333333333331,
+              195.0,
+              206.66666666666663,
+              218.33333333333331,
+              230.0,
+              241.66666666666663,
+              253.33333333333331,
+              265.0,
+              276.66666666666663,
+              288.3333333333333,
+              300.0
+            ],
+            "profile": [
+              0.7727272727272727,
+              0.7454545454545455,
+              0.7,
+              0.6272727272727273,
+              0.6,
+              0.5272727272727272,
+              0.4909090909090909,
+              0.38181818181818183,
+              0.32727272727272727,
+              0.2727272727272727,
+              0.19090909090909092,
+              0.12727272727272726,
+              0.045454545454545456,
+              0.03636363636363636,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "ci_low": [
+              0.7181818181818181,
+              0.6818181818181818,
+              0.6454545454545455,
+              0.5636363636363636,
+              0.5454545454545454,
+              0.4727272727272727,
+              0.42727272727272725,
+              0.3181818181818182,
+              0.2636363636363636,
+              0.20909090909090908,
+              0.12727272727272726,
+              0.07272727272727272,
+              0.01818181818181818,
+              0.00909090909090909,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "ci_high": [
+              0.8272727272727273,
+              0.8,
+              0.7636363636363637,
+              0.6909090909090909,
+              0.6636363636363637,
+              0.5818181818181818,
+              0.5545454545454546,
+              0.43636363636363634,
+              0.39090909090909093,
+              0.33636363636363636,
+              0.24545454545454545,
+              0.18181818181818182,
+              0.08181818181818182,
+              0.06363636363636363,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        }
+      },
+      "rliable_by_split": {
+        "all_contexts": {
+          "algorithms": {
+            "Multiwalker concat (varying, fwd\u00d75)": {
+              "score_matrix_shape": [
+                5,
+                22
+              ],
+              "metrics": {
+                "median": {
+                  "point": 5.440634591086815,
+                  "ci_low": -5.155426449371982,
+                  "ci_high": 26.064447117225047
+                },
+                "iqm": {
+                  "point": 11.948478759495163,
+                  "ci_low": 2.9243326268041727,
+                  "ci_high": 19.938115707164037
+                },
+                "mean": {
+                  "point": 6.061849106822607,
+                  "ci_low": -0.675189102748442,
+                  "ci_high": 12.678172160061658
+                },
+                "optimality_gap": {
+                  "point": 293.9381508931774,
+                  "ci_low": 287.32182783993835,
+                  "ci_high": 300.67518910274845
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000,
+          "performance_profiles": {
+            "Multiwalker concat (varying, fwd\u00d75)": {
+              "thresholds": [
+                -50.0,
+                -38.333333333333336,
+                -26.666666666666668,
+                -15.0,
+                -3.3333333333333357,
+                8.333333333333329,
+                20.0,
+                31.666666666666657,
+                43.33333333333333,
+                55.0,
+                66.66666666666666,
+                78.33333333333331,
+                90.0,
+                101.66666666666666,
+                113.33333333333331,
+                125.0,
+                136.66666666666666,
+                148.33333333333331,
+                160.0,
+                171.66666666666666,
+                183.33333333333331,
+                195.0,
+                206.66666666666663,
+                218.33333333333331,
+                230.0,
+                241.66666666666663,
+                253.33333333333331,
+                265.0,
+                276.66666666666663,
+                288.3333333333333,
+                300.0
+              ],
+              "profile": [
+                0.7727272727272727,
+                0.7454545454545455,
+                0.7,
+                0.6272727272727273,
+                0.6,
+                0.5272727272727272,
+                0.4909090909090909,
+                0.38181818181818183,
+                0.32727272727272727,
+                0.2727272727272727,
+                0.19090909090909092,
+                0.12727272727272726,
+                0.045454545454545456,
+                0.03636363636363636,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "ci_low": [
+                0.7181818181818181,
+                0.6818181818181818,
+                0.6454545454545455,
+                0.5636363636363636,
+                0.5454545454545454,
+                0.4727272727272727,
+                0.42727272727272725,
+                0.3181818181818182,
+                0.2636363636363636,
+                0.20909090909090908,
+                0.12727272727272726,
+                0.07272727272727272,
+                0.01818181818181818,
+                0.00909090909090909,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "ci_high": [
+                0.8272727272727273,
+                0.8,
+                0.7636363636363637,
+                0.6909090909090909,
+                0.6636363636363637,
+                0.5818181818181818,
+                0.5545454545454546,
+                0.43636363636363634,
+                0.39090909090909093,
+                0.33636363636363636,
+                0.24545454545454545,
+                0.18181818181818182,
+                0.08181818181818182,
+                0.06363636363636363,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ]
+            }
+          }
+        },
+        "in_distribution": {
+          "algorithms": {
+            "Multiwalker concat (varying, fwd\u00d75)": {
+              "score_matrix_shape": [
+                5,
+                7
+              ],
+              "metrics": {
+                "median": {
+                  "point": 58.55055568092505,
+                  "ci_low": 48.440040519383444,
+                  "ci_high": 71.90403347526059
+                },
+                "iqm": {
+                  "point": 61.26640576470222,
+                  "ci_low": 51.026585979707214,
+                  "ci_high": 70.53669142369283
+                },
+                "mean": {
+                  "point": 54.16151384246631,
+                  "ci_low": 43.54148727776311,
+                  "ci_high": 65.0632988193034
+                },
+                "optimality_gap": {
+                  "point": 245.83848615753368,
+                  "ci_low": 234.9367011806966,
+                  "ci_high": 256.4585127222369
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        },
+        "out_of_distribution": {
+          "algorithms": {
+            "Multiwalker concat (varying, fwd\u00d75)": {
+              "score_matrix_shape": [
+                5,
+                15
+              ],
+              "metrics": {
+                "median": {
+                  "point": -22.082425500743547,
+                  "ci_low": -33.51449853267481,
+                  "ci_high": 0.5715804631868338
+                },
+                "iqm": {
+                  "point": -15.541931049265122,
+                  "ci_low": -26.333144779731906,
+                  "ci_high": -5.576911562211405
+                },
+                "mean": {
+                  "point": -16.384661103144456,
+                  "ci_low": -24.518592476957075,
+                  "ci_high": -8.427920771370632
+                },
+                "optimality_gap": {
+                  "point": 316.3846611031445,
+                  "ci_low": 308.4279207713707,
+                  "ci_high": 324.51859247695705
+                }
+              }
+            }
+          },
+          "bootstrap_reps": 5000
+        }
+      },
+      "id_factor_low": 0.75,
+      "id_factor_high": 1.5,
+      "eval_factor_grid": [
+        0.25,
+        0.5,
+        0.75,
+        1.0,
+        1.5,
+        2.0,
+        3.0,
+        4.0
+      ],
+      "eval_vary_params": [
+        "gravity",
+        "package_mass",
+        "terrain_friction"
+      ],
+      "eval_grid_preset": "hard",
+      "diagnostics": {
+        "clones": [
+          {
+            "param": "gravity",
+            "contexts": [
+              "gravity_x0.25",
+              "gravity_x0.5",
+              "gravity_x0.75",
+              "gravity_x1.5",
+              "gravity_x2",
+              "gravity_x3",
+              "gravity_x4"
+            ],
+            "cloned": false,
+            "cloned_seed_count": 0,
+            "n_seeds": 5,
+            "n_factors": 7,
+            "max_abs_diff": 157.3345190452722,
+            "per_seed_unique_returns": [
+              7,
+              7,
+              7,
+              7,
+              7
+            ]
+          },
+          {
+            "param": "package_mass",
+            "contexts": [
+              "package_mass_x0.25",
+              "package_mass_x0.5",
+              "package_mass_x0.75",
+              "package_mass_x1.5",
+              "package_mass_x2",
+              "package_mass_x3",
+              "package_mass_x4"
+            ],
+            "cloned": false,
+            "cloned_seed_count": 0,
+            "n_seeds": 5,
+            "n_factors": 7,
+            "max_abs_diff": 178.59825395396913,
+            "per_seed_unique_returns": [
+              7,
+              7,
+              7,
+              7,
+              7
+            ]
+          },
+          {
+            "param": "terrain_friction",
+            "contexts": [
+              "terrain_friction_x0.25",
+              "terrain_friction_x0.5",
+              "terrain_friction_x0.75",
+              "terrain_friction_x1.5",
+              "terrain_friction_x2",
+              "terrain_friction_x3",
+              "terrain_friction_x4"
+            ],
+            "cloned": false,
+            "cloned_seed_count": 0,
+            "n_seeds": 5,
+            "n_factors": 7,
+            "max_abs_diff": 163.97074264309293,
+            "per_seed_unique_returns": [
+              7,
+              7,
+              7,
+              7,
+              7
+            ]
+          }
+        ],
+        "slices": [
+          {
+            "param": "gravity",
+            "id_return_mean": 43.747564421191875,
+            "ood_return_mean": -43.56781061842135,
+            "ood_drop": 87.31537503961323,
+            "flat": false,
+            "logdev_return_corr": -0.8959827056728545,
+            "n_id": 3,
+            "n_ood": 5
+          },
+          {
+            "param": "package_mass",
+            "id_return_mean": 64.89538001193498,
+            "ood_return_mean": -4.239655552488195,
+            "ood_drop": 69.13503556442316,
+            "flat": false,
+            "logdev_return_corr": -0.8485618142982054,
+            "n_id": 3,
+            "n_ood": 5
+          },
+          {
+            "param": "terrain_friction",
+            "id_return_mean": 63.57618594933562,
+            "ood_return_mean": -1.346517138523815,
+            "ood_drop": 64.92270308785943,
+            "flat": false,
+            "logdev_return_corr": -0.7513097790545092,
+            "n_id": 3,
+            "n_ood": 5
+          }
+        ],
+        "seed_health": [
+          {
+            "seed": 1,
+            "default_return": 43.44021025175849,
+            "mean_return_all_contexts": 9.912470250290376,
+            "min_return": -124.0747712389566,
+            "max_return": 62.52269575620691,
+            "collapsed": true
+          },
+          {
+            "seed": 2,
+            "default_return": 52.583283917978406,
+            "mean_return_all_contexts": -14.837416181057261,
+            "min_return": -112.12302776181605,
+            "max_return": 52.583283917978406,
+            "collapsed": false
+          },
+          {
+            "seed": 3,
+            "default_return": 68.00748601571345,
+            "mean_return_all_contexts": 11.193091470507541,
+            "min_return": -110.54945739808802,
+            "max_return": 88.29948466240121,
+            "collapsed": false
+          },
+          {
+            "seed": 4,
+            "default_return": 72.49231623051068,
+            "mean_return_all_contexts": -10.839658860257408,
+            "min_return": -110.97240936554347,
+            "max_return": 112.11489492406452,
+            "collapsed": false
+          },
+          {
+            "seed": 5,
+            "default_return": 107.29368920934698,
+            "mean_return_all_contexts": 34.880758854629796,
+            "min_return": -80.259395878762,
+            "max_return": 112.92518615101775,
+            "collapsed": false
+          }
+        ],
+        "n_collapsed_seeds": 1,
+        "coordination": {
+          "per_agent_return_variance_mean": 0.0,
+          "success_rate_mean": 1.0,
+          "episode_length_mean": 327.14909090909094
+        },
+        "env_switch": {
+          "switch_env": false,
+          "reason": "at_least_one_physics_axis_is_sensitive",
+          "sensitive_params": [
+            "gravity",
+            "package_mass",
+            "terrain_friction"
+          ],
+          "action": "keep_pistonball_train_on_sensitive_axes"
+        }
+      }
+    }
+  ],
+  "rliable_combined": {
+    "algorithms": {
+      "Multiwalker hidden (varying, fwd\u00d75)": {
+        "score_matrix_shape": [
+          5,
+          22
+        ],
+        "metrics": {
+          "median": {
+            "point": 26.180022003748803,
+            "ci_low": 19.79035668873878,
+            "ci_high": 29.10804178342471
+          },
+          "iqm": {
+            "point": 21.42290851426944,
+            "ci_low": 17.958454555511175,
+            "ci_high": 25.136306991644467
+          },
+          "mean": {
+            "point": 12.633436889612481,
+            "ci_low": 9.098539425140405,
+            "ci_high": 16.22595746150139
+          },
+          "optimality_gap": {
+            "point": 287.3665631103875,
+            "ci_low": 283.77404253849863,
+            "ci_high": 290.9014605748596
+          }
+        }
+      },
+      "Multiwalker concat (varying, fwd\u00d75)": {
+        "score_matrix_shape": [
+          5,
+          22
+        ],
+        "metrics": {
+          "median": {
+            "point": 5.440634591086815,
+            "ci_low": -4.6952421560725695,
+            "ci_high": 25.208640502429972
+          },
+          "iqm": {
+            "point": 11.948478759495163,
+            "ci_low": 3.231477008804062,
+            "ci_high": 20.377843210584057
+          },
+          "mean": {
+            "point": 6.061849106822607,
+            "ci_low": -0.2160574930946755,
+            "ci_high": 12.721321811009494
+          },
+          "optimality_gap": {
+            "point": 293.9381508931774,
+            "ci_low": 287.2786781889905,
+            "ci_high": 300.21605749309464
+          }
+        }
+      }
+    },
+    "bootstrap_reps": 5000,
+    "performance_profiles": {
+      "Multiwalker hidden (varying, fwd\u00d75)": {
+        "thresholds": [
+          -50.0,
+          -38.333333333333336,
+          -26.666666666666668,
+          -15.0,
+          -3.3333333333333357,
+          8.333333333333329,
+          20.0,
+          31.666666666666657,
+          43.33333333333333,
+          55.0,
+          66.66666666666666,
+          78.33333333333331,
+          90.0,
+          101.66666666666666,
+          113.33333333333331,
+          125.0,
+          136.66666666666666,
+          148.33333333333331,
+          160.0,
+          171.66666666666666,
+          183.33333333333331,
+          195.0,
+          206.66666666666663,
+          218.33333333333331,
+          230.0,
+          241.66666666666663,
+          253.33333333333331,
+          265.0,
+          276.66666666666663,
+          288.3333333333333,
+          300.0
+        ],
+        "profile": [
+          0.9,
+          0.8636363636363636,
+          0.8363636363636363,
+          0.8181818181818182,
+          0.8,
+          0.7090909090909091,
+          0.5545454545454546,
+          0.3181818181818182,
+          0.11818181818181818,
+          0.07272727272727272,
+          0.01818181818181818,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ci_low": [
+          0.8636363636363636,
+          0.8181818181818182,
+          0.8,
+          0.7818181818181819,
+          0.7545454545454545,
+          0.6545454545454545,
+          0.4818181818181818,
+          0.24545454545454545,
+          0.06363636363636363,
+          0.03636363636363636,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ci_high": [
+          0.9363636363636364,
+          0.9090909090909091,
+          0.8727272727272727,
+          0.8545454545454545,
+          0.8454545454545455,
+          0.7636363636363637,
+          0.6272727272727273,
+          0.39090909090909093,
+          0.17272727272727273,
+          0.11818181818181818,
+          0.045454545454545456,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "Multiwalker concat (varying, fwd\u00d75)": {
+        "thresholds": [
+          -50.0,
+          -38.333333333333336,
+          -26.666666666666668,
+          -15.0,
+          -3.3333333333333357,
+          8.333333333333329,
+          20.0,
+          31.666666666666657,
+          43.33333333333333,
+          55.0,
+          66.66666666666666,
+          78.33333333333331,
+          90.0,
+          101.66666666666666,
+          113.33333333333331,
+          125.0,
+          136.66666666666666,
+          148.33333333333331,
+          160.0,
+          171.66666666666666,
+          183.33333333333331,
+          195.0,
+          206.66666666666663,
+          218.33333333333331,
+          230.0,
+          241.66666666666663,
+          253.33333333333331,
+          265.0,
+          276.66666666666663,
+          288.3333333333333,
+          300.0
+        ],
+        "profile": [
+          0.7727272727272727,
+          0.7454545454545455,
+          0.7,
+          0.6272727272727273,
+          0.6,
+          0.5272727272727272,
+          0.4909090909090909,
+          0.38181818181818183,
+          0.32727272727272727,
+          0.2727272727272727,
+          0.19090909090909092,
+          0.12727272727272726,
+          0.045454545454545456,
+          0.03636363636363636,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ci_low": [
+          0.7181818181818181,
+          0.6818181818181818,
+          0.6454545454545455,
+          0.5636363636363636,
+          0.5454545454545454,
+          0.4636363636363636,
+          0.42727272727272725,
+          0.3181818181818182,
+          0.2636363636363636,
+          0.20909090909090908,
+          0.12727272727272726,
+          0.08181818181818182,
+          0.00909090909090909,
+          0.00909090909090909,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ci_high": [
+          0.8272727272727273,
+          0.8090909090909091,
+          0.7545454545454545,
+          0.6909090909090909,
+          0.6545454545454545,
+          0.5818181818181818,
+          0.5454545454545454,
+          0.43636363636363634,
+          0.39090909090909093,
+          0.33636363636363636,
+          0.2545454545454545,
+          0.18181818181818182,
+          0.08181818181818182,
+          0.06363636363636363,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "rliable_combined_by_split": {
+    "all_contexts": {
+      "algorithms": {
+        "Multiwalker hidden (varying, fwd\u00d75)": {
+          "score_matrix_shape": [
+            5,
+            22
+          ],
+          "metrics": {
+            "median": {
+              "point": 26.180022003748803,
+              "ci_low": 19.79035668873878,
+              "ci_high": 29.10804178342471
+            },
+            "iqm": {
+              "point": 21.42290851426944,
+              "ci_low": 17.958454555511175,
+              "ci_high": 25.136306991644467
+            },
+            "mean": {
+              "point": 12.633436889612481,
+              "ci_low": 9.098539425140405,
+              "ci_high": 16.22595746150139
+            },
+            "optimality_gap": {
+              "point": 287.3665631103875,
+              "ci_low": 283.77404253849863,
+              "ci_high": 290.9014605748596
+            }
+          }
+        },
+        "Multiwalker concat (varying, fwd\u00d75)": {
+          "score_matrix_shape": [
+            5,
+            22
+          ],
+          "metrics": {
+            "median": {
+              "point": 5.440634591086815,
+              "ci_low": -4.6952421560725695,
+              "ci_high": 25.208640502429972
+            },
+            "iqm": {
+              "point": 11.948478759495163,
+              "ci_low": 3.231477008804062,
+              "ci_high": 20.377843210584057
+            },
+            "mean": {
+              "point": 6.061849106822607,
+              "ci_low": -0.2160574930946755,
+              "ci_high": 12.721321811009494
+            },
+            "optimality_gap": {
+              "point": 293.9381508931774,
+              "ci_low": 287.2786781889905,
+              "ci_high": 300.21605749309464
+            }
+          }
+        }
+      },
+      "bootstrap_reps": 5000,
+      "performance_profiles": {
+        "Multiwalker hidden (varying, fwd\u00d75)": {
+          "thresholds": [
+            -50.0,
+            -38.333333333333336,
+            -26.666666666666668,
+            -15.0,
+            -3.3333333333333357,
+            8.333333333333329,
+            20.0,
+            31.666666666666657,
+            43.33333333333333,
+            55.0,
+            66.66666666666666,
+            78.33333333333331,
+            90.0,
+            101.66666666666666,
+            113.33333333333331,
+            125.0,
+            136.66666666666666,
+            148.33333333333331,
+            160.0,
+            171.66666666666666,
+            183.33333333333331,
+            195.0,
+            206.66666666666663,
+            218.33333333333331,
+            230.0,
+            241.66666666666663,
+            253.33333333333331,
+            265.0,
+            276.66666666666663,
+            288.3333333333333,
+            300.0
+          ],
+          "profile": [
+            0.9,
+            0.8636363636363636,
+            0.8363636363636363,
+            0.8181818181818182,
+            0.8,
+            0.7090909090909091,
+            0.5545454545454546,
+            0.3181818181818182,
+            0.11818181818181818,
+            0.07272727272727272,
+            0.01818181818181818,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "ci_low": [
+            0.8636363636363636,
+            0.8181818181818182,
+            0.8,
+            0.7818181818181819,
+            0.7545454545454545,
+            0.6545454545454545,
+            0.4818181818181818,
+            0.24545454545454545,
+            0.06363636363636363,
+            0.03636363636363636,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "ci_high": [
+            0.9363636363636364,
+            0.9090909090909091,
+            0.8727272727272727,
+            0.8545454545454545,
+            0.8454545454545455,
+            0.7636363636363637,
+            0.6272727272727273,
+            0.39090909090909093,
+            0.17272727272727273,
+            0.11818181818181818,
+            0.045454545454545456,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "Multiwalker concat (varying, fwd\u00d75)": {
+          "thresholds": [
+            -50.0,
+            -38.333333333333336,
+            -26.666666666666668,
+            -15.0,
+            -3.3333333333333357,
+            8.333333333333329,
+            20.0,
+            31.666666666666657,
+            43.33333333333333,
+            55.0,
+            66.66666666666666,
+            78.33333333333331,
+            90.0,
+            101.66666666666666,
+            113.33333333333331,
+            125.0,
+            136.66666666666666,
+            148.33333333333331,
+            160.0,
+            171.66666666666666,
+            183.33333333333331,
+            195.0,
+            206.66666666666663,
+            218.33333333333331,
+            230.0,
+            241.66666666666663,
+            253.33333333333331,
+            265.0,
+            276.66666666666663,
+            288.3333333333333,
+            300.0
+          ],
+          "profile": [
+            0.7727272727272727,
+            0.7454545454545455,
+            0.7,
+            0.6272727272727273,
+            0.6,
+            0.5272727272727272,
+            0.4909090909090909,
+            0.38181818181818183,
+            0.32727272727272727,
+            0.2727272727272727,
+            0.19090909090909092,
+            0.12727272727272726,
+            0.045454545454545456,
+            0.03636363636363636,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "ci_low": [
+            0.7181818181818181,
+            0.6818181818181818,
+            0.6454545454545455,
+            0.5636363636363636,
+            0.5454545454545454,
+            0.4636363636363636,
+            0.42727272727272725,
+            0.3181818181818182,
+            0.2636363636363636,
+            0.20909090909090908,
+            0.12727272727272726,
+            0.08181818181818182,
+            0.00909090909090909,
+            0.00909090909090909,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "ci_high": [
+            0.8272727272727273,
+            0.8090909090909091,
+            0.7545454545454545,
+            0.6909090909090909,
+            0.6545454545454545,
+            0.5818181818181818,
+            0.5454545454545454,
+            0.43636363636363634,
+            0.39090909090909093,
+            0.33636363636363636,
+            0.2545454545454545,
+            0.18181818181818182,
+            0.08181818181818182,
+            0.06363636363636363,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      }
+    },
+    "in_distribution": {
+      "algorithms": {
+        "Multiwalker hidden (varying, fwd\u00d75)": {
+          "score_matrix_shape": [
+            5,
+            7
+          ],
+          "metrics": {
+            "median": {
+              "point": 28.639714259160485,
+              "ci_low": 21.841760855674433,
+              "ci_high": 38.69553217271139
+            },
+            "iqm": {
+              "point": 29.419451342184367,
+              "ci_low": 24.16637704578525,
+              "ci_high": 35.23869016924886
+            },
+            "mean": {
+              "point": 28.856182664805765,
+              "ci_low": 22.5671802434822,
+              "ci_high": 35.089256799145886
+            },
+            "optimality_gap": {
+              "point": 271.1438173351942,
+              "ci_low": 264.9107432008541,
+              "ci_high": 277.4328197565178
+            }
+          }
+        },
+        "Multiwalker concat (varying, fwd\u00d75)": {
+          "score_matrix_shape": [
+            5,
+            7
+          ],
+          "metrics": {
+            "median": {
+              "point": 58.55055568092505,
+              "ci_low": 48.440040519383444,
+              "ci_high": 72.35217768914688
+            },
+            "iqm": {
+              "point": 61.26640576470222,
+              "ci_low": 50.858430081403725,
+              "ci_high": 70.75693762182497
+            },
+            "mean": {
+              "point": 54.16151384246631,
+              "ci_low": 43.19694380484288,
+              "ci_high": 65.4185097333808
+            },
+            "optimality_gap": {
+              "point": 245.83848615753368,
+              "ci_low": 234.5814902666192,
+              "ci_high": 256.8030561951571
+            }
+          }
+        }
+      },
+      "bootstrap_reps": 5000
+    },
+    "out_of_distribution": {
+      "algorithms": {
+        "Multiwalker hidden (varying, fwd\u00d75)": {
+          "score_matrix_shape": [
+            5,
+            15
+          ],
+          "metrics": {
+            "median": {
+              "point": 22.31550939792651,
+              "ci_low": 15.40575027561516,
+              "ci_high": 26.862007765122694
+            },
+            "iqm": {
+              "point": 15.54416215287646,
+              "ci_low": 10.355526252018466,
+              "ci_high": 20.278844101951016
+            },
+            "mean": {
+              "point": 5.062822194522284,
+              "ci_low": 0.6342170918877043,
+              "ci_high": 9.58807003325296
+            },
+            "optimality_gap": {
+              "point": 294.93717780547775,
+              "ci_low": 290.41192996674704,
+              "ci_high": 299.3657829081123
+            }
+          }
+        },
+        "Multiwalker concat (varying, fwd\u00d75)": {
+          "score_matrix_shape": [
+            5,
+            15
+          ],
+          "metrics": {
+            "median": {
+              "point": -22.082425500743547,
+              "ci_low": -33.57526084108587,
+              "ci_high": 0.616446133935712
+            },
+            "iqm": {
+              "point": -15.541931049265122,
+              "ci_low": -26.436697907658807,
+              "ci_high": -5.350366267427612
+            },
+            "mean": {
+              "point": -16.384661103144456,
+              "ci_low": -24.489045790052707,
+              "ci_high": -8.368184128795487
+            },
+            "optimality_gap": {
+              "point": 316.3846611031445,
+              "ci_low": 308.3681841287955,
+              "ci_high": 324.48904579005267
+            }
+          }
+        }
+      },
+      "bootstrap_reps": 5000
+    }
+  },
+  "pairwise_poi": [
+    {
+      "a": "Multiwalker hidden (varying, fwd\u00d75)",
+      "b": "Multiwalker concat (varying, fwd\u00d75)",
+      "a_exp_name": "mw3_hidden_varying_fwd5",
+      "b_exp_name": "mw3_concat_varying_fwd5",
+      "probability_a_beats_b": {
+        "probability_of_improvement": 0.5236363636363637,
+        "ci_low": 0.4618181818181819,
+        "ci_high": 0.5872727272727273
+      },
+      "probability_b_beats_a": {
+        "probability_of_improvement": 0.4763636363636363,
+        "ci_low": 0.4145454545454545,
+        "ci_high": 0.5381818181818182
+      }
+    }
+  ],
+  "context_order": [
+    "default",
+    "gravity_x0.25",
+    "gravity_x0.5",
+    "gravity_x0.75",
+    "gravity_x1.5",
+    "gravity_x2",
+    "gravity_x3",
+    "gravity_x4",
+    "package_mass_x0.25",
+    "package_mass_x0.5",
+    "package_mass_x0.75",
+    "package_mass_x1.5",
+    "package_mass_x2",
+    "package_mass_x3",
+    "package_mass_x4",
+    "terrain_friction_x0.25",
+    "terrain_friction_x0.5",
+    "terrain_friction_x0.75",
+    "terrain_friction_x1.5",
+    "terrain_friction_x2",
+    "terrain_friction_x3",
+    "terrain_friction_x4"
+  ],
+  "context_meta": {
+    "default": {
+      "split": "id",
+      "varied_param": null,
+      "factor": 1.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "gravity_x0.25": {
+      "split": "ood",
+      "varied_param": "gravity",
+      "factor": 0.25,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "gravity_x0.5": {
+      "split": "ood",
+      "varied_param": "gravity",
+      "factor": 0.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "gravity_x0.75": {
+      "split": "id",
+      "varied_param": "gravity",
+      "factor": 0.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "gravity_x1.5": {
+      "split": "id",
+      "varied_param": "gravity",
+      "factor": 1.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "gravity_x2": {
+      "split": "ood",
+      "varied_param": "gravity",
+      "factor": 2.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "gravity_x3": {
+      "split": "ood",
+      "varied_param": "gravity",
+      "factor": 3.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "gravity_x4": {
+      "split": "ood",
+      "varied_param": "gravity",
+      "factor": 4.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "package_mass_x0.25": {
+      "split": "ood",
+      "varied_param": "package_mass",
+      "factor": 0.25,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "package_mass_x0.5": {
+      "split": "ood",
+      "varied_param": "package_mass",
+      "factor": 0.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "package_mass_x0.75": {
+      "split": "id",
+      "varied_param": "package_mass",
+      "factor": 0.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "package_mass_x1.5": {
+      "split": "id",
+      "varied_param": "package_mass",
+      "factor": 1.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "package_mass_x2": {
+      "split": "ood",
+      "varied_param": "package_mass",
+      "factor": 2.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "package_mass_x3": {
+      "split": "ood",
+      "varied_param": "package_mass",
+      "factor": 3.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "package_mass_x4": {
+      "split": "ood",
+      "varied_param": "package_mass",
+      "factor": 4.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "terrain_friction_x0.25": {
+      "split": "ood",
+      "varied_param": "terrain_friction",
+      "factor": 0.25,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "terrain_friction_x0.5": {
+      "split": "ood",
+      "varied_param": "terrain_friction",
+      "factor": 0.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "terrain_friction_x0.75": {
+      "split": "id",
+      "varied_param": "terrain_friction",
+      "factor": 0.75,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "terrain_friction_x1.5": {
+      "split": "id",
+      "varied_param": "terrain_friction",
+      "factor": 1.5,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "interpolation"
+    },
+    "terrain_friction_x2": {
+      "split": "ood",
+      "varied_param": "terrain_friction",
+      "factor": 2.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "terrain_friction_x3": {
+      "split": "ood",
+      "varied_param": "terrain_friction",
+      "factor": 3.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    },
+    "terrain_friction_x4": {
+      "split": "ood",
+      "varied_param": "terrain_friction",
+      "factor": 4.0,
+      "factor_b": null,
+      "varied_param_b": null,
+      "region": "extrapolation"
+    }
+  },
+  "presets": [
+    "mw3_hidden_varying_fwd5",
+    "mw3_concat_varying_fwd5"
+  ],
+  "exp_names": [
+    "mw3_hidden_varying_fwd5",
+    "mw3_concat_varying_fwd5"
+  ],
+  "labels": [
+    "Multiwalker hidden (varying, fwd\u00d75)",
+    "Multiwalker concat (varying, fwd\u00d75)"
+  ]
+}

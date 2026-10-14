@@ -1,0 +1,5 @@
+method,IQM,IQM_lo,IQM_hi,mean,ID_IQM,OOD_IQM,gap_IQM,collapsed,cloned,flat,sensitive,env,switch
+Hidden context (static),67.114,58.831,75.032,64.13,67.09,67.083,0.008,2,"ball_mass,ball_elasticity","ball_mass,ball_friction,ball_elasticity,gravity",—,switch_to_multiwalker,True
+Hidden context (varying),88.769,86.75,89.71,80.178,88.374,88.951,-0.577,1,"ball_mass,ball_elasticity","ball_mass,ball_friction,ball_elasticity,gravity",—,switch_to_multiwalker,True
+Context concat (static),70.826,61.784,79.59,65.313,70.841,70.818,0.023,2,—,"ball_mass,ball_friction,ball_elasticity,gravity",—,switch_to_multiwalker,True
+Context concat (varying),85.9,84.837,87.03,85.363,84.723,86.556,-1.833,0,—,"ball_mass,ball_friction,ball_elasticity,gravity",—,switch_to_multiwalker,True

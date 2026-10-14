@@ -1,0 +1,5 @@
+method,IQM,ID_IQM,OOD_IQM,gap_IQM
+Hidden context (static),66.997,67.698,66.226,1.472
+Hidden context (varying),88.13,88.417,87.802,0.615
+Context concat (static),70.624,71.349,69.848,1.501
+Context concat (varying),85.855,85.776,85.928,-0.151
